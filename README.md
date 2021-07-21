@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a>
-    <img src="assets/img/DinoGreenColor.png" alt="Logo" width="145" height="75">
+    <img src="assets/img/DinoGreenColor.png" alt="Logo" width="145" height="100">
   </a>
 
   <h3 align="center">Hexperience</h3>
@@ -38,7 +38,9 @@
 <!-- ABOUT THE PROJECT -->
 ## Sobre O Projeto
 
-[![Product Name Screen Shot][product-screenshot]
+[![Index][product-screenshot]
+<br /><br /><br />
+
 Hexperience é um app com o objetivo de fornecer experiências, estas “experiências” são atividades orientadas por um host (anfitrião), que abrange diversas áreas: 
  - Artes
  - Pontos Turísticos
