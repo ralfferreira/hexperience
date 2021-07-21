@@ -17,23 +17,7 @@
   </p>
 </p>
 
-
-
-<!-- TABLE OF CONTENTS -->
-<details open="open">
-  <summary>Sumário</summary>
-  <ol>
-    <li>
-      <a href="#about-the-project">Sobre O Projeto</a>
-      <ul>
-        <li><a href="#built-with">Desenvolvido Com</a></li>
-      </ul>
-    </li>
-    <li><a href="#contact">Contato</a></li>
-  </ol>
-</details>
-
-
+<br /><br />
 
 <!-- ABOUT THE PROJECT -->
 ## Sobre O Projeto
