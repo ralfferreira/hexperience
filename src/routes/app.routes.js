@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Image, TouchableOpacity } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../../pages/Home'
-import CalendarScreen from '../../pages/Calendar'
-import FavoritesScreen from '../../pages/Favorites'
-import ProfileScreen from '../../pages/Profile'
+import HomeScreen from '../pages/Home'
+import CalendarScreen from '../pages/Calendar'
+import FavoritesScreen from '../pages/Favorites'
+import ProfileScreen from '../pages/Profile'
 
 const Tab = createBottomTabNavigator();
 
@@ -23,13 +23,13 @@ const Tabs = () => {
         tabBarIcon: ({focused}) => (
           <View style={{alignItems: 'center', justifyContent:'center', top: 10}}>
             <Image 
-            source={require('../../assets/img/home.png')} 
+            source={require('../assets/img/home.png')} 
             resizeMode= "contain"
             style={{
               width: 30,
               height: 30,
               tintColor: focused ? '#01BE94' : '#000',
-              marginBottom: 20,
+              marginBottom: 18,
             }}
             />
           </View>
@@ -39,7 +39,7 @@ const Tabs = () => {
         tabBarIcon: ({focused}) => (
           <View>
             <Image 
-            source={require('../../assets/img/calendar.png')} 
+            source={require('../assets/img/calendar.png')} 
             resizeMode= "contain"
             style={{
               width: 25,
@@ -55,11 +55,11 @@ const Tabs = () => {
         tabBarIcon: ({focused}) => (
           <View>
             <Image 
-            source={require('../../assets/img/favorites.png')} 
+            source={require('../assets/img/favorites.png')} 
             resizeMode= "contain"
             style={{
-              width: 25,
-              height: 25,
+              width: 30,
+              height: 30,
               tintColor: focused ? '#01BE94' : '#000',
               margin: 0,
             }}
@@ -71,7 +71,7 @@ const Tabs = () => {
         tabBarIcon: ({focused}) => (
           <View>
             <Image 
-            source={require('../../assets/img/profile.png')}
+            source={require('../assets/img/profile.png')}
             resizeMode= "contain"
             style={{
               width: 25,

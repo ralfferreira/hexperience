@@ -6,7 +6,7 @@ import { Container } from './styles';
 const Home = () => {
   return (
     <Container>
-      <Text>Home</Text>
+      <Text>Pao mde queijo</Text>
     </Container>
   );
 };
