@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, Image, TouchableOpacity } from 'react-native'
+import { View, Image } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from '../pages/Home'
 import CalendarScreen from '../pages/Calendar'
 import FavoritesScreen from '../pages/Favorites'
 import ProfileScreen from '../pages/Profile'
+import LoginScreen from '../pages/Login'
 
 const Tab = createBottomTabNavigator();
 
@@ -67,7 +68,24 @@ const Tabs = () => {
           </View>
         ),
       }} />
-      <Tab.Screen name="Profile" component={ProfileScreen} options={{
+      {/* <Tab.Screen name="Profile" component={ProfileScreen} options={{
+        tabBarIcon: ({focused}) => (
+          <View>
+            <Image 
+            source={require('../assets/img/profile.png')}
+            resizeMode= "contain"
+            style={{
+              width: 25,
+              height: 25,
+              tintColor: focused ? '#01BE94' : '#000',
+              margin: 0,
+            }}
+            />
+          </View>
+        ),
+      }} /> */}
+
+      <Tab.Screen name="Login" component={LoginScreen} options={{
         tabBarIcon: ({focused}) => (
           <View>
             <Image 
@@ -83,6 +101,7 @@ const Tabs = () => {
           </View>
         ),
       }} />
+
     </Tab.Navigator>
   );
 }
