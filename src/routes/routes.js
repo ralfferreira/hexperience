@@ -1,21 +1,25 @@
 
 import React from "react";
-import { View, ActivityIndicator } from "react-native";
-import AuthRoutes from "./auth.routes";
-import AppRoutes from "./app.routes";
+import AuthRoute from "./auth.routes";
+import Tabs from "./app.routes";
+import { createStackNavigator } from "@react-navigation/stack";
 
-const Routes = () => {
-  const { user, loading } = useAuth();
+const Routes = createStackNavigator()
 
-  if (loading) {
+const Route = () => {
+
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#999" />
-      </View>
+      <>
+      <Routes.Navigator screenOptions={{
+      headerShown: false,
+      }}>
+        <Routes.Screen name="AuthRoute" component={AuthRoute} />
+        <Routes.Screen name="AppRoute" component={Tabs} />
+      </Routes.Navigator>
+      </>
     );
-  }
 
-  return user ? <AppRoutes /> : <AuthRoutes />;
+  
 };
 
-export default Routes;
+export default Route;

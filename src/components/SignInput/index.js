@@ -1,7 +1,7 @@
 import React from "react";
 import { Container, TextInput } from "./styles";
 
-const SignUpInput = () => {
+const SignInput = () => {
   return (
     <Container>
       <TextInput />
@@ -9,4 +9,4 @@ const SignUpInput = () => {
   );
 };
 
-export default SignUpInput;
+export default SignInput;

@@ -1,9 +1,12 @@
 import React from 'react';
-import Tabs from './routes/app.routes'
+import Routes from './routes/routes'
+
 
 const Index = () => {
   return(
-      <Tabs />
+    <>
+      <Routes />
+    </>
   );
 }
 

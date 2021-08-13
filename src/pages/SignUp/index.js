@@ -1,12 +1,16 @@
 import React from 'react'
-import { View, ScrollView, KeyboardAvoidingView, } from 'react-native';
+import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Form } from "@unform/mobile";
-import SignUpInput from '../../components/SignUpInput';
+import SignInput from '../../components/SignInput';
 import SignUpButton from '../../components/SignUpButton';
-import { Center, Container, Image, Title, InputTitle, BackToSignIn, BackToSignInText, Underline } from './styles';
+import { Center, Container, Image, 
+Title, InputTitle, BackToSignIn, 
+BackToSignInText, Underline } from './styles';
+import { useNavigation } from '@react-navigation/native'; 
 import Logo from '../../assets/img/dinoDaleGreen.png'
 
 const SignUp = () => {
+  const navigation = useNavigation();
   return (
     <>
      <KeyboardAvoidingView
@@ -24,13 +28,13 @@ const SignUp = () => {
         
         <Form>
           <InputTitle>Nome</InputTitle>
-          <SignUpInput 
+          <SignInput 
           autoCapitalize="words"
           name="name"
           placeholder="Nome"
           />
           <InputTitle>Email</InputTitle>
-          <SignUpInput
+          <SignInput
           keyboardType="email-address"
           autoCorrect={false}
           autoCapitalize="none"
@@ -39,27 +43,27 @@ const SignUp = () => {
           returnKeyType="next"
           />
           <InputTitle>Telefone</InputTitle>
-          <SignUpInput
+          <SignInput
           keyboardType="number-pad"
           name="phone"
           placeholder="Telefone"
           /> 
           <InputTitle>Senha</InputTitle>
-          <SignUpInput
+          <SignInput
           name="password"
           placeholder="Senha"
           textContentType="newPassword"
           returnKeyType="send"
           />
           <InputTitle>Confirmar Senha</InputTitle>
-          <SignUpInput
+          <SignInput
           name="confirm-password"
           placeholder="Digite novamente sua Senha"
           textContentType="newPassword"
           returnKeyType="send"
           />
           <Center>
-            <SignUpButton />   
+            <SignUpButton onPress={() => navigation.navigate('AppRoute')} />
           </Center>
         </Form>
 
