@@ -2,7 +2,7 @@ import React from 'react'
 import { View, ScrollView, KeyboardAvoidingView, } from 'react-native';
 import { Form } from "@unform/mobile";
 import SignInput from '../../components/SignInput';
-import LoginButton from '../../components/LoginButton';
+import SignButton from '../../components/SignButton';
 import { Container, Image, Title, InputTitle, ForgotPassword, ForgotPasswordText, CreateAccount, CreateAccountText, Underline } from './styles';
 import Logo from '../../assets/img/dinoDaleGreen.png'
 import { useNavigation } from '@react-navigation/native'; 
@@ -40,16 +40,19 @@ const Login = () => {
           placeholder="Senha"
           returnKeyType="send"
           />
-          <LoginButton onPress={() => {
+          <SignButton
+          onPress={() => {
           navigation.navigate('AppRoute')
-          }}/>   
+          }}>
+          Entrar
+          </SignButton>
         </Form>
 
         <ForgotPassword>
           <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
         </ForgotPassword>
         <CreateAccount onPress={() => {
-          navigation.navigate('SignUp')
+        navigation.navigate('SignUp')
         }}>
           <CreateAccountText>Não possui uma conta? <Underline>Cadastre-se</Underline></CreateAccountText>
         </CreateAccount>

@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-export const Container = styled.View`
+export const Container = styled.TouchableOpacity`
   width: 150px;
   height: 60px;
   background: #00FF01;

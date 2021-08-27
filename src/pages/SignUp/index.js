@@ -2,7 +2,7 @@ import React from 'react'
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Form } from "@unform/mobile";
 import SignInput from '../../components/SignInput';
-import SignUpButton from '../../components/SignUpButton';
+import SignButton from '../../components/SignButton';
 import { Center, Container, Image, 
 Title, InputTitle, BackToSignIn, 
 BackToSignInText, Underline } from './styles';
@@ -63,7 +63,12 @@ const SignUp = () => {
           returnKeyType="send"
           />
           <Center>
-            <SignUpButton onPress={() => navigation.navigate('AppRoute')} />
+            <SignButton 
+            onPress={() => {
+            navigation.navigate('AppRoute')
+            }}>
+            Cadastrar
+            </SignButton>
           </Center>
         </Form>
 
