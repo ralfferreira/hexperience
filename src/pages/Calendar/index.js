@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
+import Header from '../../components/Header'
 
 import { Container } from './styles';
 
 const Calendar = () => {
   return (
     <Container>
-      <Text>Calendar</Text>
+      <Header>Calendário</Header>
     </Container>
   );
 };

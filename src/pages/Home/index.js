@@ -1,26 +1,22 @@
 import React from 'react'
-import LogoImg from '../../assets/img/dinoDaleGreen.png'
-import SearchImg from '../../assets/img/search.png'
 import Card from '../../components/Card'
+import Header from '../../components/Header'
 import { ScrollView } from 'react-native' 
 import BlueGradientIcon from '../../assets/img/topic-title-section-index.png'
 import RoseGradientIcon from '../../assets/img/topic-title-section-index-rose.png'
 import BlueGradientChromaLine from '../../assets/img/gradient-title-section-index-blue.png'
 import RoseGradientChromaLine from '../../assets/img/gradient-title-section-index-rose.png'
 import 
-{ Container, Header, ContentBody, ContentHeader, NearToYou, ContentTitle,
-  Recommended, ChromaLine, Content, Search, Logo, Title, ContentHeaderIcon 
+{ Container, ContentBody, ContentHeader, NearToYou, ContentTitle,
+  Recommended, ChromaLine, Content, ContentHeaderIcon 
 } from './styles';
 
 const Home = () => {
   return (
     <Container>
       <Header>
-        <Search source={SearchImg} />
-        <Title>Hexperience</Title>
-        <Logo source={LogoImg} />
+        Hexperience
       </Header>
-
       <ScrollView>
       <Content>
       <NearToYou>

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text } from 'react-native';
+import Header from '../../components/Header'
 
 import { Container } from './styles';
 
 const Profile = () => {
   return (
     <Container>
-      <Text>Profile</Text>
+      <Header>Meu Perfil</Header>
     </Container>
   );
 };
