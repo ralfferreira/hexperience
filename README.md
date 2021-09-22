@@ -2,7 +2,7 @@
 <br />
 <p align="center">
   <a>
-    <img src="assets/img/DinoGreenColor.png" alt="Logo" width="145" height="100">
+    <img src="src/assets/img/DinoGreenColor.png" alt="Logo" width="145" height="100">
   </a>
 
   <h3 align="center">Hexperience</h3>
@@ -83,4 +83,4 @@ Mariana Bastos de Oliveira - [@your_twitter](https://twitter.com/your_username) 
 
 
 
-[product-screenshot]: assets/img/readme-index.png
+[product-screenshot]: src/assets/img/readme-index.png
