@@ -63,6 +63,10 @@ export const FolderName = styled.Text`
     font-weight: 600;
     font-style: normal;
     color: #000;
-    width: 150;
+    width: 150px;
     font-size: 15px;
+`
+
+export const Experiences = styled.ScrollView`
+    padding: 10px;
 `

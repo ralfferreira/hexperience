@@ -6,7 +6,7 @@ export const Experiences = styled.ScrollView`
 `
 export const Experience = styled.View`
     width: 99%;
-    height: 100px;
+    height: 90px;
     display: flex;
     flex-direction: row;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
@@ -15,8 +15,8 @@ export const Experience = styled.View`
     background-color: #fff;
 `
 export const ExperienceImage = styled.Image`
-    height: 100px;
-    width: 115px;
+    height: 90px;
+    width: 105px;
 `
 export const ExperienceName = styled.Text`
     font-weight: 700;

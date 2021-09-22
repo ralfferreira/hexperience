@@ -1,7 +1,5 @@
 import React from 'react';
-import { Experience, ExperienceDescription, ExperienceImage, ExperienceDetails,
-LocalizationIcon, ExperienceLocalizationText, ExperienceName, ExperiencePrice, ExperienceFavorite
-} from './styles';
+import { Experience, ExperienceDescription, ExperienceImage, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperienceName, ExperiencePrice, ExperienceFavorite } from './styles';
 import LocalizationImg from '../../assets/img/pins-hexperience.png'
 import FavoriteImg from '../../assets/img/heart-icon.png'
 

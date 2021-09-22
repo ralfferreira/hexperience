@@ -1,5 +1,5 @@
 import React from 'react'
-import Card from '../../components/Card'
+import ExperienceCard from '../../components/ExperienceCard'
 import Header from '../../components/Header'
 import { ScrollView } from 'react-native' 
 import BlueGradientIcon from '../../assets/img/topic-title-section-index.png'
@@ -10,6 +10,8 @@ import
 { Container, ContentBody, ContentHeader, NearToYou, ContentTitle,
   Recommended, ChromaLine, Content, ContentHeaderIcon 
 } from './styles';
+const ExperienceImg = require('../../assets/img/div-image-experience.png');
+const Experience2Img = require('../../assets/img/onepice.gif');
 
 const Home = () => {
   return (
@@ -27,19 +29,36 @@ const Home = () => {
         </ContentHeader>
 
         <ContentBody horizontal={true} showsHorizontalScrollIndicator={false}>
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {Experience2Img}
+          name="Tarde com o Luffy"
+          localizationText="Tokyo - JP"
+          price="R$ 3500,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
         </ContentBody>
       </NearToYou>
 
@@ -51,17 +70,51 @@ const Home = () => {
         </ContentHeader>
 
         <ContentBody horizontal={true} showsHorizontalScrollIndicator={false}>
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
-          <Card />
+        <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {Experience2Img}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
+          <ExperienceCard 
+          image= {ExperienceImg}
+          name="Pescaria com Caio Castro"
+          localizationText="Fortaleza - CE"
+          price="R$ 800,00" />
         </ContentBody>
       </Recommended>
       </Content>
