@@ -2,6 +2,7 @@ import React from 'react'
 import ExperienceCard from '../../components/ExperienceCard'
 import Header from '../../components/Header'
 import { ScrollView } from 'react-native' 
+import FloatButton from '../../components/FloatButton'
 import BlueGradientIcon from '../../assets/img/topic-title-section-index.png'
 import RoseGradientIcon from '../../assets/img/topic-title-section-index-rose.png'
 import BlueGradientChromaLine from '../../assets/img/gradient-title-section-index-blue.png'
@@ -119,6 +120,7 @@ const Home = () => {
       </Recommended>
       </Content>
       </ScrollView>
+      <FloatButton />
     </Container>
   );
 };

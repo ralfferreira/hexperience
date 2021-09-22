@@ -2,6 +2,7 @@ import React from 'react';
 import OrderByImg from '../../assets/img/arrow-down.png';
 import CreateFolderImg from '../../assets/img/create-folder.png';
 import FolderImg from '../../assets/img/folder.png';
+import FloatButton from '../../components/FloatButton'
 // import ExperienceImg from '../../assets/img/div-image-experience.png'
 import { Container, ListAndCreate, OrderBy, OrderByText, OrderByArrow, CreateFolder, Folder, Folders, FolderIcon, FolderName, Experiences } from './styles';
 import Header from '../../components/Header';
@@ -121,6 +122,7 @@ const Favorites = () => {
           price="R$ 800,00" />
         </Experiences> 
       </ScrollView>
+      <FloatButton />
     </Container>
   );
 };

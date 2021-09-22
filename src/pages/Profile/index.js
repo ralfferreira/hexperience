@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../../components/Header'
+import FloatButton from '../../components/FloatButton'
 import ExperienceCard from '../../components/ExperienceCard'
 import { ScrollView } from 'react-native' 
 import { Container, Leafs, Leaf, ProfileContent, ProfileHeader, EditProfile, ProfileImage, Settings, ProfileBody, ProfileInfo, ProfileName, ProfileDescription, Experiences, Title } from './styles';
@@ -60,6 +61,7 @@ const Profile = () => {
           price="R$ 3500,00" />
       </Experiences>
       </ScrollView>
+      <FloatButton />
     </Container>
   );
 };

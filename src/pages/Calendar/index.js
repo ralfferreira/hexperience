@@ -1,5 +1,6 @@
 import React from 'react';
 import Header from '../../components/Header'
+import FloatButton from '../../components/FloatButton'
 import HorizontalCard from '../../components/HorizontalCard'
 import CalendarMonth from '../../components/CalendarMonth';
 import { Container, CalendarHeader, CalendarHeaderTitle, CalendarContent } from './styles';
@@ -66,6 +67,7 @@ const Calendar = () => {
           />
         </CalendarContent>
       </ScrollView>
+      <FloatButton />
     </Container>
   );
 };
