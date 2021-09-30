@@ -8,8 +8,12 @@ const SwitchComponent = () => {
     <Container>
       <Switch
       value={isSwitchEnabled}
+      style={{
+      paddingTop: 7,
+      transform: [{ scaleX: 1.3 }, { scaleY: 1.3 }]}}
       onValueChange={(value) => setSwitch(value) }
-      // trackColor={{true: 'red'}}
+      trackColor={{true: '#30d158', false:'lightgray'}}
+      thumbColor={isSwitchEnabled ? "#f4f3f4" : "#f4f3f4"}
       />
     </Container>
   );

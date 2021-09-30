@@ -8,8 +8,7 @@ const userSettings = () => (
   <SettingsRoute.Navigator
     screenOptions={{
       headerShown: false,
-    }}
-  >
+    }}>
     <SettingsRoute.Screen name="Settings" component={Settings} />
   </SettingsRoute.Navigator>
 );
