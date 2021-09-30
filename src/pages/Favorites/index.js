@@ -27,7 +27,7 @@ const Favorites = () => {
         <Folders horizontal={true} showsHorizontalScrollIndicator={false}>
           <Folder>
             <FolderIcon source={FolderImg} />
-            <FolderName numberOfLines={2}>Experiência para as criançasExperiência para as crianças</FolderName>
+            <FolderName numberOfLines={2}>Experiência de Férias</FolderName>
           </Folder>
           <Folder>
             <FolderIcon source={FolderImg} />
@@ -35,7 +35,7 @@ const Favorites = () => {
           </Folder>
           <Folder>
             <FolderIcon source={FolderImg} />
-            <FolderName numberOfLines={2}>Experiência para as crianças</FolderName>
+            <FolderName numberOfLines={2}>Experiência com os amigos</FolderName>
           </Folder>
         </Folders>
 
@@ -47,9 +47,9 @@ const Favorites = () => {
           price="R$ 800,00" />
           <HorizontalCard 
           image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+          name="Andar à cavalo"
+          localizationText="São Paulo - SP"
+          price="R$ 600,00" />
           <HorizontalCard 
           image= {ExperienceImg}
           name="Pescaria com Caio Castro"

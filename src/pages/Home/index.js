@@ -78,9 +78,9 @@ const Home = () => {
           price="R$ 800,00" />
           <ExperienceCard 
           image= {Experience2Img}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+          name="Tarde com o Luffy"
+          localizationText="Tokyo - JP"
+          price="R$ 3500,00" />
           <ExperienceCard 
           image= {ExperienceImg}
           name="Pescaria com Caio Castro"
