@@ -1,7 +1,8 @@
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
-
+    background: #fff;
+    height: 100%;
 `;
 export const SettingsBody = styled.View`
     padding: 15px;

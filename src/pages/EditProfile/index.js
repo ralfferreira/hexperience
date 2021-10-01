@@ -31,14 +31,16 @@ const EditProfile = () => {
           <EditProfileInputName 
           autoCapitalize="words"
           name="name"
-          placeholder="Nome"
+          placeholder="Monkey D. Luffy"
+          placeholderTextColor="black"
           maxLength={100}
           />
           <InputTitle>Biografia</InputTitle>
           <EditProfileInputBio 
           autoCapitalize="words"
           name="Biografia"
-          placeholder="Biografia"
+          placeholder="O futuro Rei dos Piratas! O Luffy eh mt daora pprt, q cara bom."
+          placeholderTextColor="black"
           maxLength={350}
           />
         </EditProfileForm>
