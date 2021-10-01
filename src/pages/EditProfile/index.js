@@ -1,10 +1,11 @@
 import React from 'react'
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
-import { Container } from './styles';
+import { Container, Leafs, Leaf, EditProfileContent, EditProfilePhoto, EditProfilePhotoImage, EditProfileChangePhoto, EditProfileForm, InputTitle, EditProfileInputName, EditProfileInputBio, ChangePassword, ChangePasswordText, ChangePasswordInput, SaveBtn, SaveBtnText, SaveBtnView } from './styles';
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 const LeafLeft = require('../../assets/img/Leafleft.png');
 const LeafRight = require('../../assets/img/Leafright.png');
 const ProfileImg = require('../../assets/img/luffy.jpg');
+const ChangePhotoIcon = require('../../assets/img/changephotoicon.png');
 
 const EditProfile = () => {
   return (
@@ -27,16 +28,18 @@ const EditProfile = () => {
         </EditProfilePhoto>
         <EditProfileForm>
           <InputTitle>Nome</InputTitle>
-          <EditProfileInput 
+          <EditProfileInputName 
           autoCapitalize="words"
           name="name"
           placeholder="Nome"
+          maxLength={100}
           />
           <InputTitle>Biografia</InputTitle>
-          <EditProfileInput 
+          <EditProfileInputBio 
           autoCapitalize="words"
           name="Biografia"
           placeholder="Biografia"
+          maxLength={350}
           />
         </EditProfileForm>
         <ChangePassword>
@@ -54,8 +57,15 @@ const EditProfile = () => {
           returnKeyType="send"
           />
         </ChangePassword>
-        <SaveBtn>
-          <SaveBtnText>Salvar Alterações</SaveBtnText>
+        <SaveBtn 
+          onPress={() => {
+          navigation.navigate('ProfileRoute')
+          }}>
+          <SaveBtnView>
+            <SaveBtnText>
+            Salvar Alterações
+            </SaveBtnText>
+          </SaveBtnView>
         </SaveBtn>
       </EditProfileContent>
       </ScrollView>
