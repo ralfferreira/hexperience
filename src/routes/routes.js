@@ -14,14 +14,36 @@ const Route = () => {
       <Routes.Navigator screenOptions={{
       headerShown: false,
       }}>
+      {/* Logged Users */}
+      {/* {isLoggedIn ? ( */}
+        {/* <RoutesGroup> */}
+          <Routes.Screen name="AuthRoute" component={AuthRoute} />
+          <Routes.Screen name="AppRoute" component={Tabs} />
+          <Routes.Screen name="SettingsRoute" component={userSettings} />
+          <Routes.Screen name="EditProfileRoute" component={userEditProfile} />
+        {/* </RoutesGroup> */}
+      {/* ) : ( */}
+      {/* // Authentication */}
+      {/* <Routes.Group>
         <Routes.Screen name="AuthRoute" component={AuthRoute} />
-        <Routes.Screen name="AppRoute" component={Tabs} />
-
-        <Routes.Screen name="SettingsRoute" component={userSettings} />
-        <Routes.Screen name="EditProfileRoute" component={userEditProfile} />
+      </Routes.Group> */}
+      {/* )} */}
       </Routes.Navigator>
       </>
     );
 };
 
 export default Route;
+
+// isSignedIn ? (
+//   <>
+//     <Stack.Screen name="Home" component={HomeScreen} />
+//     <Stack.Screen name="Profile" component={ProfileScreen} />
+//     <Stack.Screen name="Settings" component={SettingsScreen} />
+//   </>
+// ) : (
+//   <>
+//     <Stack.Screen name="SignIn" component={SignInScreen} />
+//     <Stack.Screen name="SignUp" component={SignUpScreen} />
+//   </>
+// )
