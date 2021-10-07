@@ -25,7 +25,7 @@ export const ProfileHeader = styled.View `
     align-items: center;
     margin-top: -40px;
 `
-export const EditProfile = styled.Image `
+export const EditProfileBtn = styled.Image `
     width: 50px;
     height: 50px;
 `
@@ -68,4 +68,8 @@ export const Title = styled.Text `
     font-size: 22px;
     font-weight: bold;
     padding: 16px;
+`
+export const SettingsView = styled.TouchableOpacity`
+`
+export const EditProfileView = styled.TouchableOpacity`
 `

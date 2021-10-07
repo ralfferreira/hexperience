@@ -2,8 +2,9 @@ import React from 'react';
 import Header from '../../components/Header'
 import FloatButton from '../../components/FloatButton'
 import ExperienceCard from '../../components/ExperienceCard'
-import { ScrollView } from 'react-native' 
-import { Container, Leafs, Leaf, ProfileContent, ProfileHeader, EditProfile, ProfileImage, Settings, ProfileBody, ProfileInfo, ProfileName, ProfileDescription, Experiences, Title } from './styles';
+import { ScrollView } from 'react-native'
+import { useNavigation } from '@react-navigation/native'; 
+import { Container, Leafs, Leaf, ProfileContent, ProfileHeader, EditProfileBtn, ProfileImage, SettingsView, EditProfileView, Settings, ProfileBody, ProfileInfo, ProfileName, ProfileDescription, Experiences, Title } from './styles';
 const ProfileImg = require('../../assets/img/luffy.jpg');
 const ExperienceImg = require('../../assets/img/div-image-experience.png');
 const Experience2Img = require('../../assets/img/onepice.gif');
@@ -13,6 +14,7 @@ const EditProfileImg = require('../../assets/img/editprofile.png');
 const SettingsImg = require('../../assets/img/settings.png');
 
 const Profile = () => {
+  const navigation = useNavigation();
   return (
     <Container>
       <Header>Meu Perfil</Header>
@@ -24,9 +26,13 @@ const Profile = () => {
 
       <ProfileContent>
         <ProfileHeader>
-          <EditProfile source={EditProfileImg} />
+          <EditProfileView onPress={() => {navigation.navigate('EditProfileRoute')}}>
+            <EditProfileBtn source={EditProfileImg} />
+          </EditProfileView>
           <ProfileImage source={ProfileImg} />
-          <Settings source={SettingsImg} />
+          <SettingsView onPress={() => {navigation.navigate('SettingsRoute')}} >
+            <Settings source={SettingsImg} />
+          </SettingsView>
         </ProfileHeader>
         <ProfileBody>
           <ProfileInfo>

@@ -33,6 +33,7 @@ const Login = () => {
           name="email"
           placeholder="E-mail"
           returnKeyType="next"
+          maxLength={150}
           />
           <InputTitle>Senha</InputTitle>
           <SignInput

@@ -32,6 +32,7 @@ const SignUp = () => {
           autoCapitalize="words"
           name="name"
           placeholder="Nome"
+          maxLength={100}
           />
           <InputTitle>Email</InputTitle>
           <SignInput
@@ -41,12 +42,14 @@ const SignUp = () => {
           name="email"
           placeholder="E-mail"
           returnKeyType="next"
+          maxLength={150}
           />
           <InputTitle>Telefone</InputTitle>
           <SignInput
           keyboardType="number-pad"
           name="phone"
           placeholder="Telefone"
+          maxLength={17}
           /> 
           <InputTitle>Senha</InputTitle>
           <SignInput
