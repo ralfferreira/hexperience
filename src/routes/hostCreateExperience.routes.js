@@ -1,8 +1,6 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import CreateExperience from "../pages/CreateExperience";
-import Tabs from "./app.routes";
-
 const CreateExperienceRoute = createStackNavigator();
 
 const hostCreateExperience = () => (

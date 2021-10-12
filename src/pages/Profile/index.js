@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from '../../components/Header'
 import FloatButton from '../../components/FloatButton'
-import ExperienceCard from '../../components/ExperienceCard'
+import HostExperienceCard from '../../components/HostExperienceCard'
 import { ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native'; 
 import { Container, Leafs, Leaf, ProfileContent, ProfileHeader, EditProfileBtn, ProfileImage, SettingsView, EditProfileView, Settings, ProfileBody, ProfileInfo, ProfileName, ProfileDescription, Experiences, Title } from './styles';
@@ -45,22 +45,22 @@ const Profile = () => {
 
       <Title>Experiências Que Participei</Title>
       <Experiences horizontal={true} showsHorizontalScrollIndicator={false}>
-          <ExperienceCard 
+          <HostExperienceCard 
           image= {ExperienceImg}
           name="Pescaria com Caio Castro"
           localizationText="Fortaleza - CE"
           price="R$ 800,00" />
-          <ExperienceCard 
+          <HostExperienceCard 
           image= {Experience2Img}
           name="Tarde com o Luffy"
           localizationText="Tokyo - JP"
           price="R$ 3500,00" />
-          <ExperienceCard 
+          <HostExperienceCard 
           image= {Experience2Img}
           name="Tarde com o Luffy"
           localizationText="Tokyo - JP"
           price="R$ 3500,00" />
-          <ExperienceCard 
+          <HostExperienceCard 
           image= {Experience2Img}
           name="Tarde com o Luffy"
           localizationText="Tokyo - JP"

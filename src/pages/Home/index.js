@@ -30,7 +30,7 @@ const Home = () => {
         </ContentHeader>
 
         <ContentBody horizontal={true} showsHorizontalScrollIndicator={false}>
-          <ExperienceCard 
+          <ExperienceCard
           image= {ExperienceImg}
           name="Pescaria com Caio Castro"
           localizationText="Fortaleza - CE"
