@@ -1,10 +1,11 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import CreateExperience from "../pages/CreateExperience";
+import Tabs from "./app.routes";
 
 const CreateExperienceRoute = createStackNavigator();
 
-const createExperience = () => (
+const hostCreateExperience = () => (
   <CreateExperienceRoute.Navigator
     screenOptions={{
       headerShown: false,
@@ -13,4 +14,4 @@ const createExperience = () => (
   </CreateExperienceRoute.Navigator>
 );
 
-export default createExperience;
+export default hostCreateExperience;

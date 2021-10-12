@@ -2,12 +2,14 @@ import React from 'react'
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
 import { Container, Leafs, Leaf, EditProfileContent, EditProfilePhoto, EditProfilePhotoImage, EditProfileChangePhoto, EditProfileForm, InputTitle, EditProfileInputName, EditProfileInputBio, ChangePassword, ChangePasswordText, ChangePasswordInput, SaveBtn, SaveBtnText, SaveBtnView } from './styles';
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; 
 const LeafLeft = require('../../assets/img/Leafleft.png');
 const LeafRight = require('../../assets/img/Leafright.png');
 const ProfileImg = require('../../assets/img/luffy.jpg');
 const ChangePhotoIcon = require('../../assets/img/changephotoicon.png');
 
 const EditProfile = () => {
+  const navigation = useNavigation();
   return (
     <Container>
       <HeaderWithoutSearch>Editar Perfil</HeaderWithoutSearch>
@@ -59,11 +61,11 @@ const EditProfile = () => {
           returnKeyType="send"
           />
         </ChangePassword>
-        <SaveBtn 
+        <SaveBtn>
+          <SaveBtnView  
           onPress={() => {
-          navigation.navigate('ProfileRoute')
+          navigation.navigate('Profile')
           }}>
-          <SaveBtnView>
             <SaveBtnText>
             Salvar Alterações
             </SaveBtnText>
