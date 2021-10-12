@@ -6,6 +6,7 @@ import userSettings from "./userSettings.routes";
 import userEditProfile from "./userEditProfile.routes";
 import hostCreateExperience from "./hostCreateExperience.routes";
 import hostEditExperience from "./hostEditExperience.routes";
+import experienceDetails from "./experience.routes";
 import { createStackNavigator } from "@react-navigation/stack";
 
 const Routes = createStackNavigator()
@@ -21,6 +22,7 @@ const Route = () => {
         {/* <RoutesGroup> */}
           <Routes.Screen name="AuthRoute" component={AuthRoute} />
           <Routes.Screen name="AppRoute" component={Tabs} />
+          <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
           <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />
           <Routes.Screen name="EditExperienceRoute" component={hostEditExperience} />
           <Routes.Screen name="SettingsRoute" component={userSettings} />

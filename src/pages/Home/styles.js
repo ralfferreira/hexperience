@@ -58,3 +58,5 @@ export const ChromaLine = styled.Image`
     margin-bottom: 5px;
     margin-left: 10px;
 `
+
+export const Touchable = styled.TouchableOpacity``
