@@ -30,7 +30,7 @@ const EditExperience = () => {
         <ExperienceTitle 
         autoCapitalize="words"
         name="title"
-        placeholder="Título da Experiência"
+        placeholder="Pescaria com Caio Castro"
         placeholderTextColor="gray"
         maxLength={100}
         />
@@ -47,7 +47,7 @@ const EditExperience = () => {
         <ExperienceDescription 
         autoCapitalize="words"
         name="description"
-        placeholder="Descreva sua experiência para o mundo!"
+        placeholder="Uma manhã de pescaria com o ator Caio Castro"
         placeholderTextColor="gray"
         maxLength={300}
         />
@@ -59,7 +59,7 @@ const EditExperience = () => {
             <DetailsInput 
             autoCapitalize="words"
             name="address"
-            placeholder="Endereço da experiência"
+            placeholder="Fortaleza - CE"
             placeholderTextColor="gray"
             maxLength={100}
             />
@@ -69,7 +69,7 @@ const EditExperience = () => {
             <DetailsInput
             autoCapitalize="words"
             name="reference-point"
-            placeholder="Ponto de referência"
+            placeholder="Perto do Trevo Açaí Lago"
             placeholderTextColor="gray"
             maxLength={100}
             />
@@ -79,7 +79,7 @@ const EditExperience = () => {
             <DetailsInput 
             autoCapitalize="words"
             name="duration"
-            placeholder="Duração da experiência"
+            placeholder="1 hora"
             placeholderTextColor="gray"
             maxLength={100}
             />
@@ -89,7 +89,7 @@ const EditExperience = () => {
             <DetailsInput 
             autoCapitalize="words"
             name="amount-people"
-            placeholder="Quantidade de pessoas por horário"
+            placeholder="5 pessoas"
             placeholderTextColor="gray"
             maxLength={100}
             />
@@ -99,7 +99,7 @@ const EditExperience = () => {
             <DetailsInput 
             autoCapitalize="words"
             name="price"
-            placeholder="Preço"
+            placeholder="800,00"
             placeholderTextColor="gray"
             maxLength={100}
             />
