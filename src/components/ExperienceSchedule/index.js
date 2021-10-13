@@ -4,8 +4,8 @@ import { Experience, ExperienceDate, ExperienceTime, ExperienceButton, Experienc
 const ExperienceSchedule = ({date, time }) => {
   return (
     <Experience>
-      <ExperienceDate>({date})</ExperienceDate>
-      <ExperienceTime>({time})</ExperienceTime>
+      <ExperienceDate>{date}</ExperienceDate>
+      <ExperienceTime>{time}</ExperienceTime>
       <ExperienceButton>
         <ExperienceButtonText>Agendar</ExperienceButtonText>
       </ExperienceButton>

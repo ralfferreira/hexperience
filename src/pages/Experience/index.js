@@ -1,13 +1,21 @@
 import React from 'react'
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceCategory from '../../components/ExperienceCategory';
+import ExperienceSchedule from '../../components/ExperienceSchedule';
+import Comment from '../../components/Comment';
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
-import ExperienceImg from '../../assets/img/div-image-experience.png'
 import ReportImg from '../../assets/img/report-experience.png'
 import FavoriteImg from '../../assets/img/heart-icon.png'
 import Rating from '../../components/Rating'
 import HostProfileImg from '../../assets/img/host-profile.png'
-import { Container, ExperienceImage } from './styles';
+import AddressIcon from '../../assets/img/address.png';
+import ReferencePointIcon from '../../assets/img/referencepoint.png';
+import DurationIcon from '../../assets/img/duration.png';
+import AmountPeopleIcon from '../../assets/img/amountpeople.png';
+import PriceIcon from '../../assets/img/price.png';
+import ExperienceImg from '../../assets/img/div-image-experience.png'
+import FreeIcon from '../../assets/img/freeicon.png';
+import { Container, ExperienceImage, ExperienceTitle, ExperienceOptions, ExperienceReport, ReportImage, ExperienceRating, ExperienceFavorite, ExperienceHost, ExperienceHostProfile, ExperienceHostName, Title, ExperienceDescription, Description, ExperienceDetails, ExperienceDetailsRow, ImageDetails, DetailsInput, ExperienceParentalRating, ParentalRatingImg, ExperienceWhatTake, ExperienceSchedules, CommentsList } from './styles';
 
 const Experience = () => {
   return (
@@ -27,7 +35,7 @@ const Experience = () => {
         <ExperienceRating>
           <Rating />
         </ExperienceRating>
-        <ExperienceCategory>Pescaria</ExperienceCategory>
+        <ExperienceCategory name="Pesca"></ExperienceCategory>
         <ExperienceFavorite source={FavoriteImg} />
       </ExperienceOptions>
 
@@ -45,59 +53,38 @@ const Experience = () => {
         <ExperienceDetails>
           <ExperienceDetailsRow>
             <ImageDetails source={AddressIcon} />
-            <DetailsInput 
-            autoCapitalize="words"
-            name="address"
-            placeholder="Fortaleza - CE"
-            placeholderTextColor="gray"
-            maxLength={100}
-            />
+            <DetailsInput>
+            Fortaleza - CE
+            </DetailsInput>
           </ExperienceDetailsRow>
           <ExperienceDetailsRow>
             <ImageDetails source={ReferencePointIcon} />
-            <DetailsInput
-            autoCapitalize="words"
-            name="reference-point"
-            placeholder="Perto do Trevo Açaí Lago"
-            placeholderTextColor="gray"
-            maxLength={100}
-            />
+            <DetailsInput>
+            Perto do Trevo Açaí Lago
+            </DetailsInput>
           </ExperienceDetailsRow>
           <ExperienceDetailsRow>
             <ImageDetails source={DurationIcon} />
-            <DetailsInput 
-            autoCapitalize="words"
-            name="duration"
-            placeholder="1 hora"
-            placeholderTextColor="gray"
-            maxLength={100}
-            />
+            <DetailsInput>
+            1 hora
+            </DetailsInput>
           </ExperienceDetailsRow>
           <ExperienceDetailsRow>
             <ImageDetails source={AmountPeopleIcon} />
-            <DetailsInput 
-            autoCapitalize="words"
-            name="amount-people"
-            placeholder="5 pessoas"
-            placeholderTextColor="gray"
-            maxLength={100}
-            />
+            <DetailsInput>
+            5 pessoas
+            </DetailsInput>
           </ExperienceDetailsRow>
           <ExperienceDetailsRow>
             <ImageDetails source={PriceIcon} />
-            <DetailsInput 
-            autoCapitalize="words"
-            name="price"
-            placeholder="800,00"
-            placeholderTextColor="gray"
-            maxLength={100}
-            />
+            <DetailsInput>
+            800,00
+            </DetailsInput>
           </ExperienceDetailsRow>
 
+          <Title>Classificação Indicativa</Title>
           <ExperienceParentalRating>
-            <ParentalRatingOption>
-              <ParentalRatingImg source={TwelveYearsIcon} />
-            </ParentalRatingOption>
+            <ParentalRatingImg source={FreeIcon} />
           </ExperienceParentalRating>
         </ExperienceDetails>
 
@@ -134,18 +121,11 @@ const Experience = () => {
 
         <Title>Comentários</Title>
         <CommentsList>
-          <Comment>
-            <CommentRow>
-              <CommentProfile source={UserProfileImg} />
-              <CommentName>Sofia</CommentName>
-              <Rating />
-              <CommentDate>Sábado, 30 de outubro, 09:00</CommentDate>
-            </CommentRow>
-              <CommentContent>
-                <CommentContentText>
-                  Adorei!!! Tudo muito lindooooo, ai que tudo!
-                </CommentContentText>
-              </CommentContent>
+          <Comment
+          name="Luffy"
+          content="Adorei!!! Tudo muito lindooooo, ai que tudo!"
+          date="Sábado, 30 de outubro, 09:00"
+          >
           </Comment>
         </CommentsList>
         
