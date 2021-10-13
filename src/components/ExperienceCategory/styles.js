@@ -10,6 +10,7 @@ export const ExperienceCategoryView = styled.View`
     color: #000;
     width: 110px;
     height: 30px;
+    margin-right: 10px;
 `
 export const CategoryText = styled.Text`
     font-size: 14px;
