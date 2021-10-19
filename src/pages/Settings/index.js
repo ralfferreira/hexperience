@@ -18,7 +18,7 @@ const Settings = () => {
         </SettingsThemeSwitcher>
         <Touchable 
         onPress={() => {
-        navigation.navigate('SignUp')
+        navigation.navigate('RequestHost')
         }}>
           <OptionTitle style={styles.orange} >Torne-se um anfitrião</OptionTitle>
         </Touchable>

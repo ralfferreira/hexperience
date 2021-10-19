@@ -50,3 +50,4 @@ export const ExperienceFavorite = styled.Image`
     width: 21px;
     height: 20px;
 `
+export const Touchable = styled.TouchableOpacity``
