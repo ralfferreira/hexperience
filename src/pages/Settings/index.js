@@ -13,32 +13,32 @@ const Settings = () => {
 
       <SettingsBody>
         <SettingsThemeSwitcher>
-          <OptionTitle>Tema Escuro</OptionTitle>
-          <SwitchComponent />
+        <OptionTitle>Tema Escuro</OptionTitle>
+        <SwitchComponent />
         </SettingsThemeSwitcher>
         <Touchable 
         onPress={() => {
         navigation.navigate('RequestHost')
         }}>
-          <OptionTitle style={styles.orange} >Torne-se um anfitrião</OptionTitle>
+        <OptionTitle style={styles.orange} >Torne-se um anfitrião</OptionTitle>
+        </Touchable>
+        <Touchable 
+        onPress={() => {
+        navigation.navigate('ReportBug')
+        }}>
+        <OptionTitle>Reportar Problema</OptionTitle>
         </Touchable>
         <Touchable 
         onPress={() => {
         navigation.navigate('Home')
         }}>
-          <OptionTitle>Reportar Problema</OptionTitle>
+        <OptionTitle style={styles.red}>Excluir Perfil</OptionTitle>
         </Touchable>
         <Touchable 
         onPress={() => {
         navigation.navigate('Login')
         }}>
-          <OptionTitle style={styles.red}>Excluir Perfil</OptionTitle>
-        </Touchable>
-        <Touchable 
-        onPress={() => {
-        navigation.navigate('Login')
-        }}>
-          <OptionTitle style={styles.red}>Sair</OptionTitle>
+        <OptionTitle style={styles.red}>Sair</OptionTitle>
         </Touchable>
       </SettingsBody>
     </Container>
