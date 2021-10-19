@@ -12,7 +12,7 @@ const FloatButton = () => {
       icon="plus"
       style={styles.fab}
       color="#000"
-      onPress={() => {navigation.navigate('SettingsRoute')}}
+      onPress={() => {navigation.navigate('CreateExperienceRoute')}}
       />
     </Container>
   );

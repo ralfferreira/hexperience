@@ -20,3 +20,4 @@ export const OptionTitle = styled.Text`
     font-weight: 400;
     height: 50px;
 `
+export const Touchable = styled.TouchableOpacity``

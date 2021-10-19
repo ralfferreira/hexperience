@@ -1,10 +1,16 @@
 import React from 'react';
-import { Experience, ExperienceDescription, ExperienceImage, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperienceName, ExperiencePrice, ExperienceFavorite } from './styles';
+import { Experience, Touchable, ExperienceDescription, ExperienceImage, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperienceName, ExperiencePrice, ExperienceFavorite } from './styles';
 import LocalizationImg from '../../assets/img/pins-hexperience.png'
 import FavoriteImg from '../../assets/img/heart-icon.png'
+import { useNavigation } from '@react-navigation/native'; 
 
 const HorizontalCard = ({name, image, localizationText, price }) => {
+  const navigation = useNavigation();
   return (
+    <Touchable
+      onPress={() => {
+      navigation.navigate('ExperienceRoute')
+      }}>
     <Experience>
       <ExperienceImage source={(image)} />
       <ExperienceDescription>
@@ -17,6 +23,7 @@ const HorizontalCard = ({name, image, localizationText, price }) => {
         </ExperienceDetails>
       </ExperienceDescription>
     </Experience>
+    </Touchable>
   );
 };
 

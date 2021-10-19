@@ -31,3 +31,4 @@ export const Search = styled.Image`
     margin-right: 10px;
     margin-left: 10px;
 `
+export const Touchable = styled.TouchableOpacity``
