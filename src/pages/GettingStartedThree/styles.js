@@ -70,7 +70,7 @@ export const SignText = styled.Text`
 `
 export const SignView = styled.TouchableOpacity`
     display: flex;
-    width: 140px;
+    width: 160px;
     height: 40px;
     border-color: #00FF01;
     border-width: 2px;
