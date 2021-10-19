@@ -15,9 +15,11 @@ import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
 import ExperienceImg from '../../assets/img/div-image-experience.png'
 import FreeIcon from '../../assets/img/freeicon.png';
+import { useNavigation } from '@react-navigation/native'; 
 import { Container, ExperienceImage, ExperienceTitle, ExperienceOptions, ExperienceReport, ReportImage, ExperienceRating, ExperienceFavorite, ExperienceHost, ExperienceHostProfile, ExperienceHostName, Title, ExperienceDescription, Description, ExperienceDetails, ExperienceDetailsRow, ImageDetails, DetailsInput, ExperienceParentalRating, ParentalRatingImg, ExperienceWhatTake, ExperienceSchedules, CommentsList } from './styles';
 
 const Experience = () => {
+  const navigation = useNavigation();
   return (
     <Container>
       <HeaderWithoutSearch>Experiência</HeaderWithoutSearch>
@@ -29,7 +31,9 @@ const Experience = () => {
       <ExperienceImage source={ExperienceImg} />
       <ExperienceTitle>Pescaria com Caio Castro</ExperienceTitle>
       <ExperienceOptions>
-        <ExperienceReport>
+        <ExperienceReport onPress={() => {
+          navigation.navigate('ReportExperience')
+          }}>
           <ReportImage source={ReportImg} />
         </ExperienceReport>
         <ExperienceRating>
