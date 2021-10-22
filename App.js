@@ -8,9 +8,9 @@ const App = () => {
   return(
     <NavigationContainer>
       <StatusBar
-      barStyle="dark-content"
-      backgroundColor="transparent"
-      translucent
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent
       />
       <Index />
     </NavigationContainer>
