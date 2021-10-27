@@ -6,6 +6,7 @@ import React, {
   useEffect
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 import api from '../services/api';
 
 const AuthContext = createContext({});
@@ -37,6 +38,12 @@ const AuthProvider = ({children}) => {
     const response = await api.post('sessions', {
       email: email,
       password: password
+    }).catch(err => {
+      if (err.code === 'ECONNABORTED') {
+        return 'timeout';
+      }
+      
+      throw err;
     });
 
     const { token, user } = response.data;

@@ -1,44 +1,56 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'; 
+
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
-import { Container, SettingsBody, SettingsThemeSwitcher, OptionTitle, Touchable } from './styles';
 import SwitchComponent from '../../components/Switch';
+
+import { useAuth } from '../../hooks/auth';
+
+import { 
+  Container, 
+  SettingsBody, 
+  SettingsThemeSwitcher, 
+  OptionTitle, 
+  Touchable 
+} from './styles';
 
 const Settings = () => {
   const navigation = useNavigation();
+  const { signOut, user } = useAuth();
+
+  const handleSignOut = useCallback(async () => {
+    await signOut();
+  }, [signOut]);
+
   return (
     <Container>
       <HeaderWithoutSearch>Configurações</HeaderWithoutSearch>
 
       <SettingsBody>
         <SettingsThemeSwitcher>
-        <OptionTitle>Tema Escuro</OptionTitle>
-        <SwitchComponent />
+          <OptionTitle>Tema Escuro</OptionTitle>
+          <SwitchComponent />
         </SettingsThemeSwitcher>
-        <Touchable 
-        onPress={() => {
-        navigation.navigate('RequestHost')
-        }}>
-        <OptionTitle style={styles.orange} >Torne-se um anfitrião</OptionTitle>
+        
+        {user.type === 'host' 
+          ? <></> 
+          : (
+            <Touchable onPress={() => { navigation.navigate('RequestHost') }}>
+              <OptionTitle style={styles.orange} >Torne-se um anfitrião</OptionTitle>
+            </Touchable>
+          ) 
+        }        
+
+        <Touchable onPress={() => { navigation.navigate('ReportBug') }}>
+          <OptionTitle>Reportar Problema</OptionTitle>
         </Touchable>
-        <Touchable 
-        onPress={() => {
-        navigation.navigate('ReportBug')
-        }}>
-        <OptionTitle>Reportar Problema</OptionTitle>
+
+        <Touchable onPress={() => { navigation.navigate('Home') }}>
+          <OptionTitle style={styles.red}>Excluir Perfil</OptionTitle>
         </Touchable>
-        <Touchable 
-        onPress={() => {
-        navigation.navigate('Home')
-        }}>
-        <OptionTitle style={styles.red}>Excluir Perfil</OptionTitle>
-        </Touchable>
-        <Touchable 
-        onPress={() => {
-        navigation.navigate('Login')
-        }}>
-        <OptionTitle style={styles.red}>Sair</OptionTitle>
+        <Touchable onPress={handleSignOut}>
+          <OptionTitle style={styles.red}>Sair</OptionTitle>
         </Touchable>
       </SettingsBody>
     </Container>

@@ -1,11 +1,30 @@
 import React, { useState } from 'react'
-import { Container, HeaderContent, Back, BackIcon, HeaderTitle, Logo, Title, AlignForm, InputRow, InputTitle, DateInput, DetailsInput, SaveBtn, SaveBtnText, SaveBtnView } from './styles';
 import { ScrollView, StyleSheet } from 'react-native';
-import { CheckBox } from 'react-native-elements'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
-import BackImg from '../../assets/img/back.png'
-import LogoImg from '../../assets/img/dinoDaleGreen.png'
+import { CheckBox } from 'react-native-elements';
+
+import BackImg from '../../assets/img/back.png';
+import LogoImg from '../../assets/img/dinoDaleGreen.png';
+
+import { 
+  Container,
+  HeaderContent,
+  Back,
+  BackIcon,
+  HeaderTitle,
+  Logo,
+  Title,
+  AlignForm,
+  InputRow,
+  InputTitle,
+  DateInput,
+  DetailsInput,
+  SaveBtn,
+  SaveBtnText,
+  SaveBtnView 
+} from './styles';
+
 const ReportExperience = () => {
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date(1598051730000));
@@ -25,31 +44,32 @@ const ReportExperience = () => {
   };
 
   const [checked, toggleChecked] = useState(false);
+
   return (
     <Container>
       <HeaderContent>
-      <Back onPress={() => navigation.goBack()} >
-        <BackIcon source={BackImg}/>
-      </Back>
-      <HeaderTitle>Denunciar Experiência</HeaderTitle>
-      <Logo source={LogoImg} />
-    </HeaderContent>
+        <Back onPress={() => navigation.goBack()} >
+          <BackIcon source={BackImg}/>
+        </Back>
+        <HeaderTitle>Denunciar Experiência</HeaderTitle>
+        <Logo source={LogoImg} />
+      </HeaderContent>
       <ScrollView keyboardShouldPersistTaps="handled">
-      <Title>Caso se encontre em situação de emergência, peça ajuda antes de nos contatar.</Title>
+        <Title>Caso se encontre em situação de emergência, peça ajuda antes de nos contatar.</Title>
 
-      <AlignForm>
-        <InputRow>
-          <InputTitle>Data do Ocorrido:</InputTitle>
-          <DateInput onPress={showDatepicker} />
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
-        </InputRow>
+        <AlignForm>
+          <InputRow>
+            <InputTitle>Data do Ocorrido:</InputTitle>
+            <DateInput onPress={showDatepicker} />
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          </InputRow>
           <CheckBox
             title='Falta de Segurança'
             containerStyle={styles.checkbox}
@@ -78,24 +98,19 @@ const ReportExperience = () => {
             checked={checked}
             onPress={() => toggleChecked(!checked)}
           />
-        <InputTitle>Outro</InputTitle>
-        <DetailsInput 
-        autoCapitalize="words"
-        name="other"
-        placeholder="Descreva para nós o corrido"
-        maxLength={300}
-        />
-        <SaveBtn>
-          <SaveBtnView  
-          onPress={() => {
-          navigation.navigate('Home')
-          }}>
-            <SaveBtnText>
-            Enviar
-            </SaveBtnText>
-          </SaveBtnView>
-        </SaveBtn>
-      </AlignForm>
+          <InputTitle>Outro</InputTitle>
+          <DetailsInput 
+            autoCapitalize="words"
+            name="other"
+            placeholder="Descreva para nós o corrido"
+            maxLength={300}
+          />
+          <SaveBtn>
+            <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
+              <SaveBtnText>Enviar</SaveBtnText>
+            </SaveBtnView>
+          </SaveBtn>
+        </AlignForm>
       </ScrollView>
     </Container>
   );

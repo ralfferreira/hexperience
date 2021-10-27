@@ -1,17 +1,35 @@
 import React from 'react';
-import OrderByImg from '../../assets/img/arrow-down.png';
-import CreateFolderImg from '../../assets/img/create-folder.png';
-import FolderImg from '../../assets/img/folder.png';
-import FloatButton from '../../components/FloatButton'
-// import ExperienceImg from '../../assets/img/div-image-experience.png'
-import { Container, ListAndCreate, OrderBy, OrderByText, OrderByArrow, CreateFolder, Folder, Folders, FolderIcon, FolderName, Experiences } from './styles';
-import Header from '../../components/Header';
 import { ScrollView } from 'react-native' ;
+
+import FloatButton from '../../components/FloatButton'
+import Header from '../../components/Header';
 import HorizontalCard from '../../components/HorizontalCard';
 
+import { useAuth } from '../../hooks/auth';
+
+import CreateFolderImg from '../../assets/img/create-folder.png';
+import FolderImg from '../../assets/img/folder.png';
+// import ExperienceImg from '../../assets/img/div-image-experience.png'
+import OrderByImg from '../../assets/img/arrow-down.png';
 const ExperienceImg = require('../../assets/img/div-image-experience.png');
 
+import { 
+  Container, 
+  ListAndCreate, 
+  OrderBy, 
+  OrderByText, 
+  OrderByArrow, 
+  CreateFolder, 
+  Folder, 
+  Folders, 
+  FolderIcon, 
+  FolderName, 
+  Experiences 
+} from './styles';
+
 const Favorites = () => {
+  const { user } = useAuth()
+
   return (
     <Container>
       <Header>Favoritos</Header>
@@ -41,88 +59,104 @@ const Favorites = () => {
 
         <Experiences horizontal={false} showsHorizontalScrollIndicator={false}>
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Andar à cavalo"
-          localizationText="São Paulo - SP"
-          price="R$ 600,00" />
+            image= {ExperienceImg}
+            name="Andar à cavalo"
+            localizationText="São Paulo - SP"
+            price="R$ 600,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
           <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+            image= {ExperienceImg}
+            name="Pescaria com Caio Castro"
+            localizationText="Fortaleza - CE"
+            price="R$ 800,00" 
+          />
         </Experiences> 
       </ScrollView>
-      <FloatButton />
+      {user.type === 'host' ? <FloatButton /> : <></>}
     </Container>
   );
 };

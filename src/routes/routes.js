@@ -1,5 +1,7 @@
-
 import React from "react";
+import { ActivityIndicator, View } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+
 import AuthRoute from "./auth.routes";
 import Tabs from "./app.routes";
 import userSettings from "./userSettings.routes";
@@ -8,50 +10,41 @@ import hostCreateExperience from "./hostCreateExperience.routes";
 import hostEditExperience from "./hostEditExperience.routes";
 import experienceDetails from "./experience.routes";
 import SearchPage from './search.routes'
-import { createStackNavigator } from "@react-navigation/stack";
 
-const Routes = createStackNavigator()
+import { useAuth } from '../hooks/auth';
+
+const Routes = createStackNavigator();
 
 const Route = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
     return (
-      <>
-      <Routes.Navigator screenOptions={{
-      headerShown: false,
-      }}>
-      {/* Logged Users */}
-      {/* {isLoggedIn ? ( */}
-        {/* <RoutesGroup> */}
-          <Routes.Screen name="AuthRoute" component={AuthRoute} />
-          <Routes.Screen name="AppRoute" component={Tabs} />
-          <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
-          <Routes.Screen name="SearchRoute" component={SearchPage} />
-          <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />
-          <Routes.Screen name="EditExperienceRoute" component={hostEditExperience} />
-          <Routes.Screen name="SettingsRoute" component={userSettings} />
-          <Routes.Screen name="EditProfileRoute" component={userEditProfile} />
-        {/* </RoutesGroup> */}
-      {/* ) : ( */}
-      {/* // Authentication */}
-      {/* <Routes.Group>
-        <Routes.Screen name="AuthRoute" component={AuthRoute} />
-      </Routes.Group> */}
-      {/* )} */}
-      </Routes.Navigator>
-      </>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <ActivityIndicator size="large" color="#999" />
+      </View>
     );
+  }
+
+  if (!user) {
+    return <AuthRoute />
+  }
+
+  return (
+    <>
+      <Routes.Navigator screenOptions={{
+        headerShown: false,
+      }}>
+        <Routes.Screen name="AppRoute" component={Tabs} />
+        <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
+        <Routes.Screen name="SearchRoute" component={SearchPage} />
+        <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />
+        <Routes.Screen name="EditExperienceRoute" component={hostEditExperience} />
+        <Routes.Screen name="SettingsRoute" component={userSettings} />
+        <Routes.Screen name="EditProfileRoute" component={userEditProfile} />      
+      </Routes.Navigator>
+    </>
+  );
 };
 
 export default Route;
-
-// isSignedIn ? (
-//   <>
-//     <Stack.Screen name="Home" component={HomeScreen} />
-//     <Stack.Screen name="Profile" component={ProfileScreen} />
-//     <Stack.Screen name="Settings" component={SettingsScreen} />
-//   </>
-// ) : (
-//   <>
-//     <Stack.Screen name="SignIn" component={SignInScreen} />
-//     <Stack.Screen name="SignUp" component={SignUpScreen} />
-//   </>
-// )
