@@ -16,15 +16,7 @@ import { useAuth } from '../hooks/auth';
 const Routes = createStackNavigator();
 
 const Route = () => {
-  const { user, loading } = useAuth();
-
-  if (loading) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <ActivityIndicator size="large" color="#999" />
-      </View>
-    );
-  }
+  const { user } = useAuth();  
 
   if (!user) {
     return <AuthRoute />

@@ -67,7 +67,12 @@ const Home = () => {
   }, [])
 
   const navigateToExperience = useCallback((exp_id) => {
-    navigation.navigate('ExperienceRoute', { exp_id })
+    navigation.navigate('ExperienceRoute', { 
+      screen: 'Experience',
+      params: {
+        exp_id
+      }
+    })
   }, [navigation]);
 
   return (

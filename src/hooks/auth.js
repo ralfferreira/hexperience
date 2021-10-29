@@ -6,6 +6,7 @@ import React, {
   useEffect
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { differenceInHours, parseISO } from "date-fns";
 
 import api from '../services/api';
 
@@ -17,49 +18,47 @@ const AuthProvider = ({children}) => {
 
   useEffect(() => {
     async function loadStorageData() {
-      const [token, user] = await AsyncStorage.multiGet([
+      const [token, user, lastLogin] = await AsyncStorage.multiGet([
         '@Hexperience:token',
-        '@Hexperience:user'
+        '@Hexperience:user',
+        '@Hexperience:lastLoginDate'
       ]);
 
       if (token[1] && user[1]) {
         api.defaults.headers.authorization = `Bearer ${token[1]}`;
 
-        setData({ token: token[1], user: JSON.parse(user[1]) });
+        setData({ token: token[1], user: JSON.parse(user[1]), lastLoginDate: parseISO(lastLogin) });
       }
-
-      setLoading(false);
     }
 
-    loadStorageData();
+    loadStorageData().then(() => renewSession());
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {
       email: email,
       password: password
-    }).catch(err => {
-      if (err.code === 'ECONNABORTED') {
-        return 'timeout';
-      }
-      
-      throw err;
     });
 
     const { token, user } = response.data;
 
     await AsyncStorage.multiSet([
       ['@Hexperience:token', token],
-      ['@Hexperience:user', JSON.stringify(user)]
+      ['@Hexperience:user', JSON.stringify(user)],      
+      ['@Hexperience:lastLoginDate', new Date().toISOString()],      
     ]);
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
-    setData({ token: token, user: user});
+    setData({ token: token, user: user, lastLoginDate: new Date()});
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.multiRemove(['@Hexperience:token', '@Hexperience:user']);
+    await AsyncStorage.multiRemove([
+      '@Hexperience:token', 
+      '@Hexperience:user',
+      '@Hexperience:lastLoginDate'
+    ]);
 
     setData({});
   }, []);
@@ -72,6 +71,35 @@ const AuthProvider = ({children}) => {
       user: user
     });
   }, [setData, data.token]);
+
+  const renewSession = useCallback(async () => {
+    if (data.user.type === 'admin') {
+      if (differenceInHours(data.lastLoginDate, new Date()) > 23) {
+        signOut();
+      }
+
+      return;
+    }
+    
+    const response = await api.put('/sessions', {
+      token: data.token,
+      user_id: data.user.id
+    });
+
+    const { user, newToken } = response.data;
+
+    await AsyncStorage.multiSet([
+      ['@Hexperience:token', newToken],
+      ['@Hexperience:user', JSON.stringify(user)],
+      ['@Hexperience:lastLoginDate', new Date().toISOString()],
+    ]);
+
+    api.defaults.headers.authorization = `Bearer ${newToken}`;
+
+    setData({ token: newToken, user: user, lastLoginDate: new Date() });
+
+    setLoading(false);
+  });
 
   return (
     <AuthContext.Provider
