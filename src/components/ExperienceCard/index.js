@@ -1,32 +1,53 @@
-import React from 'react'
-import Rating from '../Rating'
-import { useNavigation } from '@react-navigation/native'; 
-import LocalizationImg from '../../assets/img/pins-hexperience.png'
-import FavoriteImg from '../../assets/img/heart-icon.png'
-import { Touchable, Experience, ExperienceImage, ExperienceDescription, ExperienceName, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperiencePrice, ExperienceRating, ExperienceFavorite} from './styles';
+import React from 'react';
 
-const ExperienceCard = ({name, image, localizationText, price }) => {
-  const navigation = useNavigation();
+import Rating from '../Rating/index';
+
+import LocalizationImg from '../../assets/img/pins-hexperience.png';
+import FavoriteImg from '../../assets/img/heart-icon.png';
+
+import { 
+  Touchable,
+  Experience,
+  ExperienceImage,
+  ExperienceDescription,
+  ExperienceName,
+  ExperienceDetails,
+  LocalizationIcon,
+  ExperienceLocalizationText,
+  ExperiencePrice,
+  ExperienceRating,
+  ExperienceFavorite
+} from './styles';
+
+const ExperienceCard = ({ 
+  name, 
+  image, 
+  address, 
+  price, 
+  onPress, 
+  rating, 
+  ratingDisabled 
+}) => {
   return (
     <Experience>
-      <Touchable 
-      onPress={() => {
-      navigation.navigate('ExperienceRoute')
-      }}>
-      <ExperienceImage source={(image)} />
-      <ExperienceDescription>
-        <ExperienceName>{(name)}</ExperienceName>
-        <ExperienceDetails>
-          <LocalizationIcon source={LocalizationImg} />
-          <ExperienceLocalizationText>{(localizationText)}</ExperienceLocalizationText>
-        </ExperienceDetails>
-        <ExperiencePrice>{(price)}</ExperiencePrice>
-      </ExperienceDescription>
-      <ExperienceRating>
-        <Rating />
-        <ExperienceFavorite source={FavoriteImg} />
-      </ExperienceRating>
-    </Touchable>
+      <Touchable onPress={onPress}>
+        <ExperienceImage source={(image)} />
+        <ExperienceDescription>
+          <ExperienceName>{(name)}</ExperienceName>
+          <ExperienceDetails>
+            <LocalizationIcon source={LocalizationImg} />
+            <ExperienceLocalizationText>{(address)}</ExperienceLocalizationText>
+          </ExperienceDetails>
+          <ExperiencePrice>{(price)}</ExperiencePrice>
+        </ExperienceDescription>
+        <ExperienceRating>
+          <Rating
+            rating={rating}
+            disabled={ratingDisabled}
+          />
+          <ExperienceFavorite source={FavoriteImg} />
+        </ExperienceRating>
+      </Touchable>
     </Experience>
   );
 };

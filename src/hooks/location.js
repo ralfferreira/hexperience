@@ -1,14 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
-import {
-  requestForegroundPermissionsAsync,
-  getCurrentPositionAsync,
-} from 'expo-location'
+import { requestForegroundPermissionsAsync, getCurrentPositionAsync } from 'expo-location';
 
 const LocationContext = createContext({});
 
 const LocationProvider = ({children}) => {
   const [permission, setPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState({});
 
   useEffect(() => {
     async function verifyPermission() {      

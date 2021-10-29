@@ -32,9 +32,6 @@ const SignUp = () => {
 
   const handleSubmit = useCallback(async (data) => {
     try {
-
-      console.log('Passei aqui');
-
       const schema = Yup.object().shape({
         name: Yup.string().required('Nome obrigatório'),
         email: Yup.string()
@@ -59,8 +56,6 @@ const SignUp = () => {
         abortEarly: false
       });
 
-      console.log('Cheguei aqui');
-
       await api.post('/users/sign-up', {
         name: data.name,
         email: data.email,
@@ -71,8 +66,6 @@ const SignUp = () => {
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
-
-        console.log(err);
 
         return
       }

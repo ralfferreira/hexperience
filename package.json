@@ -20,6 +20,7 @@
     "@unform/core": "1.9.8",
     "@unform/mobile": "1.9.8",
     "axios": "^0.21.4",
+    "date-fns": "^2.25.0",
     "expo": "~42.0.1",
     "expo-location": "~12.1.2",
     "expo-network": "~3.2.0",

@@ -3,11 +3,10 @@ import StarRating from 'react-native-star-rating';
 import { Component } from 'react';
 
 class Rating extends Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      starCount: 5
+      starCount: props.rating,
     };
   }
 
@@ -20,10 +19,10 @@ class Rating extends Component {
   render() {
     return (
       <StarRating
-        disabled={false}
+        disabled={this.props.disabled}
         maxStars={5}
         rating={this.state.starCount}
-        selectedStar={(rating) => this.onStarRatingPress(rating)}
+        selectedStar={(rate) => this.onStarRatingPress(rate)}
         fullStarColor={'gold'}
         starSize={20}
       />
