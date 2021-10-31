@@ -5,7 +5,7 @@ const LocationContext = createContext({});
 
 const LocationProvider = ({children}) => {
   const [permission, setPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState({});
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   useEffect(() => {
     async function verifyPermission() {      
@@ -14,7 +14,7 @@ const LocationProvider = ({children}) => {
       setPermission(granted)
     }
 
-    verifyPermission()
+    verifyPermission().then(() => updateLocation());
   }, []);
 
   const updateLocation = useCallback(async () => {

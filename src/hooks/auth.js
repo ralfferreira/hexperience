@@ -6,14 +6,18 @@ import React, {
   useEffect
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { differenceInHours, parseISO } from "date-fns";
+import { differenceInDays, parseISO } from "date-fns";
 
 import api from '../services/api';
 
 const AuthContext = createContext({});
 
 const AuthProvider = ({children}) => {
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    token: null,
+    user: null,
+    lastLoginDate: null
+  });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -27,7 +31,11 @@ const AuthProvider = ({children}) => {
       if (token[1] && user[1]) {
         api.defaults.headers.authorization = `Bearer ${token[1]}`;
 
-        setData({ token: token[1], user: JSON.parse(user[1]), lastLoginDate: parseISO(lastLogin) });
+        setData({ 
+          token: token[1], 
+          user: JSON.parse(user[1]), 
+          lastLoginDate: parseISO(lastLogin[1]) 
+        });
       }
     }
 
@@ -73,8 +81,12 @@ const AuthProvider = ({children}) => {
   }, [setData, data.token]);
 
   const renewSession = useCallback(async () => {
+    if (!data.user) {
+      return;
+    }
+
     if (data.user.type === 'admin') {
-      if (differenceInHours(data.lastLoginDate, new Date()) > 23) {
+      if (differenceInDays(data.lastLoginDate, new Date()) > 1) {
         signOut();
       }
 

@@ -50,6 +50,10 @@ const Home = () => {
   useEffect(() => {
     updateLocation()
       .then(() => {
+        if (!currentLocation) {
+          return;
+        }
+
         api.get('/experiences/near', {
           data: {
             lat: currentLocation.latitude,

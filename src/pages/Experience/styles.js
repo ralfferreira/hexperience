@@ -79,10 +79,6 @@ export const DetailsInput = styled.Text`
 export const ExperienceParentalRating = styled.View`
     padding: 15px;
 `
-export const ParentalRatingImg = styled.Image`
-    width: 30px;
-    height: 30px;
-`
 export const ExperienceWhatTake = styled.Text`
     padding: 15px;
     font-size: 15px;
@@ -90,7 +86,7 @@ export const ExperienceWhatTake = styled.Text`
 export const ExperienceSchedules = styled.ScrollView`
     margin-left: 15px;
 `
-export const CommentsList = styled.View`
+export const CommentsList = styled.ScrollView`
     display: flex;
     flex-direction: column;
     margin-bottom: 50px;

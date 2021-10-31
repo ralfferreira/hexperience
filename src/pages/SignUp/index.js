@@ -1,6 +1,7 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; 
+import { useNavigation } from '@react-navigation/native';
+import formatStringByPattern from 'format-string-by-pattern';
 import * as Yup from 'yup'
 
 import { Form } from "@unform/mobile";
@@ -30,6 +31,14 @@ const SignUp = () => {
 
   const navigation = useNavigation();
 
+  const [phoneNumber, setPhoneNumber] = useState(null);
+
+  const handlePhoneTextChange = useCallback((value) => {
+    const formatted = formatStringByPattern('+99 (99) 99999-9999', value);
+
+    setPhoneNumber(formatted);
+  });
+
   const handleSubmit = useCallback(async (data) => {
     try {
       const schema = Yup.object().shape({
@@ -37,6 +46,12 @@ const SignUp = () => {
         email: Yup.string()
           .required('Email obrigatório')
           .email('Digite um email válido'),
+        phone: Yup.string()
+          .optional()
+          .matches(
+            /^\+[0-9]+\s\([0-9]+\)\s\d\d\d\d\d-\d\d\d\d$/i, 
+            "Telefone deve estar no formato: '+XX (XX) XXXXX-XXXX'"
+          ),
         password: Yup.string()
           .required('Senha obrigatório')
           .min(8, 'Senha deve ter no minímo 8 digitos'),
@@ -59,7 +74,8 @@ const SignUp = () => {
       await api.post('/users/sign-up', {
         name: data.name,
         email: data.email,
-        password: data.password
+        password: data.password,
+        phone_number: data.phone,
       })
 
       navigation.navigate('Login');
@@ -109,13 +125,15 @@ const SignUp = () => {
             placeholder="E-mail"
             maxLength={150}
           />
-          {/* <InputTitle>Telefone</InputTitle>
+          <InputTitle>Telefone</InputTitle>
           <SignInput
             keyboardType="number-pad"
             name="phone"
             placeholder="Telefone"
-            maxLength={17}
-          />  */}
+            maxLength={19}
+            onChangeText={(value) => handlePhoneTextChange(value)}
+            value={phoneNumber}
+          /> 
           <InputTitle>Senha</InputTitle>
           <SignInput
             name="password"

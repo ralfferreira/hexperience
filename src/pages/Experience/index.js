@@ -9,6 +9,7 @@ import ExperienceCategory from '../../components/ExperienceCategory';
 import ExperienceSchedule from '../../components/ExperienceSchedule';
 import Comment from '../../components/Comment';
 import Rating from '../../components/Rating';
+import ParentalRating from '../../components/ParentalRating';
 
 import api from '../../services/api';
 
@@ -21,7 +22,6 @@ import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
 import ExperienceImg from '../../assets/img/div-image-experience.png'
-import FreeIcon from '../../assets/img/freeicon.png';
 
 import { 
   Container, 
@@ -42,8 +42,7 @@ import {
   ExperienceDetailsRow, 
   ImageDetails, 
   DetailsInput, 
-  ExperienceParentalRating, 
-  ParentalRatingImg, 
+  ExperienceParentalRating,
   ExperienceWhatTake, 
   ExperienceSchedules, 
   CommentsList 
@@ -83,15 +82,18 @@ const Experience = () => {
         const startsAt = format(parsedDate, "HH:mm", {
           locale: ptBR
         });
+
         const endsAt = format(addMinutes(parsedDate, experience.duration), "HH:mm", {
           locale: ptBR
         });
 
+        const date = format(parsedDate, "EEEE',' dd 'de' MMMM 'de' yyyy", {
+          locale: ptBR,            
+        });        
+
         return {
           id: schedule.id,
-          formattedDate: format(parsedDate, "EEEE',' dd 'de' MMMM 'de' yyyy", {
-            locale: ptBR,            
-          }),
+          formattedDate: date.charAt(0).toUpperCase() + date.slice(1),
           formattedTime: `${startsAt} - ${endsAt}`,
         }
       });
@@ -195,7 +197,7 @@ const Experience = () => {
 
                   <Title>Classificação Indicativa</Title>
                   <ExperienceParentalRating>
-                    <ParentalRatingImg source={FreeIcon} />
+                    <ParentalRating age={experience.parental_rating} />
                   </ExperienceParentalRating>
                 </ExperienceDetails>
 
@@ -221,11 +223,23 @@ const Experience = () => {
 
                 <Title>Comentários</Title>
                 <CommentsList>
-                  <Comment
-                    name="Luffy"
-                    content="Adorei!!! Tudo muito lindooooo, ai que tudo!"
-                    date="Sábado, 30 de outubro, 09:00"
-                  />
+                  {
+                    experience.reviews 
+                    ? experience.reviews.map((review) => {
+                      console.log(review);
+
+                      return (
+                        <Comment
+                          key={review.id}
+                          name="Luffy"
+                          content={review.comment}
+                          date={review.updated_at}
+                          rating={review.rating}
+                        />
+                      )
+                    })
+                    : (<></>)
+                  }
                 </CommentsList>
               </>
           ) : (<></>)
