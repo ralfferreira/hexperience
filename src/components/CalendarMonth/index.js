@@ -5,7 +5,7 @@ const CalendarMonth = ({month, day }) => {
   return (
     <Container>
       <Month>{(month)}</Month>
-      <Day>{(day)}</Day>
+      { day && (<Day>{day}</Day>) }
     </Container>
   );
 };

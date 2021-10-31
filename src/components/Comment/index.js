@@ -16,7 +16,7 @@ import {
   CommentDate 
 } from './styles';
 
-const Comment = ({ name, content, date, rating }) => {
+const Comment = ({ name, content, date, rating, avatar_url }) => {
   const commentDate = useMemo(() => {
     const parsedDate = parseISO(date);
 
@@ -30,7 +30,7 @@ const Comment = ({ name, content, date, rating }) => {
   return (
     <CommentView>
       <CommentRow>
-        <CommentProfile source={UserProfileImg} />
+        <CommentProfile source={avatar_url ? { uri: avatar_url } : UserProfileImg} />
         <CommentName>{name}</CommentName>
         <Rating
           rating={rating}

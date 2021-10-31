@@ -226,12 +226,10 @@ const Experience = () => {
                   {
                     experience.reviews 
                     ? experience.reviews.map((review) => {
-                      console.log(review);
-
                       return (
                         <Comment
                           key={review.id}
-                          name="Luffy"
+                          name={review.user.name}
                           content={review.comment}
                           date={review.updated_at}
                           rating={review.rating}
