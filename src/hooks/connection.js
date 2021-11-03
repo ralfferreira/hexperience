@@ -6,11 +6,13 @@ import React, {
   useState 
 } from 'react';
 import * as Network from 'expo-network';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ConnectionContext = createContext({});
 
 const ConnectionProvider = ({children}) => {
   const [connecting, setConnecting] = useState(true);
+  const [firstTime, setFirstTime] = useState(true);
 
   useEffect(() => {
     async function testConnection() {
@@ -24,6 +26,18 @@ const ConnectionProvider = ({children}) => {
     testConnection()
   }, []);
 
+  useEffect(() => {
+    async function verifyIfFirstTime() {
+      const isFirstTime = await AsyncStorage.getItem('@Hexperience:firstTime');
+
+      if (isFirstTime) {
+        setFirstTime(false);
+      }
+    }
+
+    verifyIfFirstTime();
+  }, []);
+
   const handleConnectivityChange = useCallback(() => {
     setConnecting(!connecting);
   }, []);
@@ -34,9 +48,15 @@ const ConnectionProvider = ({children}) => {
     setConnecting(network.isConnected);
   }, []);
 
+  const handleFirstTime = useCallback(() => {
+    AsyncStorage.setItem('@Hexperience:firstTime', 'false').then(() => {
+      setFirstTime(false);
+    });
+  }, [setFirstTime]);
+
   return (
     <ConnectionContext.Provider
-      value={{ handleConnectivityChange, tryToConnect, connecting }}
+      value={{ handleConnectivityChange, tryToConnect, connecting, firstTime, handleFirstTime }}
     >
       {children}
     </ConnectionContext.Provider>

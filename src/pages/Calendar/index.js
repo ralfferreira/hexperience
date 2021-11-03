@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { ScrollView, Alert, View, ActivityIndicator } from 'react-native';
+import { ScrollView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { getYear, getMonth, getDate, parseISO } from 'date-fns';
 
@@ -9,10 +9,9 @@ import HorizontalCard from '../../components/HorizontalCard'
 import CalendarMonth from '../../components/CalendarMonth';
 
 import { useAuth } from '../../hooks/auth';
+import { useFavorites } from '../../hooks/favorites';
 
 import api from '../../services/api';
-
-const ExperienceImg = require('../../assets/img/div-image-experience.png');
 
 import { 
   Container, 
@@ -23,10 +22,10 @@ import {
 
 const Calendar = () => {
   const { user } = useAuth();
+  const { favoritesRelation } = useFavorites();
   const navigation = useNavigation();
 
   const [appointments, setAppointments] = useState(null);
-  const [formating, setFormating] = useState(true);
 
   useEffect(() => {
     api.get(`/appointments/users/${user.id}`).then((response) => {
@@ -35,14 +34,6 @@ const Calendar = () => {
       Alert.alert(`${err.message}`)
     });
   }, []);
-
-  useEffect(() => {
-    if (!formattedData) {
-      return;
-    }
-
-    setFormating(false);
-  }, [formattedData]);
 
   const handleNavigation = useCallback(({ isHost, exp_id }) => {
     if (isHost) {
@@ -59,7 +50,7 @@ const Calendar = () => {
 
   const formattedData = useMemo(() => {
     if (!appointments) {
-      return null;
+      return [];
     }
 
     const years = [...new Set(appointments.map(a => {
@@ -145,22 +136,16 @@ const Calendar = () => {
       <Header>Calendário</Header>
       <ScrollView>
         {
-          formating
-          ? (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-              <ActivityIndicator size="large" color="#999" />
-            </View>
-          )
-          : formattedData.length 
-            ? formattedData.map(y => {
-              return (
-                <>
-                  <CalendarHeader key={`CalendarHeader:${y.year}`} >
-                    <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}`}>
-                      {y.year}
-                    </CalendarHeaderTitle>
-                  </CalendarHeader>
-                  <CalendarContent key={`CalendarContent:${y.year}`} >
+          formattedData 
+          ? formattedData.map(y => {
+            return (
+              <>
+                <CalendarHeader key={`CalendarHeader:${y.year}`} >
+                  <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}`}>
+                    {y.year}
+                  </CalendarHeaderTitle>
+                </CalendarHeader>
+                <CalendarContent key={`CalendarContent:${y.year}`} >
                   {
                     y.months.length 
                     ? y.months.map(m => {
@@ -180,7 +165,7 @@ const Calendar = () => {
                                     i > 0
                                     ? (
                                       <CalendarMonth
-                                        key={`CalendarMonth:${y.year}:${m.month}:${d.day}`}
+                                        key={`CalendarDay:${y.year}:${m.month}:${d.day}`}
                                         day={d.day}
                                       />
                                     )
@@ -190,22 +175,26 @@ const Calendar = () => {
                                     d.data.length
                                     ? d.data.map(dt => {
                                       const a = dt.appointment;
+                                      const e = a.schedule.experience;
+
+                                      let isFavorite = false;
+
+                                      if (favoritesRelation.find(e => e.exp_id === e.id)) {
+                                        isFavorite = true;
+                                      }
 
                                       return (
                                         <HorizontalCard 
-                                          key={a.id}
-                                          image= {ExperienceImg}
-                                          name={a.schedule.experience.name}
-                                          address={
-                                            a.schedule.experience.address
-                                            ? a.schedule.experience.address
-                                            : 'Online'
-                                          }
-                                          price={`R$ ${a.schedule.experience.price}`}
+                                          key={`Appointment:${y.year}:${m.month}:${d.day}:${a.id}`}
+                                          image={e.cover_url}
+                                          name={e.name}
+                                          address={e.address}
+                                          price={e.price}
                                           onPress={() => handleNavigation({
                                             isHost: dt.isHost,
-                                            exp_id: a.schedule.experience.id
+                                            exp_id: e.id
                                           })}
+                                          isFavorite={isFavorite}
                                         />
                                       )
                                     })
@@ -221,11 +210,11 @@ const Calendar = () => {
                     })
                     : (<></>)
                   }
-                  </CalendarContent>                  
-                </>
-              )
-            })
-            : (<></>)
+                </CalendarContent>                  
+              </>
+            )
+          })
+          : (<></>)
         }
       </ScrollView>
       {user.type === 'host' ? <FloatButton /> : <></> }

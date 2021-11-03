@@ -1,5 +1,4 @@
 import React from "react";
-import { ActivityIndicator, View } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 
 import AuthRoute from "./auth.routes";

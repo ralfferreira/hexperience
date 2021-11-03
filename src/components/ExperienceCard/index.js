@@ -3,7 +3,9 @@ import React from 'react';
 import Rating from '../Rating/index';
 
 import LocalizationImg from '../../assets/img/pins-hexperience.png';
-import FavoriteImg from '../../assets/img/heart-icon.png';
+import UnfavoriteImg from '../../assets/img/heart-icon.png';
+import FavoriteImg from '../../assets/img/heart-full.png';
+const DefaultImg = require('../../assets/img/DinoGreenColor.png');
 
 import { 
   Touchable,
@@ -26,26 +28,44 @@ const ExperienceCard = ({
   price, 
   onPress, 
   rating, 
-  ratingDisabled 
+  ratingDisabled,
+  isFavorite
 }) => {
   return (
     <Experience>
       <Touchable onPress={onPress}>
-        <ExperienceImage source={(image)} />
+        <ExperienceImage 
+          resizeMode="center" 
+          source={
+            image
+            ? { uri: image }
+            : DefaultImg
+          } 
+        />
         <ExperienceDescription>
-          <ExperienceName>{(name)}</ExperienceName>
+          <ExperienceName>{name}</ExperienceName>
           <ExperienceDetails>
             <LocalizationIcon source={LocalizationImg} />
-            <ExperienceLocalizationText>{(address)}</ExperienceLocalizationText>
+            <ExperienceLocalizationText>
+              {address ? address : 'Online'}
+            </ExperienceLocalizationText>
           </ExperienceDetails>
-          <ExperiencePrice>{(price)}</ExperiencePrice>
+          <ExperiencePrice>
+            {price ? `R$ ${price}` : 'Indeterminado'}
+          </ExperiencePrice>
         </ExperienceDescription>
         <ExperienceRating>
           <Rating
             rating={rating}
             disabled={ratingDisabled}
           />
-          <ExperienceFavorite source={FavoriteImg} />
+          <ExperienceFavorite 
+            source={
+              isFavorite
+              ? FavoriteImg
+              : UnfavoriteImg
+            }
+          />
         </ExperienceRating>
       </Touchable>
     </Experience>

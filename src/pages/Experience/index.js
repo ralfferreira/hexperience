@@ -11,17 +11,20 @@ import Comment from '../../components/Comment';
 import Rating from '../../components/Rating';
 import ParentalRating from '../../components/ParentalRating';
 
+import { useFavorites } from '../../hooks/favorites';
+
 import api from '../../services/api';
 
 import ReportImg from '../../assets/img/report-experience.png'
-import FavoriteImg from '../../assets/img/heart-icon.png'
+import UnfavoriteImg from '../../assets/img/heart-icon.png';
+import FavoriteImg from '../../assets/img/heart-full.png';
 import HostProfileImg from '../../assets/img/host-profile.png'
 import AddressIcon from '../../assets/img/address.png';
 import ReferencePointIcon from '../../assets/img/referencepoint.png';
 import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
-import ExperienceImg from '../../assets/img/div-image-experience.png'
+import DefaultImg from '../../assets/img/DinoGreenColor.png'
 
 import { 
   Container, 
@@ -51,6 +54,8 @@ import {
 const Experience = () => {
   const navigation = useNavigation();
   const route = useRoute();
+  
+  const { favoritesRelation } = useFavorites();
 
   const routeParams = route.params;
 
@@ -125,6 +130,18 @@ const Experience = () => {
     navigation.navigate('ReportExperience', { exp_id });
   }, [navigation]);
 
+  const isFavorite = useMemo(() => {
+    if (!favoritesRelation || !experience ) {
+      return;
+    }
+
+    if (favoritesRelation.find(e => e.exp_id === experience.id)) {
+      return true;
+    }
+
+    return false;
+  }, [favoritesRelation, experience]);
+
   return (
     <Container>
       <HeaderWithoutSearch>Experiência</HeaderWithoutSearch>
@@ -136,7 +153,14 @@ const Experience = () => {
         {
           experience ? (
             <>
-              <ExperienceImage source={ExperienceImg} />
+              <ExperienceImage 
+                resizeMode="center" 
+                source={
+                  experience.cover_url
+                  ? { uri: experience.cover_url }
+                  : DefaultImg
+                } 
+              />
                 <ExperienceTitle>{experience.name}</ExperienceTitle>
                 <ExperienceOptions>
                   <ExperienceReport onPress={() => navigateToReportExperience(experience.id)}>
@@ -149,11 +173,24 @@ const Experience = () => {
                     />
                   </ExperienceRating>
                   <ExperienceCategory name={experience.category.name} />
-                  <ExperienceFavorite source={FavoriteImg} />
+                  <ExperienceFavorite 
+                    source={
+                      isFavorite
+                      ? FavoriteImg
+                      : UnfavoriteImg
+                    } 
+                  />
                 </ExperienceOptions>
 
                 <ExperienceHost>
-                  <ExperienceHostProfile source={HostProfileImg} />
+                  <ExperienceHostProfile 
+                    source={
+                      experience.host.user.avatar_url
+                      ? { uri: experience.host.user.avatar_url }
+                      : DefaultImg
+                    }
+                    resizeMode="center"
+                  />
                   <ExperienceHostName>{`@${experience.host.nickname}`}</ExperienceHostName>
                 </ExperienceHost>
 
@@ -173,11 +210,7 @@ const Experience = () => {
                         : 'Online'
                       }
                     </DetailsInput>
-                  </ExperienceDetailsRow>
-                  <ExperienceDetailsRow>
-                    <ImageDetails source={ReferencePointIcon} />
-                    <DetailsInput>Perto do Trevo Açaí Lago</DetailsInput>
-                  </ExperienceDetailsRow>
+                  </ExperienceDetailsRow>                  
                   <ExperienceDetailsRow>
                     <ImageDetails source={DurationIcon} />
                     <DetailsInput>

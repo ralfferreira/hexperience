@@ -8,7 +8,7 @@ export const ExperienceCategoryView = styled.View`
     display: flex;
     border-radius: 16px;
     color: #000;
-    width: 110px;
+    width: 118px;
     height: 30px;
     margin-right: 10px;
 `

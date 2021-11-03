@@ -45,10 +45,6 @@ const Settings = () => {
         <Touchable onPress={() => { navigation.navigate('ReportBug') }}>
           <OptionTitle>Reportar Problema</OptionTitle>
         </Touchable>
-
-        <Touchable onPress={() => { navigation.navigate('Home') }}>
-          <OptionTitle style={styles.red}>Excluir Perfil</OptionTitle>
-        </Touchable>
         <Touchable onPress={handleSignOut}>
           <OptionTitle style={styles.red}>Sair</OptionTitle>
         </Touchable>

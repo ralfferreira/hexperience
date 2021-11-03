@@ -38,6 +38,8 @@ export const ExperienceHost = styled.View`
 `
 export const ExperienceHostProfile = styled.Image`
     padding: 5px;
+    width: 75px;
+    height: 75px;
 `
 export const ExperienceHostName = styled.Text`
     padding: 10px;

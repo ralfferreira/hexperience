@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
+
+import { useConnection } from '../../hooks/connection';
 
 import Dino from '../../assets/img/dino2.png';
 import SelectGreen from '../../assets/img/select-green.png';
@@ -22,6 +24,11 @@ import {
 
 const GettingStartedThree = () => {
   const navigation = useNavigation();
+  const { handleFirstTime } = useConnection();
+
+  const handleNavigation = useCallback((page) => {
+    handleFirstTime().then(() => navigation.navigate(page));
+  }, [navigation, handleFirstTime]);
 
   return (
     <Container>
@@ -35,13 +42,13 @@ const GettingStartedThree = () => {
       </LandingNavigation>
 
       <Start>
-        <StartView onPress={() => { navigation.navigate('SignUp') }}>
+        <StartView onPress={() => handleNavigation('SignUp')}>
           <StartText>Começe agora</StartText>
         </StartView>
       </Start>
 
       <Sign>
-        <SignView onPress={() => { navigation.navigate('Login') }}>
+        <SignView onPress={() => handleNavigation('Login')}>
           <SignText>Entrar</SignText>
         </SignView>
       </Sign>

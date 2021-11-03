@@ -8,6 +8,7 @@ import FloatButton from '../../components/FloatButton'
 
 import { useAuth } from '../../hooks/auth';
 import { useLocation } from '../../hooks/location'
+import { useFavorites } from '../../hooks/favorites';
 
 import api from '../../services/api'
 
@@ -15,9 +16,6 @@ import BlueGradientIcon from '../../assets/img/topic-title-section-index.png'
 import RoseGradientIcon from '../../assets/img/topic-title-section-index-rose.png'
 import BlueGradientChromaLine from '../../assets/img/gradient-title-section-index-blue.png'
 import RoseGradientChromaLine from '../../assets/img/gradient-title-section-index-rose.png'
-
-const ExperienceImg = require('../../assets/img/div-image-experience.png');
-const Experience2Img = require('../../assets/img/onepice.gif');
 
 import { 
   Container, 
@@ -33,6 +31,7 @@ import {
 
 const Home = () => {
   const { user } = useAuth();
+  const { favoritesRelation } = useFavorites();
   const { updateLocation, currentLocation } = useLocation();
   const navigation = useNavigation();
 
@@ -100,20 +99,23 @@ const Home = () => {
                     nearExperiences.map((entry) => {
                       const { experience } = entry;
 
+                      let isFavorite = false;
+
+                      if (favoritesRelation.find(e => e.exp_id === experience.id)) {
+                        isFavorite = true;
+                      }
+
                       return (
                         <ExperienceCard
                           key={experience.id}
-                          image={Experience2Img}
+                          image={experience.cover_url}
                           name={experience.name}
-                          address={
-                            experience.addresss 
-                            ? experience.addresss 
-                            : 'Online'
-                          }
-                          price={`R$ ${experience.price}`}
+                          address={experience.address}
+                          price={experience.price}
                           onPress={() => navigateToExperience(experience.id)}
                           rating={experience.rating}
                           ratingDisabled={true}
+                          isFavorite={isFavorite}
                         />
                       )
                     })
@@ -138,20 +140,23 @@ const Home = () => {
                     recommendedExperiences.map((entry) => {
                       const { experience } = entry;
 
+                      let isFavorite = false;                      
+
+                      if (favoritesRelation.find(e => e.exp_id === experience.id)) {
+                        isFavorite = true;
+                      }
+
                       return (
                         <ExperienceCard
                           key={experience.id}
-                          image={ExperienceImg}
+                          image={experience.cover_url}
                           name={experience.name}
-                          address={
-                            experience.addresss 
-                            ? experience.addresss 
-                            : 'Online'
-                          }
-                          price={`R$ ${experience.price}`}
+                          address={experience.addresss}
+                          price={experience.price}
                           onPress={() => navigateToExperience(experience.id)}
                           rating={experience.rating}
                           ratingDisabled={true}
+                          isFavorite={isFavorite}
                         />
                       )
                     })

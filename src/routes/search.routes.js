@@ -1,6 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+
 import Search from "../pages/Search";
+
 const SearchRoute = createStackNavigator();
 
 const SearchPage = () => (

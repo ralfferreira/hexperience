@@ -6,7 +6,7 @@ import React, {
   useEffect
 } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { differenceInDays, parseISO } from "date-fns";
+import { differenceInHours, parseISO } from "date-fns";
 
 import api from '../services/api';
 
@@ -40,7 +40,7 @@ const AuthProvider = ({children}) => {
     }
 
     loadStorageData().then(() => renewSession());
-  }, []);
+  }, [renewSession]);
 
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {
@@ -65,7 +65,8 @@ const AuthProvider = ({children}) => {
     await AsyncStorage.multiRemove([
       '@Hexperience:token', 
       '@Hexperience:user',
-      '@Hexperience:lastLoginDate'
+      '@Hexperience:lastLoginDate',
+      '@Hexperience:favorites'
     ]);
 
     setData({});
@@ -86,7 +87,7 @@ const AuthProvider = ({children}) => {
     }
 
     if (data.user.type === 'admin') {
-      if (differenceInDays(data.lastLoginDate, new Date()) > 1) {
+      if (differenceInHours(data.lastLoginDate, new Date()) > 23) {
         signOut();
       }
 
@@ -111,7 +112,7 @@ const AuthProvider = ({children}) => {
     setData({ token: newToken, user: user, lastLoginDate: new Date() });
 
     setLoading(false);
-  });
+  }, [data, setData, setLoading]);
 
   return (
     <AuthContext.Provider
