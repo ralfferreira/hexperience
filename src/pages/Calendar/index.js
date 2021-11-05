@@ -137,22 +137,22 @@ const Calendar = () => {
       <ScrollView>
         {
           formattedData 
-          ? formattedData.map(y => {
+          ? formattedData.map((y, iy) => {
             return (
               <>
-                <CalendarHeader key={`CalendarHeader:${y.year}`} >
-                  <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}`}>
+                <CalendarHeader key={`CalendarHeader:${y.year}:${iy}`} >
+                  <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}:${iy}`}>
                     {y.year}
                   </CalendarHeaderTitle>
                 </CalendarHeader>
-                <CalendarContent key={`CalendarContent:${y.year}`} >
+                <CalendarContent key={`CalendarContent:${y.year}:${iy}`} >
                   {
                     y.months.length 
-                    ? y.months.map(m => {
+                    ? y.months.map((m, im) => {
                       return (
-                        <>                    
+                        <>    
                           <CalendarMonth 
-                            key={`CalendarMonth:${y.year}:${m.month}`}
+                            key={`CalendarMonth:${y.year}:${m.month}:${im}`}
                             month={m.month} 
                             day={m.days[0].day} 
                           />
@@ -165,7 +165,7 @@ const Calendar = () => {
                                     i > 0
                                     ? (
                                       <CalendarMonth
-                                        key={`CalendarDay:${y.year}:${m.month}:${d.day}`}
+                                        key={`CalendarDay:${y.year}:${m.month}:${d.day}:${i}`}
                                         day={d.day}
                                       />
                                     )
