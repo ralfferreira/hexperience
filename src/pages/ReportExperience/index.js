@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
+import { Form } from "@unform/mobile";
 
 import BackImg from '../../assets/img/back.png';
 import LogoImg from '../../assets/img/dinoDaleGreen.png';
@@ -57,6 +58,7 @@ const ReportExperience = () => {
       <ScrollView keyboardShouldPersistTaps="handled">
         <Title>Caso se encontre em situação de emergência, peça ajuda antes de nos contatar.</Title>
 
+      <Form ref={formRef} onSubmit={handleSubmit} >
         <AlignForm>
           <InputRow>
             <InputTitle>Data do Ocorrido:</InputTitle>
@@ -111,6 +113,7 @@ const ReportExperience = () => {
             </SaveBtnView>
           </SaveBtn>
         </AlignForm>
+      </Form>
       </ScrollView>
     </Container>
   );

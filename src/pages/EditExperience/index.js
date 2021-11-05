@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
-
+import { Form } from "@unform/mobile";
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
 
 import PlusIcon from '../../assets/img/plusicon.png';
@@ -51,13 +51,6 @@ const EditExperience = () => {
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           enabled
         />
-        <ExperienceTitle 
-          autoCapitalize="words"
-          name="title"
-          placeholder="Pescaria com Caio Castro"
-          placeholderTextColor="gray"
-          maxLength={100}
-        />
 
         <Title>Imagens</Title>
         <ExperienceImageView>
@@ -67,104 +60,114 @@ const EditExperience = () => {
           </AddExperienceImage>
         </ExperienceImageView>
 
-        <Title>Descrição</Title>
-        <ExperienceDescription 
-          autoCapitalize="words"
-          name="description"
-          placeholder="Uma manhã de pescaria com o ator Caio Castro"
-          placeholderTextColor="gray"
-          maxLength={300}
-        />
+        <Form ref={formRef} onSubmit={handleSubmit} >
+          <ExperienceTitle 
+            autoCapitalize="words"
+            name="title"
+            placeholder="Pescaria com Caio Castro"
+            placeholderTextColor="gray"
+            maxLength={100}
+          />
 
-        <Title>Detalhes</Title>
-        <ExperienceDetails>
-          <ExperienceDetailsRow>
-            <ImageDetails source={AddressIcon} />
-            <DetailsInput 
-              autoCapitalize="words"
-              name="address"
-              placeholder="Fortaleza - CE"
-              placeholderTextColor="gray"
-              maxLength={100}
-            />
-          </ExperienceDetailsRow>
-          <ExperienceDetailsRow>
-            <ImageDetails source={ReferencePointIcon} />
-            <DetailsInput
-              autoCapitalize="words"
-              name="reference-point"
-              placeholder="Perto do Trevo Açaí Lago"
-              placeholderTextColor="gray"
-              maxLength={100}
-            />
-          </ExperienceDetailsRow>
-          <ExperienceDetailsRow>
-            <ImageDetails source={DurationIcon} />
-            <DetailsInput 
-              autoCapitalize="words"
-              name="duration"
-              placeholder="1 hora"
-              placeholderTextColor="gray"
-              maxLength={100}
-            />
-          </ExperienceDetailsRow>
-          <ExperienceDetailsRow>
-            <ImageDetails source={AmountPeopleIcon} />
-            <DetailsInput 
-              autoCapitalize="words"
-              name="amount-people"
-              placeholder="5 pessoas"
-              placeholderTextColor="gray"
-              maxLength={100}
-            />
-          </ExperienceDetailsRow>
-          <ExperienceDetailsRow>
-            <ImageDetails source={PriceIcon} />
-            <DetailsInput 
-              autoCapitalize="words"
-              name="price"
-              placeholder="800,00"
-              placeholderTextColor="gray"
-              maxLength={100}
-            />
-          </ExperienceDetailsRow>
-        </ExperienceDetails>
-        <Title>Classificação Indicativa</Title>
-        <ParentalRating>
-          <ParentalRatingOption>
-            <ParentalRatingImg source={FreeIcon} />
-          </ParentalRatingOption>
+          <Title>Descrição</Title>
+          <ExperienceDescription 
+            autoCapitalize="words"
+            name="description"
+            placeholder="Uma manhã de pescaria com o ator Caio Castro"
+            placeholderTextColor="gray"
+            maxLength={300}
+          />
 
-          <ParentalRatingOption>
-            <ParentalRatingImg source={TenYearsIcon} />
-          </ParentalRatingOption>
+          <Title>Detalhes</Title>
+          <ExperienceDetails>
+            <ExperienceDetailsRow>
+              <ImageDetails source={AddressIcon} />
+              <DetailsInput 
+                autoCapitalize="words"
+                name="address"
+                placeholder="Fortaleza - CE"
+                placeholderTextColor="gray"
+                maxLength={100}
+              />
+            </ExperienceDetailsRow>
+            <ExperienceDetailsRow>
+              <ImageDetails source={ReferencePointIcon} />
+              <DetailsInput
+                autoCapitalize="words"
+                name="reference-point"
+                placeholder="Perto do Trevo Açaí Lago"
+                placeholderTextColor="gray"
+                maxLength={100}
+              />
+            </ExperienceDetailsRow>
+            <ExperienceDetailsRow>
+              <ImageDetails source={DurationIcon} />
+              <DetailsInput 
+                autoCapitalize="words"
+                name="duration"
+                placeholder="1 hora"
+                placeholderTextColor="gray"
+                maxLength={100}
+              />
+            </ExperienceDetailsRow>
+            <ExperienceDetailsRow>
+              <ImageDetails source={AmountPeopleIcon} />
+              <DetailsInput 
+                autoCapitalize="words"
+                name="amount-people"
+                placeholder="5 pessoas"
+                placeholderTextColor="gray"
+                maxLength={100}
+              />
+            </ExperienceDetailsRow>
+            <ExperienceDetailsRow>
+              <ImageDetails source={PriceIcon} />
+              <DetailsInput 
+                autoCapitalize="words"
+                name="price"
+                placeholder="800,00"
+                placeholderTextColor="gray"
+                maxLength={100}
+              />
+            </ExperienceDetailsRow>
+          </ExperienceDetails>
+          <Title>Classificação Indicativa</Title>
+          <ParentalRating>
+            <ParentalRatingOption>
+              <ParentalRatingImg source={FreeIcon} />
+            </ParentalRatingOption>
 
-          <ParentalRatingOption>
-            <ParentalRatingImg source={TwelveYearsIcon} />
-          </ParentalRatingOption>
+            <ParentalRatingOption>
+              <ParentalRatingImg source={TenYearsIcon} />
+            </ParentalRatingOption>
 
-          <ParentalRatingOption>
-            <ParentalRatingImg source={FourteenYearsIcon} />
-          </ParentalRatingOption>
+            <ParentalRatingOption>
+              <ParentalRatingImg source={TwelveYearsIcon} />
+            </ParentalRatingOption>
 
-          <ParentalRatingOption>
-            <ParentalRatingImg source={EighteenYearsIcon} />
-          </ParentalRatingOption>
-        </ParentalRating>
+            <ParentalRatingOption>
+              <ParentalRatingImg source={FourteenYearsIcon} />
+            </ParentalRatingOption>
 
-        <Title>O Que Levar? (Opcional)</Title>
-        <ExperienceDescription
-          autoCapitalize="words"
-          name="description"
-          placeholder="O que levar na sua experiência? (Opcional)"
-          placeholderTextColor="gray"
-          maxLength={300}
-        />
-        <SaveBtn>
-          <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
-            <SaveBtnText>Salvar Alterações</SaveBtnText>
-          </SaveBtnView>
-        </SaveBtn>
+            <ParentalRatingOption>
+              <ParentalRatingImg source={EighteenYearsIcon} />
+            </ParentalRatingOption>
+          </ParentalRating>
+
+          <Title>O Que Levar? (Opcional)</Title>
+          <ExperienceDescription
+            autoCapitalize="words"
+            name="description"
+            placeholder="O que levar na sua experiência? (Opcional)"
+            placeholderTextColor="gray"
+            maxLength={300}
+          />
+          <SaveBtn>
+            <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
+              <SaveBtnText>Salvar Alterações</SaveBtnText>
+            </SaveBtnView>
+          </SaveBtn>
+        </Form>
       </ScrollView>
     </Container>
   );

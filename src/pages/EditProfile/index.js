@@ -1,7 +1,7 @@
 import React from 'react'
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-
+import { Form } from "@unform/mobile";
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
 
 import { useAuth } from '../../hooks/auth';
@@ -54,50 +54,52 @@ const EditProfile = () => {
             <EditProfilePhotoImage source={ProfileImg} />
             <EditProfileChangePhoto source={ChangePhotoIcon} />
           </EditProfilePhoto>
-          <EditProfileForm>
-            <InputTitle>Nome</InputTitle>
-            <EditProfileInputName 
-              autoCapitalize="words"
-              name="name"
-              placeholder="Nome"
-              value={user.name}
-              placeholderTextColor="black"
-              maxLength={100}
-            />
-            <InputTitle>Biografia</InputTitle>
-            <EditProfileInputBio 
-              autoCapitalize="words"
-              name="Biografia"
-              placeholder="Biografia"
-              value={user.bio}
-              placeholderTextColor="black"
-              maxLength={350}
-            />
-          </EditProfileForm>
-          <ChangePassword>
-            <ChangePasswordText>Alterar senha</ChangePasswordText>
-            <ChangePasswordInput
-              name="password"
-              placeholder="Senha Atual"
-              textContentType="actualPassword"
-              returnKeyType="send"
-            />
-            <ChangePasswordInput 
-              name="new_password"
-              placeholder="Nova Senha"
-              textContentType="newPassword"
-              returnKeyType="send"
-            />
-          </ChangePassword>
-          <SaveBtn>
-            <SaveBtnView  
-              onPress={() => {
-              navigation.navigate('Profile')
-              }}
-            >
-              <SaveBtnText>Salvar Alterações</SaveBtnText>
-            </SaveBtnView>
-          </SaveBtn>
+          <Form ref={formRef} onSubmit={handleSubmit} >
+            <EditProfileForm>
+              <InputTitle>Nome</InputTitle>
+              <EditProfileInputName 
+                autoCapitalize="words"
+                name="name"
+                placeholder="Nome"
+                value={user.name}
+                placeholderTextColor="black"
+                maxLength={100}
+              />
+              <InputTitle>Biografia</InputTitle>
+              <EditProfileInputBio 
+                autoCapitalize="words"
+                name="Biografia"
+                placeholder="Biografia"
+                value={user.bio}
+                placeholderTextColor="black"
+                maxLength={350}
+              />
+            </EditProfileForm>
+            <ChangePassword>
+              <ChangePasswordText>Alterar senha</ChangePasswordText>
+              <ChangePasswordInput
+                name="password"
+                placeholder="Senha Atual"
+                textContentType="actualPassword"
+                returnKeyType="send"
+              />
+              <ChangePasswordInput 
+                name="new_password"
+                placeholder="Nova Senha"
+                textContentType="newPassword"
+                returnKeyType="send"
+              />
+            </ChangePassword>
+            <SaveBtn>
+              <SaveBtnView  
+                onPress={() => {
+                navigation.navigate('Profile')
+                }}
+              >
+                <SaveBtnText>Salvar Alterações</SaveBtnText>
+              </SaveBtnView>
+            </SaveBtn>
+          </Form>
         </EditProfileContent>
       </ScrollView>
     </Container>

@@ -1,6 +1,6 @@
 import React from 'react'
 import LocalizationImg from '../../assets/img/pins-hexperience.png'
-import DeleteExperienceImg from '../../assets/img/delete-experience.png'
+// import DeleteExperienceImg from '../../assets/img/delete-experience.png'
 import { useNavigation } from '@react-navigation/native'; 
 import { EditExperience, DeleteExperience, Experience, Touchable, ExperienceImage, ExperienceDescription, ExperienceName, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperiencePrice, ExperienceCommands, ExperienceFavorite} from './styles';
 const EditProfileImg = require('../../assets/img/editprofile.png');
@@ -25,9 +25,9 @@ const HostExperienceCard = ({name, image, localizationText, price }) => {
         }}>
           <EditExperience source={EditProfileImg} />
         </Touchable>
-        <Touchable>
+        {/* <Touchable>
           <DeleteExperience source={DeleteExperienceImg} />
-        </Touchable>
+        </Touchable> */}
       </ExperienceCommands>
     </Experience>
   );
