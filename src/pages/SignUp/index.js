@@ -6,7 +6,7 @@ import * as Yup from 'yup'
 
 import { Form } from "@unform/mobile";
 
-import SignInput from '../../components/SignInput';
+import FormInput from '../../components/FormInput';
 import SignButton from '../../components/SignButton';
 
 import api from '../../services/api';
@@ -23,7 +23,7 @@ import {
   InputTitle, 
   BackToSignIn, 
   BackToSignInText, 
-  Underline 
+  Underline
 } from './styles';
 
 const SignUp = () => {
@@ -37,7 +37,7 @@ const SignUp = () => {
     const formatted = formatStringByPattern('+99 (99) 99999-9999', value);
 
     setPhoneNumber(formatted);
-  });
+  }, []);
 
   const handleSubmit = useCallback(async (data) => {
     try {
@@ -83,8 +83,10 @@ const SignUp = () => {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
-        return
-      }
+        formRef.current?.setErrors(errors);
+
+        return;
+      }  
 
       Alert.alert(
         'Erro na autenticação',
@@ -110,14 +112,14 @@ const SignUp = () => {
         
         <Form ref={formRef} onSubmit={handleSubmit} >
           <InputTitle>Nome</InputTitle>
-          <SignInput 
+          <FormInput 
             autoCapitalize="words"
             name="name"
             placeholder="Nome"
             maxLength={100}
           />
           <InputTitle>Email</InputTitle>
-          <SignInput
+          <FormInput
             keyboardType="email-address"
             autoCorrect={false}
             autoCapitalize="none"
@@ -126,7 +128,7 @@ const SignUp = () => {
             maxLength={150}
           />
           <InputTitle>Telefone</InputTitle>
-          <SignInput
+          <FormInput
             keyboardType="number-pad"
             name="phone"
             placeholder="Telefone"
@@ -135,18 +137,18 @@ const SignUp = () => {
             value={phoneNumber}
           /> 
           <InputTitle>Senha</InputTitle>
-          <SignInput
+          <FormInput
             name="password"
             placeholder="Senha"
             secureTextEntry
-            textContentType="newPassword"          
+            textContentType="newPassword"  
           />
           <InputTitle>Confirmar Senha</InputTitle>
-          <SignInput
+          <FormInput
             name="confirm_password"
             secureTextEntry
             placeholder="Digite novamente sua Senha"
-            textContentType="newPassword"          
+            textContentType="newPassword"   
           />
           <Center>
             <SignButton

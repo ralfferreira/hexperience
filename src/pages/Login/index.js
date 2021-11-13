@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 
 import { Form } from "@unform/mobile";
 
-import SignInput from '../../components/SignInput';
+import FormInput from '../../components/FormInput';
 import SignButton from '../../components/SignButton';
 
 import { useAuth } from '../../hooks/auth';
@@ -23,7 +23,7 @@ import {
   ForgotPasswordText, 
   CreateAccount, 
   CreateAccountText, 
-  Underline 
+  Underline,
 } from './styles';
 
 const Login = () => {
@@ -85,7 +85,7 @@ const Login = () => {
         
         <Form ref={formRef} onSubmit={handleSubmit} >
           <InputTitle>Email</InputTitle>
-          <SignInput 
+          <FormInput 
             keyboardType="email-address"
             autoCorrect={false}
             autoCapitalize="none"
@@ -94,7 +94,7 @@ const Login = () => {
             maxLength={150}
           />
           <InputTitle>Senha</InputTitle>
-          <SignInput
+          <FormInput
             secureTextEntry
             name="password"
             placeholder="Senha"

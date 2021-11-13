@@ -18,9 +18,7 @@ import api from '../../services/api';
 import ReportImg from '../../assets/img/report-experience.png'
 import UnfavoriteImg from '../../assets/img/heart-icon.png';
 import FavoriteImg from '../../assets/img/heart-full.png';
-import HostProfileImg from '../../assets/img/host-profile.png'
 import AddressIcon from '../../assets/img/address.png';
-import ReferencePointIcon from '../../assets/img/referencepoint.png';
 import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
@@ -266,6 +264,7 @@ const Experience = () => {
                           content={review.comment}
                           date={review.updated_at}
                           rating={review.rating}
+                          avatar_url={review.user.avatar_url}
                         />
                       )
                     })

@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useRef } from 'react';
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
 import { Form } from "@unform/mobile";
+
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 
 import { 
@@ -17,7 +18,10 @@ import {
 } from './styles';
 
 const ReportBug = () => {
+  const formRef = useRef(null);
   const navigation = useNavigation();
+
+  const handleSubmit = useCallback(() => {}, []);
 
   return (
     <Container>

@@ -4,7 +4,7 @@ import ptBR from 'date-fns/esm/locale/pt-BR';
 
 import Rating from '../Rating';
 
-import UserProfileImg from '../../assets/img/luffy.jpg';
+import DefaultImg from '../../assets/img/DinoGreenColor.png'
 
 import { 
   CommentView,
@@ -30,7 +30,10 @@ const Comment = ({ name, content, date, rating, avatar_url }) => {
   return (
     <CommentView>
       <CommentRow>
-        <CommentProfile source={avatar_url ? { uri: avatar_url } : UserProfileImg} />
+        <CommentProfile 
+          source={avatar_url ? { uri: avatar_url } : DefaultImg}
+          resizeMode="center"
+        />
         <CommentName>{name}</CommentName>
         <Rating
           rating={rating}

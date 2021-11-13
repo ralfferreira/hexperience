@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { ScrollView, StyleSheet } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react'
+import { Platform, ScrollView, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
@@ -27,24 +27,28 @@ import {
 } from './styles';
 
 const ReportExperience = () => {
+  const formRef = useRef();
   const navigation = useNavigation();
-  const [date, setDate] = useState(new Date(1598051730000));
+
+  const [showDatepicker, setShowDatePicker] = useState(false);
+  const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState('date');
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setDate(currentDate);
-  };
+  const handleToggleDatePicker = useCallback(() => {
+    setShowDatePicker((state) => !state);
+  }, []);
 
-  const showMode = (currentMode) => {
-    setMode(currentMode);
-  };
+  const handleDateChange = useCallback((event, date) => {
+    if (Platform.OS === 'android') {
+      setShowDatePicker(false);
+    }
 
-  const showDatepicker = () => {
-    showMode('date');
-  };
+    if (date) {
+      setDate(date);
+    }
+  }, []);
 
-  const [checked, toggleChecked] = useState(false);
+  const handleSubmit = useCallback(() => {}, []);
 
   return (
     <Container>
@@ -62,17 +66,19 @@ const ReportExperience = () => {
         <AlignForm>
           <InputRow>
             <InputTitle>Data do Ocorrido:</InputTitle>
-            <DateInput onPress={showDatepicker} />
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-            />
+            <DateInput onPress={handleToggleDatePicker} />
+            {
+              showDatepicker &&
+              <DateTimePicker
+                value={date}
+                mode='date'
+                is24Hour={true}
+                display='calendar'
+                onChange={handleDateChange}
+              />
+            }
           </InputRow>
-          <CheckBox
+          {/* <CheckBox
             title='Falta de Segurança'
             containerStyle={styles.checkbox}
             checkedColor="green"
@@ -99,7 +105,7 @@ const ReportExperience = () => {
             checkedColor="green"
             checked={checked}
             onPress={() => toggleChecked(!checked)}
-          />
+          /> */}
           <InputTitle>Outro</InputTitle>
           <DetailsInput 
             autoCapitalize="words"

@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react';
 
 import { useField } from '@unform/core';
 
-import { Container, TextInput } from "./styles";
+import { DetailsInput } from "./styles";
 
-const SignInput = ({ name, onChangeText, ...rest }) => {
+const ExperienceDetailsInput = ({ name, onChangeText, containerStyle = {}, ...rest }) => {
   const inputRef = useRef(null);
 
   const { fieldName, registerField, defaultValue, error } = useField(name);
@@ -59,15 +59,13 @@ const SignInput = ({ name, onChangeText, ...rest }) => {
   );
   
   return (
-    <Container >
-      <TextInput
-        ref={inputRef}
-        onChangeText={handleChangeText}
-        defaultValue={defaultValue}
-        {...rest}
-      />
-    </Container>
+    <DetailsInput
+      ref={inputRef}
+      onChangeText={handleChangeText}
+      defaultValue={defaultValue}
+      {...rest}
+    />
   );
 };
 
-export default SignInput;
+export default ExperienceDetailsInput;

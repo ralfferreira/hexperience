@@ -185,7 +185,7 @@ const Calendar = () => {
 
                                       return (
                                         <HorizontalCard 
-                                          key={`Appointment:${y.year}:${m.month}:${d.day}:${a.id}`}
+                                          key={`Appointment:${y.year}:${m.month}:${d.day}:${a.id}:${i}`}
                                           image={e.cover_url}
                                           name={e.name}
                                           address={e.address}

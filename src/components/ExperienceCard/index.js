@@ -43,10 +43,10 @@ const ExperienceCard = ({
           } 
         />
         <ExperienceDescription>
-          <ExperienceName>{name}</ExperienceName>
+          <ExperienceName numberOfLines={1}>{name}</ExperienceName>
           <ExperienceDetails>
             <LocalizationIcon source={LocalizationImg} />
-            <ExperienceLocalizationText>
+            <ExperienceLocalizationText numberOfLines={1}>
               {address ? address : 'Online'}
             </ExperienceLocalizationText>
           </ExperienceDetails>

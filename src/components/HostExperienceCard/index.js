@@ -11,10 +11,10 @@ const HostExperienceCard = ({name, image, localizationText, price }) => {
     <Experience>
       <ExperienceImage source={(image)} />
       <ExperienceDescription>
-        <ExperienceName>{(name)}</ExperienceName>
+        <ExperienceName numberOfLines={1}>{(name)}</ExperienceName>
         <ExperienceDetails>
           <LocalizationIcon source={LocalizationImg} />
-          <ExperienceLocalizationText>{(localizationText)}</ExperienceLocalizationText>
+          <ExperienceLocalizationText numberOfLines={1}>{(localizationText)}</ExperienceLocalizationText>
         </ExperienceDetails>
         <ExperiencePrice>{(price)}</ExperiencePrice>
       </ExperienceDescription>

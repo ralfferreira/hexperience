@@ -81,12 +81,12 @@ const AuthProvider = ({children}) => {
     });
   }, [setData, data.token]);
 
-  const renewSession = useCallback(async () => {
-    if (!data.user) {
+  const renewSession = useCallback(async () => {    
+    if (!data.user) {      
       return;
     }
 
-    if (data.user.type === 'admin') {
+    if (data.user.type === 'admin') {      
       if (differenceInHours(data.lastLoginDate, new Date()) > 23) {
         signOut();
       }
@@ -98,7 +98,7 @@ const AuthProvider = ({children}) => {
       token: data.token,
       user_id: data.user.id
     });
-
+    
     const { user, newToken } = response.data;
 
     await AsyncStorage.multiSet([

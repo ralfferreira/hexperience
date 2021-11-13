@@ -1,18 +1,22 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
-import { ScrollView, KeyboardAvoidingView } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker';
-import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
+
+import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
+import ExperienceTitleInput from '../../components/ExperienceTitleInput';
+import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
+import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
+
+import api from '../../services/api';
 
 import PlusIcon from '../../assets/img/plusicon.png';
 import AddressIcon from '../../assets/img/address.png';
-import ReferencePointIcon from '../../assets/img/referencepoint.png';
 import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
-import ExperienceImg from '../../assets/img/div-image-experience.png'
 import FreeIcon from '../../assets/img/freeicon.png';
 import TenYearsIcon from '../../assets/img/tenyearsicon.png';
 import TwelveYearsIcon from '../../assets/img/twelveyearsicon.png';
@@ -21,13 +25,10 @@ import EighteenYearsIcon from '../../assets/img/eighteenyearsicon.png';
 
 import { 
   Container, 
-  Title, 
-  ExperienceTitle, 
-  DetailsInput, 
+  Title,
   ExperienceImageView, 
   ExperienceImage, 
   AddExperienceImage, 
-  ExperienceDescription, 
   ExperienceDetails, 
   ExperienceDetailsRow, 
   ParentalRating, 
@@ -37,7 +38,8 @@ import {
   ParentalRatingImg, 
   SaveBtn, 
   SaveBtnText, 
-  SaveBtnView 
+  SaveBtnView,
+  ExperienceImageCarrousel
 } from './styles';
 
 const CreateExperience = () => {
@@ -45,6 +47,7 @@ const CreateExperience = () => {
   const formRef = useRef(null);
 
   const [cover, setCover] = useState(null);
+  const [photos, setPhotos] = useState([]);
   const [parentalRating, setParentalRating] = useState(1);
 
   const handleSubmit = useCallback(async (data) => {
@@ -63,21 +66,54 @@ const CreateExperience = () => {
         abortEarly: false
       });
 
-
-    } catch (err) {
-      if (err instanceof Yup.ValidationError) {
-        const errors = getValidationErrors(err);
-
-        return
+      if (!cover) {
+        throw new Error('No minimo uma mensagem deve ser enviada');
       }
+
+      const result = await api.post('/experiences', {
+        name: data.title,
+        duration: data.duration,
+        description: data.description,
+        price: data.price,
+        requirements: data.requirements,
+        parental_rating: parentalRating,
+        max_guests: data.amount_people,
+        is_online: data.address ? false : true,
+        category_id: 1
+      });
+
+      const coverData = new FormData();
+
+      coverData.append('photo', {
+        type: 'image/jpeg',
+        name: `cover:${result.data.name}:${result.data.id}.jpg`,
+        uri: cover,
+      })
+
+      await api.post(`/experiences/${result.data.id}/cover`, coverData);
+
+      for (const photo of photos) {
+        const photoData = new FormData();
+
+        photoData.append('photo', {
+          type: 'image/jpeg',
+          name: `photo:${result.data.id}.jpg`,
+          uri: photo,
+        });
+
+        await api.post(`/experiences/${result.data.id}/photos`, photoData);
+      }
+
+      navigation.navigate('Home');
+    } catch (err) {
+      
 
       Alert.alert(
         'Erro na autenticação',
         `${err}`
       );
     }
-  }, []);
-  const [image, setImage] = useState(null);
+  }, [parentalRating, cover, photos, navigation]);
 
   useEffect(() => {
     (async () => {
@@ -90,20 +126,31 @@ const CreateExperience = () => {
     })();
   }, []);
 
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
+  const handlePickImage = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [4, 3],
       quality: 1,
     });
 
-    console.log(result);
-
-    if (!result.cancelled) {
-      setImage(result.uri);
+    if (result.cancelled) {
+      return;
     }
-  };
+
+    if (!cover) {
+      setCover(result.uri);
+      return;
+    }
+
+    if (photos.length >= 4) {
+      Alert.alert('Limite atingido', 'Só é possível subir 5 imagens por experiência');
+      
+      return;
+    }
+
+    setPhotos([...photos, result.uri]);
+  }, [cover, photos]);
 
   return (
     <Container>
@@ -114,18 +161,9 @@ const CreateExperience = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           enabled
-        />
-
-        <Title>Imagens</Title>
-        <ExperienceImageView>
-          {image && <ExperienceImage source={{ uri: image }} /> }
-          <AddExperienceImage onPress={pickImage}>
-            <PlusImg source={PlusIcon} />
-          </AddExperienceImage>
-        </ExperienceImageView>
-
-        <Form ref={formRef} onSubmit={handleSubmit} >
-          <ExperienceTitle 
+        />        
+        <Form ref={formRef} onSubmit={handleSubmit} >          
+          <ExperienceTitleInput 
             autoCapitalize="words"
             name="title"
             placeholder="Título da Experiência"
@@ -133,8 +171,27 @@ const CreateExperience = () => {
             maxLength={100}
           />
 
+          <Title>Imagens</Title>
+          <ExperienceImageView>
+            <ExperienceImageCarrousel horizontal={true} showsHorizontalScrollIndicator={false}>
+              {cover && <ExperienceImage source={{ uri: cover }} /> }
+              {
+                photos.length >= 1
+                ? photos.map((photo, i) => {
+                  return (
+                    <ExperienceImage key={`Photo:${photo}:${i}`} source={{uri: photo}} />
+                  )
+                })
+                : (<></>)
+              }
+              <AddExperienceImage onPress={handlePickImage}>
+                <PlusImg source={PlusIcon} />
+              </AddExperienceImage>   
+            </ExperienceImageCarrousel>
+          </ExperienceImageView>
+
           <Title>Descrição</Title>
-          <ExperienceDescription 
+          <ExperienceDescriptionInput 
             autoCapitalize="words"
             name="description"
             placeholder="Descreva sua experiência para o mundo!"
@@ -146,7 +203,7 @@ const CreateExperience = () => {
           <ExperienceDetails>
             <ExperienceDetailsRow>
               <ImageDetails source={AddressIcon} />
-              <DetailsInput 
+              <ExperienceDetailsInput 
                 autoCapitalize="words"
                 name="address"
                 placeholder="Endereço da experiência"
@@ -155,29 +212,19 @@ const CreateExperience = () => {
               />
             </ExperienceDetailsRow>
             <ExperienceDetailsRow>
-              <ImageDetails source={ReferencePointIcon} />
-              <DetailsInput
-                autoCapitalize="words"
-                name="reference-point"
-                placeholder="Ponto de referência"
-                placeholderTextColor="gray"
-                maxLength={100}
-              />
-            </ExperienceDetailsRow>
-            <ExperienceDetailsRow>
               <ImageDetails source={DurationIcon} />
-              <DetailsInput 
-                autoCapitalize="words"
+              <ExperienceDetailsInput 
+                keyboardType="number-pad"                
                 name="duration"
-                placeholder="Duração da experiência"
+                placeholder="Duração da experiência em minutos"
                 placeholderTextColor="gray"
                 maxLength={100}
               />
             </ExperienceDetailsRow>
             <ExperienceDetailsRow>
               <ImageDetails source={AmountPeopleIcon} />
-              <DetailsInput 
-                autoCapitalize="words"
+              <ExperienceDetailsInput 
+                keyboardType="number-pad"  
                 name="amount_people"
                 placeholder="Quantidade de pessoas por horário"
                 placeholderTextColor="gray"
@@ -186,8 +233,8 @@ const CreateExperience = () => {
             </ExperienceDetailsRow>
             <ExperienceDetailsRow>
               <ImageDetails source={PriceIcon} />
-              <DetailsInput 
-                autoCapitalize="words"
+              <ExperienceDetailsInput 
+                keyboardType="number-pad"  
                 name="price"
                 placeholder="Preço"
                 placeholderTextColor="gray"
@@ -216,10 +263,14 @@ const CreateExperience = () => {
             <ParentalRatingOption>
               <ParentalRatingImg source={EighteenYearsIcon} />
             </ParentalRatingOption>
+
+            <ParentalRatingOption>
+              <ParentalRatingImg source={EighteenYearsIcon} />
+            </ParentalRatingOption>
           </ParentalRating>
 
           <Title>O Que Levar? (Opcional)</Title>
-          <ExperienceDescription
+          <ExperienceDescriptionInput
             autoCapitalize="words"
             name="requirements"
             placeholder="O que levar na sua experiência? (Opcional)"
@@ -227,7 +278,11 @@ const CreateExperience = () => {
             maxLength={300}
           />
           <SaveBtn>
-            <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
+            <SaveBtnView 
+              onPress={() => {
+                formRef.current?.submitForm();
+              }}
+            >
               <SaveBtnText>Criar Experiência</SaveBtnText>
             </SaveBtnView>
           </SaveBtn>

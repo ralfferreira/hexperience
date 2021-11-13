@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useCallback, useRef } from 'react'
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { Form } from "@unform/mobile";
+
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
 
 import { useAuth } from '../../hooks/auth';
@@ -10,7 +11,7 @@ import api from '../../services/api';
 
 const LeafLeft = require('../../assets/img/Leafleft.png');
 const LeafRight = require('../../assets/img/Leafright.png');
-const ProfileImg = require('../../assets/img/luffy.jpg');
+const DefaultImg = require('../../assets/img/DinoGreenColor.png');
 const ChangePhotoIcon = require('../../assets/img/changephotoicon.png');
 
 import { 
@@ -34,8 +35,11 @@ import {
 } from './styles';
 
 const EditProfile = () => {
+  const formRef = useRef();
   const navigation = useNavigation();
   const { user } = useAuth();
+
+  const handleSubmit = useCallback(() => {}, [])
 
   return (
     <Container>
@@ -51,7 +55,13 @@ const EditProfile = () => {
         />
         <EditProfileContent>
           <EditProfilePhoto>
-            <EditProfilePhotoImage source={ProfileImg} />
+            <EditProfilePhotoImage 
+              source={
+                user.avatar_url
+                ? { uri: user.avatar_url }
+                : DefaultImg
+              }
+            />
             <EditProfileChangePhoto source={ChangePhotoIcon} />
           </EditProfilePhoto>
           <Form ref={formRef} onSubmit={handleSubmit} >
@@ -69,7 +79,6 @@ const EditProfile = () => {
               <EditProfileInputBio 
                 autoCapitalize="words"
                 name="Biografia"
-                placeholder="Biografia"
                 value={user.bio}
                 placeholderTextColor="black"
                 maxLength={350}
@@ -80,7 +89,7 @@ const EditProfile = () => {
               <ChangePasswordInput
                 name="password"
                 placeholder="Senha Atual"
-                textContentType="actualPassword"
+                textContentType="password"
                 returnKeyType="send"
               />
               <ChangePasswordInput 

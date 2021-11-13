@@ -22,7 +22,6 @@ export const Container = styled.View`
       border-color: #ff9000;
     `}
 `;
-
 export const TextInput = styled.TextInput`
   flex: 1;
   color: #000;
