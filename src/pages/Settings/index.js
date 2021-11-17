@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { StyleSheet } from 'react-native'
+import { Alert, StyleSheet } from 'react-native'
 import { useNavigation } from '@react-navigation/native'; 
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
@@ -20,6 +20,8 @@ const Settings = () => {
   const { signOut, user } = useAuth();
 
   const handleSignOut = useCallback(async () => {
+    Alert.alert('Tchauzinho', 'Nos vemos em breve!');
+
     await signOut();
   }, [signOut]);
 
@@ -33,7 +35,8 @@ const Settings = () => {
           <SwitchComponent />
         </SettingsThemeSwitcher>
         
-        {user.type === 'host' 
+        {
+          user.type === 'host' 
           ? <></> 
           : (
             <Touchable onPress={() => { navigation.navigate('RequestHost') }}>

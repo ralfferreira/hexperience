@@ -76,7 +76,12 @@ const RequestHost = () => {
       await api.post('hosts/request-privilege', postData)
         .catch((err) => { console.log(err.response);});
 
-      navigation.navigate('Home')
+      Alert.alert(
+        'Sucesso', 
+        'Sua requisição para privilégio de anfitrião foi enviada e será analisada'
+      );
+
+      navigation.navigate('Home');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);

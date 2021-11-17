@@ -67,6 +67,10 @@ const Experience = () => {
     });
   }, []);
 
+  const navigateToReportExperience = useCallback((exp_id) => {
+    navigation.navigate('ReportExperience', { exp_id });
+  }, [navigation]);
+
   const schedules = useMemo(() => {
     if (!experience) {
       return;
@@ -122,11 +126,7 @@ const Experience = () => {
     }
 
     return `${duration.minutes} min`
-  }, [experience]);
-
-  const navigateToReportExperience = useCallback((exp_id) => {
-    navigation.navigate('ReportExperience', { exp_id });
-  }, [navigation]);
+  }, [experience]);  
 
   const isFavorite = useMemo(() => {
     if (!favoritesRelation || !experience ) {

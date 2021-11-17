@@ -76,7 +76,9 @@ const SignUp = () => {
         email: data.email,
         password: data.password,
         phone_number: data.phone,
-      })
+      });
+
+      Alert.alert('Parabéns', 'Cadastro realizado com sucesso')
 
       navigation.navigate('Login');
     } catch (err) {
@@ -89,7 +91,7 @@ const SignUp = () => {
       }  
 
       Alert.alert(
-        'Erro na autenticação',
+        'Erro no cadastro',
         `${err}`
       );
     }

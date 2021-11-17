@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import { useNavigation } from "@react-navigation/core";
 
 import ExperienceCategory from '../../components/ExperienceCategory';
 import ExperienceCard from '../../components/ExperienceCard';
@@ -24,6 +25,7 @@ import {
 } from './styles';
 
 const Search = () => {
+  const navigation = useNavigation();
   const { favoritesRelation } = useFavorites();
 
   const [search, setSearch] = useState(null);
@@ -58,6 +60,15 @@ const Search = () => {
   const updateSearch = useCallback((value) => {
     setSearch(value)
   }, []);
+
+  const navigateToExperience = useCallback((exp_id) => {
+    navigation.navigate('ExperienceRoute', { 
+      screen: 'Experience',
+      params: {
+        exp_id
+      }
+    })
+  }, [navigation]);
 
   const filteredCategories = useMemo(() => {
     if (!categories) {
@@ -215,7 +226,7 @@ const Search = () => {
                       ? { uri: h.user.avatar_url }
                       : DefaultImg
                     }
-                    resizeMode="contain"
+                    resizeMode="center"
                   />
                 </HostProfile>
               )

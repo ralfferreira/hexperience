@@ -16,6 +16,7 @@ export const InputRow = styled.View`
     display: flex;
     justify-content: space-between;
     flex-direction: row;
+    align-items: center;
 `
 export const InputTitle = styled.Text`
     font-size: 16px;

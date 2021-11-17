@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { useConnection } from '../../hooks/connection';
 
-import Dino from '../../assets/img/dino2.png';
+import Dino from '../../assets/img/dino3.jpg';
 import SelectGreen from '../../assets/img/select-green.png';
 import SelectGray from '../../assets/img/select-gray.png';
 

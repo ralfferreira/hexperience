@@ -1,9 +1,13 @@
-import React, { useCallback, useRef, useState } from 'react'
-import { Platform, ScrollView, StyleSheet } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { useNavigation } from '@react-navigation/native';
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { Alert, ScrollView, StyleSheet } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import { CheckBox } from 'react-native-elements';
 import { Form } from "@unform/mobile";
+
+import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
+import MultilineDetailsInput from '../../components/MultilineDetailsInput';
+
+import api from '../../services/api';
 
 import BackImg from '../../assets/img/back.png';
 import LogoImg from '../../assets/img/dinoDaleGreen.png';
@@ -17,10 +21,7 @@ import {
   Logo,
   Title,
   AlignForm,
-  InputRow,
   InputTitle,
-  DateInput,
-  DetailsInput,
   SaveBtn,
   SaveBtnText,
   SaveBtnView 
@@ -28,27 +29,104 @@ import {
 
 const ReportExperience = () => {
   const formRef = useRef();
+  const route = useRoute();
   const navigation = useNavigation();
 
-  const [showDatepicker, setShowDatePicker] = useState(false);
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
+  const routeParams = route.params;
 
-  const handleToggleDatePicker = useCallback(() => {
-    setShowDatePicker((state) => !state);
-  }, []);
+  const [expId, setExpId] = useState(0);
 
-  const handleDateChange = useCallback((event, date) => {
-    if (Platform.OS === 'android') {
-      setShowDatePicker(false);
+  const [reason, setReason] = useState('Falta de Segurança');
+  const [otherReason, setOtherReason] = useState(null);
+  const [lackOfSafety, setLackOfSafety] = useState(true);
+  const [harassment, setHarassment] = useState(false);
+  const [illegal, setIllegal] = useState(false);
+  const [violence, setViolence] = useState(false);
+  const [otherCheckBox, setOtherCheckBox] = useState(false);
+
+  const [comment, setComment] = useState(null);
+
+  useEffect(() => {
+    setExpId(routeParams.exp_id);
+  }, [routeParams]);
+
+  const handleCheckBoxChange = useCallback((option) => {
+    setReason(option);
+    
+    switch (option) {
+      case 'Falta de Segurança':        
+        setLackOfSafety(true);
+        setHarassment(false);
+        setIllegal(false);
+        setViolence(false);
+        setOtherCheckBox(false);
+        break;
+      case 'Assédio':
+        setLackOfSafety(false);
+        setHarassment(true);
+        setIllegal(false);
+        setViolence(false);
+        setOtherCheckBox(false);
+        break;
+      case 'Conteúdo Ilegal':
+        setLackOfSafety(false);
+        setHarassment(false);
+        setIllegal(true);
+        setViolence(false);
+        setOtherCheckBox(false);
+        break;
+      case 'Violência Física/Verbal':
+        setLackOfSafety(false);
+        setHarassment(false);
+        setIllegal(false);
+        setViolence(true);
+        setOtherCheckBox(false);
+        break;
+      case 'Outro':
+        setLackOfSafety(false);
+        setHarassment(false);
+        setIllegal(false);
+        setViolence(false);
+        setOtherCheckBox(true);
+        break;
     }
+  }, [otherCheckBox]);
 
-    if (date) {
-      setDate(date);
+  const handleSubmit = useCallback(async () => {
+    try {
+      if (expId === 0) {
+        throw new Error('Experiencia não existe');
+      }
+
+      let reportReason = reason;
+
+      if (otherCheckBox) {
+        if (!otherReason) {
+          throw new Error('Uma categoria deve ser informada');
+        }
+
+        reportReason = otherReason;
+      }
+
+      if (!comment) {
+        throw new Error('Deve ser descrito o que ocorreu');
+      }
+
+      await api.post('/reports/experiences/', {
+        comment: comment,
+        reason: reportReason,
+        exp_id: expId
+      });
+
+      Alert.alert('Obrigado', 'Sua denúncia foi feita com sucesso.');
+
+      navigation.goBack();
+    } catch (err) {
+      console.log(err.response);
+
+      Alert.alert('Erro', `${err}`)
     }
-  }, []);
-
-  const handleSubmit = useCallback(() => {}, []);
+  }, [expId, reason, otherCheckBox, otherReason, comment]);
 
   return (
     <Container>
@@ -64,57 +142,70 @@ const ReportExperience = () => {
 
       <Form ref={formRef} onSubmit={handleSubmit} >
         <AlignForm>
-          <InputRow>
-            <InputTitle>Data do Ocorrido:</InputTitle>
-            <DateInput onPress={handleToggleDatePicker} />
-            {
-              showDatepicker &&
-              <DateTimePicker
-                value={date}
-                mode='date'
-                is24Hour={true}
-                display='calendar'
-                onChange={handleDateChange}
-              />
-            }
-          </InputRow>
-          {/* <CheckBox
+          <CheckBox
             title='Falta de Segurança'
             containerStyle={styles.checkbox}
             checkedColor="green"
-            checked={checked}
-            onPress={() => toggleChecked(!checked)}
+            checked={lackOfSafety}
+            onPress={() => handleCheckBoxChange('Falta de Segurança')}
           />
           <CheckBox
             title='Assédio'
             containerStyle={styles.checkbox}
             checkedColor="green"
-            checked={checked}
-            onPress={() => toggleChecked(!checked)}
+            checked={harassment}
+            onPress={() => handleCheckBoxChange('Assédio')}
           />
           <CheckBox
             title='Conteúdo Ilegal'
             containerStyle={styles.checkbox}
             checkedColor="green"
-            checked={checked}
-            onPress={() => toggleChecked(!checked)}
+            checked={illegal}
+            onPress={() => handleCheckBoxChange('Conteúdo Ilegal')}
           />
           <CheckBox
             title='Violência Física/Verbal'
             containerStyle={styles.checkbox}
             checkedColor="green"
-            checked={checked}
-            onPress={() => toggleChecked(!checked)}
-          /> */}
-          <InputTitle>Outro</InputTitle>
-          <DetailsInput 
-            autoCapitalize="words"
+            checked={violence}
+            onPress={() => handleCheckBoxChange('Violência Física/Verbal')}
+          />
+          <CheckBox
+            title='Outro:'
+            containerStyle={styles.checkbox}
+            checkedColor="green"
+            checked={otherCheckBox}
+            onPress={() => handleCheckBoxChange('Outro')}
+          />
+          {
+            otherCheckBox
+            ? (
+              <ExperienceDetailsInput               
+                name="reason"
+                maxLength={100}
+                editable={otherCheckBox}
+                value={otherReason}
+                placeholder='Informe a categoria da denúncia. Ex: Fraude'
+                onChangeText={(text) => setOtherReason(text)}
+              />
+            )
+            : (<></>)
+          }          
+          <InputTitle>O que ocorreu?</InputTitle>
+          <MultilineDetailsInput 
             name="other"
-            placeholder="Descreva para nós o corrido"
-            maxLength={300}
+            placeholder="Descreva para nós o ocorrido"
+            maxLength={350}
+            multiline={true}
+            value={comment}
+            onChangeText={(text) => setComment(text)}
           />
           <SaveBtn>
-            <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
+            <SaveBtnView
+              onPress={() => {
+                formRef.current?.submitForm();
+              }}
+            >
               <SaveBtnText>Enviar</SaveBtnText>
             </SaveBtnView>
           </SaveBtn>
