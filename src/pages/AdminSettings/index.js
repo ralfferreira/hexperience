@@ -5,6 +5,7 @@ import SwitchComponent from '../../components/Switch';
 import { Container, AlignForm, InputTitle, DetailsInput, SaveBtn, SaveBtnText, SaveBtnView, SettingsThemeSwitcher, OptionTitle } from './styles';
 import { ScrollView, KeyboardAvoidingView } from 'react-native';
 import { Form } from "@unform/mobile";
+import * as Yup from 'yup';
 
 const AdminSettings = () => {
   return (

@@ -3,12 +3,15 @@ import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { isAfter, format, addMinutes, parseISO, intervalToDuration } from 'date-fns';
 import ptBR from 'date-fns/esm/locale/pt-BR';
+import { Form } from "@unform/mobile";
+import * as Yup from 'yup';
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceCategory from '../../components/ExperienceCategory';
 import ExperienceSchedule from '../../components/ExperienceSchedule';
 import Comment from '../../components/Comment';
 import Rating from '../../components/Rating';
+import AddComment from '../../components/AddComment';
 import ParentalRating from '../../components/ParentalRating';
 
 import { useFavorites } from '../../hooks/favorites';
@@ -23,6 +26,7 @@ import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
 import DefaultImg from '../../assets/img/DinoGreenColor.png'
+import AddCommentImg from '../../assets/img/add-comment.png'
 
 import { 
   Container, 
@@ -46,7 +50,10 @@ import {
   ExperienceParentalRating,
   ExperienceWhatTake, 
   ExperienceSchedules, 
-  CommentsList 
+  CommentsList,
+  AddComments,
+  AddCommentButton,
+  AddCommentIcon
 } from './styles';
 
 const Experience = () => {
@@ -253,6 +260,26 @@ const Experience = () => {
                 </ExperienceSchedules>
 
                 <Title>Comentários</Title>
+                <Form>
+                  <AddComments>
+                    <KeyboardAvoidingView
+                      behavior={Platform.OS === "ios" ? "padding" : undefined}
+                      enabled
+                    />
+                    <AddComment 
+                    autoCapitalize="words"
+                    name="comment"
+                    placeholder="Adicione um comentário"
+                    maxLength={200}
+                    multiline
+                    />
+                    <AddCommentButton 
+                    // onPress={handleAddComment}
+                    >
+                      <AddCommentIcon source={AddCommentImg} />
+                    </AddCommentButton>
+                  </AddComments>
+                </Form>
                 <CommentsList>
                   {
                     experience.reviews 

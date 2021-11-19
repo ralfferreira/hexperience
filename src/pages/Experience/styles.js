@@ -94,3 +94,23 @@ export const CommentsList = styled.ScrollView`
     flex-direction: column;
     margin-bottom: 50px;
 `
+export const AddComments = styled.View`
+    padding: 15px;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+`
+export const AddCommentButton = styled.TouchableOpacity`
+    margin-left: 10px;
+    margin-bottom: 5px;
+    background-color:#00FF01;
+    border-radius: 100px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+`
+export const AddCommentIcon = styled.Image`
+`
