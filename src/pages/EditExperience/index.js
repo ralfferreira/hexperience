@@ -20,6 +20,7 @@ import FreeIcon from '../../assets/img/freeicon.png';
 import TenYearsIcon from '../../assets/img/tenyearsicon.png';
 import TwelveYearsIcon from '../../assets/img/twelveyearsicon.png';
 import FourteenYearsIcon from '../../assets/img/fourteenyearsicon.png';
+import SixteenYearsIcon from '../../assets/img/sixteenyearsicon.png';
 import EighteenYearsIcon from '../../assets/img/eighteenyearsicon.png';
 
 import { 
@@ -296,7 +297,7 @@ const EditExperience = () => {
             </ParentalRatingOption>
 
             <ParentalRatingOption>
-              <ParentalRatingImg source={EighteenYearsIcon} />
+              <ParentalRatingImg source={SixteenYearsIcon} />
             </ParentalRatingOption>
 
             <ParentalRatingOption>
