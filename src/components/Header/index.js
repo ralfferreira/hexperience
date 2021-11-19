@@ -12,7 +12,7 @@ const Header = ({ children, ...rest }) => {
   return (
     <SearchBar {...rest}>
       <Touchable 
-        onPress={() => navigation.navigate('SearchRoute')}
+        onPress={() => navigation.navigate('AdminRoute')}
       >
         <Search source={SearchImg} />
       </Touchable>
