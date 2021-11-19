@@ -56,12 +56,19 @@ const Login = () => {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
-          return
+          formRef.current?.setErrors(errors);
+
+          Alert.alert(
+            'Erro na autenticação',
+            `${err.message}`
+          );
+
+          return;
         }
 
         Alert.alert(
           'Erro na autenticação',
-          `${err}`
+          `${err.response.data.message}`
         );
       }
     },

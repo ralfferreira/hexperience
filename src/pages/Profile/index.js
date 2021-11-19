@@ -1,15 +1,16 @@
-import React from 'react';
-import { ScrollView } from 'react-native'
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import { ScrollView, Alert } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 
 import Header from '../../components/Header'
-import FloatButton from '../../components/FloatButton'
 import HostExperienceCard from '../../components/HostExperienceCard'
+import ExperienceCard from '../../components/ExperienceCard';
 
 import { useAuth } from '../../hooks/auth';
+import { useFavorites } from '../../hooks/favorites';
 
-const ExperienceImg = require('../../assets/img/div-image-experience.png');
-const Experience2Img = require('../../assets/img/onepice.gif');
+import api from '../../services/api';
+
 const LeafLeft = require('../../assets/img/Leafleft.png');
 const LeafRight = require('../../assets/img/Leafright.png');
 const EditProfileImg = require('../../assets/img/editprofile.png');
@@ -38,6 +39,102 @@ import {
 const Profile = () => {
   const navigation = useNavigation();
   const { user } = useAuth();
+  const { favoritesRelation } = useFavorites();
+
+  const [experiences, setExperiences] = useState([]);
+
+  useEffect(() => {
+    if (user.type === 'host') {
+      api.get(`/experiences/host/${user.host.id}`).then((response) => {
+        setExperiences(response.data);
+      }).catch((err) => {
+        Alert.alert(
+          'Erro ao carregar experiências', 
+          `${err.response.data.message}`
+        );
+      })
+    } else if (user.type === 'user') {
+      api.get(`/experiences/user/${user.id}`).then((response) => {
+        setExperiences(response.data);
+      }).catch((err) => {
+        Alert.alert(
+          'Erro ao carregar experiências', 
+          `${err.response.data.message}`
+        );
+      })
+    }
+  }, [user]);
+
+  const navigateToExperience = useCallback((exp_id) => {
+    navigation.navigate('ExperienceRoute', { 
+      screen: 'Experience',
+      params: {
+        exp_id
+      }
+    })
+  }, [navigation]);
+
+  const navigateToEditExperience = useCallback((exp_id) => {
+    navigation.navigate('EditExperienceRoute', { 
+      screen: 'EditExperience',
+      params: {
+        exp_id
+      }
+    })
+  }, [navigation]);
+
+  const handleDeleteExperience = useCallback(async (exp_id) => {
+    api.delete(`/experiences/${exp_id}`).then((response) => {
+      Alert.alert('Sucesso', 'Experiência apagada com sucesso')
+    }).catch((err) => {
+      Alert.alert('Erro ao deletar experiência', `${err.response.data.message}`);
+    })
+  }, []);
+
+  const ensureDeleteExperience = useCallback((exp_id, name) => {
+    Alert.alert(
+      'Excluir experiência',
+      `Tem certeza que deseja excluir a experiência "${name}"?`,
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Continuar',
+          onPress: () => handleDeleteExperience(exp_id)
+        }
+      ]
+    )
+  }, [handleDeleteExperience]);
+
+  const formattedExperiences = useMemo(() => {
+    if (!experiences.length) {
+      return [];
+    }
+
+    if (user.type === 'host') {
+      return experiences;
+    }
+
+    const format = experiences.map(experience => {
+      let isFavorite = false;
+
+      if (favoritesRelation.length) {
+        if (favoritesRelation.find(fav => fav.exp_id === experience.id)) {
+          isFavorite = true;
+        }
+      }
+
+      return {
+        experience: experience,
+        isFavorite: isFavorite
+      }
+    });
+
+    return format;
+  }, [experiences, favoritesRelation, user]);
 
   return (
     <Container>
@@ -82,33 +179,45 @@ const Profile = () => {
           }
         </Title>
         <Experiences horizontal={true} showsHorizontalScrollIndicator={false}>
-          <HostExperienceCard 
-            image={ExperienceImg}
-            name="Pescaria com Caio Castro"
-            localizationText="Fortaleza - CE"
-            price="R$ 800,00"
-          />
-          <HostExperienceCard 
-            image={Experience2Img}
-            name="Tarde com o Luffy"
-            localizationText="Tokyo - JP"
-            price="R$ 3500,00" 
-          />
-          <HostExperienceCard 
-            image={Experience2Img}
-            name="Tarde com o Luffy"
-            localizationText="Tokyo - JP"
-            price="R$ 3500,00" 
-          />
-          <HostExperienceCard 
-            image={Experience2Img}
-            name="Tarde com o Luffy"
-            localizationText="Tokyo - JP"
-            price="R$ 3500,00" 
-          />
+          {
+            formattedExperiences.length
+            ? formattedExperiences.map(entry => {
+              if (user.type === 'host') {
+                return (
+                  <HostExperienceCard 
+                    key={entry.id}
+                    address={entry.address}
+                    image={entry.cover_url}
+                    name={entry.name}
+                    price={entry.price}
+                    onEditPress={() => navigateToEditExperience(entry.id)}
+                    onDeletePress={
+                      () => ensureDeleteExperience(entry.id, entry.name)
+                    }
+                  />
+                )
+              }
+
+              const { isFavorite, experience } = entry;
+
+              return (
+                <ExperienceCard
+                  key={experience.id}
+                  image={experience.cover_url}
+                  name={experience.name}
+                  address={experience.addresss}
+                  price={experience.price}
+                  onPress={() => navigateToExperience(experience.id)}
+                  rating={experience.rating}
+                  ratingDisabled={true}
+                  isFavorite={isFavorite}
+                />
+              )
+            })
+            : (<></>)
+          }
         </Experiences>
       </ScrollView>
-      {user.type === 'host' ? <FloatButton /> : <></>}
     </Container>
   );
 };

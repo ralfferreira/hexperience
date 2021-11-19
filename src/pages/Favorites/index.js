@@ -28,7 +28,7 @@ const Favorites = () => {
   const { folders } = useFavorites();
   const navigation = useNavigation();
 
-  const [favorites, setFavorites] = useState(null);
+  const [favorites, setFavorites] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(null);
 
   useEffect(() => {
@@ -55,6 +55,10 @@ const Favorites = () => {
   const filteredFavorites = useMemo(() => {
     if (!selectedFolder) {
       return favorites
+    }
+
+    if (!favorites.length) {
+      return [];
     }
 
     return favorites.filter(fav => {
@@ -97,7 +101,7 @@ const Favorites = () => {
         </Folders>
         <Experiences horizontal={false} showsHorizontalScrollIndicator={false}>
           {
-            filteredFavorites 
+            filteredFavorites
             ? filteredFavorites.map(fav => {
               return (
                 <HorizontalCard 

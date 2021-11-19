@@ -17,7 +17,7 @@ const FavoritesContext = createContext({});
 const FavoritesProvider = ({children}) => {
   const { loading, user  } = useAuth();
 
-  const [favoritesRelation, setFavoritesRelation] = useState(null);
+  const [favoritesRelation, setFavoritesRelation] = useState([]);
   
   useEffect(() => {
     async function loadFavoritesRelation() {

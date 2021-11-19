@@ -19,11 +19,29 @@ const Settings = () => {
   const navigation = useNavigation();
   const { signOut, user } = useAuth();
 
-  const handleSignOut = useCallback(async () => {
+  const handleSignOut = useCallback(() => {
     Alert.alert('Tchauzinho', 'Nos vemos em breve!');
 
-    await signOut();
+    signOut();
   }, [signOut]);
+
+  const ensureSignOut = useCallback(() => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair?',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Sair',
+          onPress: () => handleSignOut(),
+        }
+      ]
+    )
+  }, [handleSignOut]);
 
   return (
     <Container>
@@ -48,7 +66,7 @@ const Settings = () => {
         <Touchable onPress={() => { navigation.navigate('ReportBug') }}>
           <OptionTitle>Reportar Problema</OptionTitle>
         </Touchable>
-        <Touchable onPress={handleSignOut}>
+        <Touchable onPress={ensureSignOut}>
           <OptionTitle style={styles.red}>Sair</OptionTitle>
         </Touchable>
       </SettingsBody>

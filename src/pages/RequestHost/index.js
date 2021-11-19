@@ -87,11 +87,18 @@ const RequestHost = () => {
         const errors = getValidationErrors(err);
 
         formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro na solicitação',
+          `${err.message}`
+        );
+
+        return;
       }
 
       Alert.alert(
-        'Erro',
-        `${err}`
+        'Erro na solicitação',
+        `${err.response.data.message}`
       );
     }
   }, [navigation]);

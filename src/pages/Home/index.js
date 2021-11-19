@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Alert, ScrollView } from 'react-native'
 import { useNavigation } from '@react-navigation/native';
 
@@ -42,7 +42,7 @@ const Home = () => {
     api.get('/experiences').then((response) => {
       setRecommendedExperiences(response.data);
     }).catch((err) => { 
-      Alert.alert(`${err.message}`)
+      Alert.alert(`${err.response.data.message}`)
     });
   }, []);
 
@@ -61,7 +61,7 @@ const Home = () => {
         }).then ((response) => {
           setNearExperiences(response.data);
         }).catch((err) => {
-          Alert.alert(`${err.message}`)
+          Alert.alert(`${err.response.data.message}`)
         });
       })
       .catch((err) => {
@@ -78,6 +78,58 @@ const Home = () => {
     })
   }, [navigation]);
 
+  const formattedNear = useMemo(() => {
+    if (!nearExperiences.length) {
+      return [];
+    }
+
+    const format = nearExperiences.map((entry) => {
+      const { experience } = entry
+
+      let isFavorite = false;
+
+      if (favoritesRelation.length) {
+        if (favoritesRelation.find(fav => fav.exp_id === experience.id)) {
+          isFavorite = true;
+        }
+      }
+
+      return {
+        available: entry.available,
+        experience: experience,
+        isFavorite: isFavorite
+      }
+    });
+
+    return format;
+  }, [favoritesRelation, nearExperiences]);
+
+  const formattedRecommended = useMemo(() => {
+    if (!recommendedExperiences.length) {
+      return [];
+    }
+
+    const format = recommendedExperiences.map((entry) => {
+      const { experience } = entry
+
+      let isFavorite = false;
+
+      if (favoritesRelation.length) {
+        if (favoritesRelation.find(fav => fav.exp_id === experience.id)) {
+          isFavorite = true;
+        }
+      }
+
+      return {
+        available: entry.available,
+        experience: experience,
+        isFavorite: isFavorite
+      }
+    });
+
+    return format;
+  }, [favoritesRelation, recommendedExperiences]);
+
   return (
     <Container>
       <Header>
@@ -86,7 +138,7 @@ const Home = () => {
       <ScrollView>
         <Content>
           { 
-            nearExperiences.length 
+            formattedNear.length 
             ? (
               <NearToYou>
                 <ContentHeader>
@@ -96,14 +148,8 @@ const Home = () => {
                 </ContentHeader>            
                 <ContentBody horizontal={true} showsHorizontalScrollIndicator={false}>
                   {
-                    nearExperiences.map((entry) => {
-                      const { experience } = entry;
-
-                      let isFavorite = false;
-
-                      if (favoritesRelation.find(e => e.exp_id === experience.id)) {
-                        isFavorite = true;
-                      }
+                    formattedNear.map((entry) => {
+                      const { experience, isFavorite } = entry;
 
                       return (
                         <ExperienceCard
@@ -126,7 +172,7 @@ const Home = () => {
             : (<></>)
           }
           {
-            recommendedExperiences.length
+            formattedRecommended.length
             ? (
               <Recommended>
                 <ContentHeader>
@@ -137,14 +183,8 @@ const Home = () => {
 
                 <ContentBody horizontal={true} showsHorizontalScrollIndicator={false}>
                   {
-                    recommendedExperiences.map((entry) => {
-                      const { experience } = entry;
-
-                      let isFavorite = false;                      
-
-                      if (favoritesRelation.find(e => e.exp_id === experience.id)) {
-                        isFavorite = true;
-                      }
+                    formattedRecommended.map((entry) => {
+                      const { experience, isFavorite } = entry;
 
                       return (
                         <ExperienceCard

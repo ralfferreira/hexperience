@@ -56,9 +56,9 @@ const CreateExperience = () => {
         title: Yup.string().required('Título é obrigatório'),
         description: Yup.string().required('Descrição é obrigatório'),
         address: Yup.string().required('Descrição é obrigatório'),
-        duration: Yup.number().required('Duração é obrigatório'),
+        duration: Yup.number().max(360).required('Duração é obrigatório'),
         amount_people: Yup.number().required('Número de pessoas por horário é obrigatório'),
-        price: Yup.number().required('Preço é obrigatorio'),
+        price: Yup.number().min(0).required('Preço é obrigatorio'),
         requirements: Yup.string().optional()
       });
 
@@ -169,6 +169,7 @@ const CreateExperience = () => {
             placeholder="Título da Experiência"
             placeholderTextColor="gray"
             maxLength={100}
+            multiline
           />
 
           <Title>Imagens</Title>
@@ -197,6 +198,7 @@ const CreateExperience = () => {
             placeholder="Descreva sua experiência para o mundo!"
             placeholderTextColor="gray"
             maxLength={300}
+            multiline
           />
 
           <Title>Detalhes</Title>
@@ -276,6 +278,7 @@ const CreateExperience = () => {
             placeholder="O que levar na sua experiência? (Opcional)"
             placeholderTextColor="gray"
             maxLength={300}
+            multiline
           />
           <SaveBtn>
             <SaveBtnView 

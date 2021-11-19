@@ -81,9 +81,7 @@ const EditProfile = () => {
 
       Alert.alert('Sucesso', 'Avatar atualizado com sucesso');
     } catch (err) {
-      console.log(err.response);
-
-      Alert.alert('Erro na atualização do perfil', `${err}`);
+      Alert.alert('Erro na atualização do perfil', `${err.response.data.message}`);
     }
   }, []);
 

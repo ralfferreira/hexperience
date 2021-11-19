@@ -29,9 +29,9 @@ const Search = () => {
   const { favoritesRelation } = useFavorites();
 
   const [search, setSearch] = useState(null);
-  const [categories, setCategories] = useState(null);
-  const [experiences, setExperiences] = useState(null);
-  const [hosts, setHosts] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [experiences, setExperiences] = useState([]);
+  const [hosts, setHosts] = useState([]);
 
   useEffect(() => {
     api.get('/experiences/categories').then((response) => {
@@ -70,8 +70,34 @@ const Search = () => {
     })
   }, [navigation]);
 
+  const formattedExperiences = useMemo(() => {
+    if (!experiences.length) {
+      return [];
+    }
+
+    const format = experiences.map(entry => {
+      const { experience, available } = entry;
+
+      let isFavorite = false;
+
+      if (favoritesRelation.length) {
+        if (favoritesRelation.find(fav => fav.exp_id === experience.id)) {
+          isFavorite = true;
+        }
+      }
+
+      return {
+        isFavorite: isFavorite,
+        experience: experience,
+        available: available
+      }
+    });
+
+    return format;
+  }, [experiences, favoritesRelation]);
+
   const filteredCategories = useMemo(() => {
-    if (!categories) {
+    if (!categories.length) {
       return [];
     }
 
@@ -89,27 +115,27 @@ const Search = () => {
   }, [search, categories]);
 
   const filteredExperiences = useMemo(() => {
-    if (!experiences) {
+    if (!formattedExperiences.length) {
       return [];
     }
 
     if (!search) {
-      return experiences;
+      return formattedExperiences;
     }
 
     const regex = new RegExp(`.*${search.toLowerCase()}.*`)
 
-    return experiences.filter(entry => {
+    return formattedExperiences.filter(entry => {
       const { experience } = entry
 
       if (regex.test(experience.name.toLowerCase())) {
         return experience;
       }
     });
-  }, [search, experiences]);
+  }, [search, formattedExperiences]);
 
   const filteredHosts = useMemo(() => {
-    if (!hosts) {
+    if (!hosts.length) {
       return [];
     }
 
@@ -182,13 +208,7 @@ const Search = () => {
           {
             filteredExperiences
             ? filteredExperiences.map(entry => {
-              const { experience } = entry;
-
-              let isFavorite = false;                      
-
-              if (favoritesRelation.find(e => e.exp_id === experience.id)) {
-                isFavorite = true;
-              }
+              const { experience, isFavorite } = entry;
               
               return (
                 <ExperienceCard
@@ -208,7 +228,7 @@ const Search = () => {
           }      
         </Experiences>
 
-        <Row>
+        {/* <Row>
           <Title>Anfitriões</Title>
           <SeeAll>ver todos os anfitriões</SeeAll>
         </Row>
@@ -233,7 +253,7 @@ const Search = () => {
             })
             : (<></>)
           }
-        </Hosts>
+        </Hosts> */}
       </ScrollView>
     </Container>
   )

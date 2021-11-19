@@ -87,12 +87,17 @@ const SignUp = () => {
 
         formRef.current?.setErrors(errors);
 
+        Alert.alert(
+          'Erro no cadastro',
+          `${err.message}`
+        );
+
         return;
       }  
 
       Alert.alert(
         'Erro no cadastro',
-        `${err}`
+        `${err.response.data.message}`
       );
     }
   }, [navigation]);

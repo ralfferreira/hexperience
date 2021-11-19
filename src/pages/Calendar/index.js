@@ -25,13 +25,13 @@ const Calendar = () => {
   const { favoritesRelation } = useFavorites();
   const navigation = useNavigation();
 
-  const [appointments, setAppointments] = useState(null);
+  const [appointments, setAppointments] = useState([]);
 
   useEffect(() => {
     api.get(`/appointments/users/${user.id}`).then((response) => {
       setAppointments(response.data);
     }).catch((err) => {
-      Alert.alert(`${err.message}`)
+      Alert.alert('Erro ao carregar agendamentos', `${err.response.data.message}`)
     });
   }, []);
 
@@ -49,7 +49,7 @@ const Calendar = () => {
   });
 
   const formattedData = useMemo(() => {
-    if (!appointments) {
+    if (!appointments.length) {
       return [];
     }
 
@@ -110,8 +110,28 @@ const Calendar = () => {
             }
           });
 
+          const formattedAppointment = fromD.map(entry => {
+            const { appointment, isHost } = entry;
+
+            const { experience } = appointment.schedule;
+
+            let isFavorite = false;
+
+            if (favoritesRelation.length) {
+              if (favoritesRelation.find(fav => fav.exp_id === experience.id)) {
+                isFavorite = true;
+              }
+            }
+
+            return {
+              appointment: appointment,
+              isFavorite: isFavorite,
+              isHost: isHost
+            };
+          });
+
           return {
-            data: fromD,
+            data: formattedAppointment,
             day: d
           };
         });
@@ -129,14 +149,14 @@ const Calendar = () => {
     });
 
     return yearsResult;
-  }, [appointments]);
+  }, [appointments, favoritesRelation]);
 
   return (
     <Container>
       <Header>Calendário</Header>
       <ScrollView>
         {
-          formattedData 
+          formattedData.length
           ? formattedData.map((y, iy) => {
             return (
               <>
@@ -174,14 +194,8 @@ const Calendar = () => {
                                   {
                                     d.data.length
                                     ? d.data.map(dt => {
-                                      const a = dt.appointment;
+                                      const a = dt.appointment;                                      
                                       const e = a.schedule.experience;
-
-                                      let isFavorite = false;
-
-                                      if (favoritesRelation.find(e => e.exp_id === e.id)) {
-                                        isFavorite = true;
-                                      }
 
                                       return (
                                         <HorizontalCard 
@@ -194,7 +208,7 @@ const Calendar = () => {
                                             isHost: dt.isHost,
                                             exp_id: e.id
                                           })}
-                                          isFavorite={isFavorite}
+                                          isFavorite={dt.isFavorite}
                                         />
                                       )
                                     })
