@@ -17,7 +17,9 @@ const Header = ({ children, ...rest }) => {
         <Search source={SearchImg} />
       </Touchable>
       <Title>{children}</Title>
-      <Logo source={LogoImg} />
+      <Touchable onPress={() => navigation.navigate('NotificationsRoute')}>
+        <Logo source={LogoImg} />
+      </Touchable>
     </SearchBar>
   );
 };

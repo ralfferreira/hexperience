@@ -10,6 +10,7 @@ import hostEditExperience from "./hostEditExperience.routes";
 import experienceDetails from "./experience.routes";
 import AdminDetails from './admin.routes'
 import SearchPage from './search.routes'
+import NotificationsPage from './notifications.routes'
 
 import { useAuth } from '../hooks/auth';
 
@@ -31,6 +32,7 @@ const Route = () => {
         <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
         <Routes.Screen name="AdminRoute" component={AdminDetails} />
         <Routes.Screen name="SearchRoute" component={SearchPage} />
+        <Routes.Screen name="NotificationsRoute" component={NotificationsPage} />
         <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />
         <Routes.Screen name="EditExperienceRoute" component={hostEditExperience} />
         <Routes.Screen name="SettingsRoute" component={userSettings} />
