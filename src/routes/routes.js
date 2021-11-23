@@ -11,7 +11,6 @@ import experienceDetails from "./experience.routes";
 import AdminDetails from './admin.routes'
 import SearchPage from './search.routes'
 import NotificationsPage from './notifications.routes'
-
 import { useAuth } from '../hooks/auth';
 
 const Routes = createStackNavigator();

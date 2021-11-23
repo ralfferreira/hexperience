@@ -1,8 +1,55 @@
 import React from 'react';
 import { View, Image } from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import HomeScreen from '../pages/Admin'
+import { createStackNavigator } from "@react-navigation/stack";
+import Admin from "../pages/Admin";
+import AdminHostRequest from "../pages/AdminHostRequest";
+import AdminComplaintUsers from "../pages/AdminComplaintUsers";
+import AdminBlockedUsers from "../pages/AdminBlockedUsers";
+import AdminBlockedExperiences from "../pages/AdminBlockedExperiences";
+import AdminReportedExperiences from "../pages/AdminReportedExperiences";
+import AdminReportedBugs from "../pages/AdminReportedBugs";
 import SettingsScreen from '../pages/AdminSettings'
+
+const HomeStack = createStackNavigator();
+
+const HomeStackScreen = () => {
+  return(
+    <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+      <HomeStack.Screen name="Admin" component={Admin} />
+      <HomeStack.Screen name="AdminHostRequests" component={AdminHostRequest} options={{
+        headerShown: true, 
+        title: 'Solicitações de Anfitrião',
+        headerTitleAlign: 'center',
+        }} />
+      <HomeStack.Screen name="AdminComplaintUsers" component={AdminComplaintUsers} options={{
+        headerShown: true, 
+        title: 'Usuários Denunciados',
+        headerTitleAlign: 'center',
+        }} />
+      <HomeStack.Screen name="AdminBlockedUsers" component={AdminBlockedUsers} options={{
+        headerShown: true, 
+        title: 'Usuários Bloqueados',
+        headerTitleAlign: 'center',
+        }} />
+      <HomeStack.Screen name="AdminBlockedExperiences" component={AdminBlockedExperiences} options={{
+        headerShown: true, 
+        title: 'Experiências Bloqueadas',
+        headerTitleAlign: 'center',
+        }} />
+      <HomeStack.Screen name="AdminReportedExperiences" component={AdminReportedExperiences} options={{
+        headerShown: true, 
+        title: 'Experiências Reportadas',
+        headerTitleAlign: 'center',
+        }} />
+      <HomeStack.Screen name="AdminReportedBugs" component={AdminReportedBugs} options={{
+        headerShown: true, 
+        title: 'Problemas Relatados',
+        headerTitleAlign: 'center',
+        }} />
+    </HomeStack.Navigator>
+  );
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -17,7 +64,7 @@ const AdminTabs = () => {
         height: 80,
       }
     }}>
-      <Tab.Screen name="Home" component={HomeScreen} options={{
+      <Tab.Screen name="Home" component={HomeStackScreen} options={{
         tabBarIcon: ({focused}) => (
           <View style={{alignItems: 'center', justifyContent:'center', top: 10}}>
             <Image 
@@ -54,36 +101,3 @@ const AdminTabs = () => {
 }
 
 export default AdminTabs;
-
-// import React from "react";
-// import { createStackNavigator } from "@react-navigation/stack";
-// import Admin from "../pages/Admin";
-// import HostRequests from "../pages/HostRequests";
-// import ComplaintUsers from "../pages/ComplaintUsers";
-// import BlockedUsers from "../pages/BlockedUsers";
-// import BlockedExperiences from "../pages/BlockedExperiences";
-// import ReportedExperiences from "../pages/ReportedExperiences";
-// import ReportedBugs from "../pages/ReportedBugs";
-
-// const AdminRoute = createStackNavigator();
-
-// const AdminDetails = () => (
-//   <AdminRoute.Navigator
-//     screenOptions={{
-//       headerShown: false,
-//   }}>
-//     <AdminRoute.Screen name="Admin" component={Admin} />
-
-//     <AdminRoute.Screen name="HostRequests" component={HostRequests} />
-//     <AdminRoute.Screen name="ComplaintUsers" component={ComplaintUsers} />
-//     <AdminRoute.Screen name="BlockedUsers" component={BlockedUsers} />
-
-//     <AdminRoute.Screen name="BlockedExperiences" component={BlockedExperiences} />
-//     <AdminRoute.Screen name="ReportedExperiences" component={ReportedExperiences} />
-
-//     <AdminRoute.Screen name="ReportedBugs" component={ReportedBugs} />
-    
-//   </AdminRoute.Navigator>
-// );
-
-// export default AdminDetails;

@@ -1,11 +1,10 @@
-import { Text } from 'react-native';
-
+import React from 'react'
 import { Container } from './styles';
 
 const AdminReportedExperiences = () => {
   return (
     <Container>
-      <Text>AdminReportedExperiences</Text>
+      
     </Container>
   );
 };
