@@ -58,3 +58,4 @@ export const RequestItemDate = styled.Text`
     text-align: right;
     color: #161616;
 `
+export const Touchable = styled.TouchableOpacity``

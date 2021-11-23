@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Content, ReportedExperiencesList, ReportedExperiencesRow, ReportedExperiencesItem, ReportedExperiencesHeader, ReportedExperiencesImage, ReportedExperiencesName, ReportedExperiencesAlert, ReportedExperiencesDate  } from './styles';
+import { Container, Content, Touchable, ReportedExperiencesList, ReportedExperiencesRow, ReportedExperiencesItem, ReportedExperiencesHeader, ReportedExperiencesImage, ReportedExperiencesName, ReportedExperiencesAlert, ReportedExperiencesDate  } from './styles';
 import { SearchBar } from 'react-native-elements';
 import Luffy from '../../assets/img/luffy.jpg';
 const AdminReportedExperiences = () => {
@@ -25,6 +25,7 @@ const AdminReportedExperiences = () => {
       <Content>
         <ReportedExperiencesList>
           <ReportedExperiencesRow>
+            <Touchable>
             <ReportedExperiencesItem>
               <ReportedExperiencesHeader>
                 <ReportedExperiencesImage source={Luffy} />
@@ -33,7 +34,9 @@ const AdminReportedExperiences = () => {
               <ReportedExperiencesAlert>Falta de Segurança</ReportedExperiencesAlert>
               <ReportedExperiencesDate>23/11/2021</ReportedExperiencesDate>
             </ReportedExperiencesItem>
+            </Touchable>
 
+            <Touchable>
             <ReportedExperiencesItem>
               <ReportedExperiencesHeader>
                 <ReportedExperiencesImage source={Luffy} />
@@ -42,26 +45,7 @@ const AdminReportedExperiences = () => {
               <ReportedExperiencesAlert>Falta de Segurança</ReportedExperiencesAlert>
               <ReportedExperiencesDate>23/11/2021</ReportedExperiencesDate>
             </ReportedExperiencesItem>
-          </ReportedExperiencesRow>
-
-          <ReportedExperiencesRow>
-            <ReportedExperiencesItem>
-              <ReportedExperiencesHeader>
-                <ReportedExperiencesImage source={Luffy} />
-              </ReportedExperiencesHeader>
-              <ReportedExperiencesName>Passeio com Monkey D. Luffy</ReportedExperiencesName>
-              <ReportedExperiencesAlert>Falta de Segurança</ReportedExperiencesAlert>
-              <ReportedExperiencesDate>23/11/2021</ReportedExperiencesDate>
-            </ReportedExperiencesItem>
-
-            <ReportedExperiencesItem>
-              <ReportedExperiencesHeader>
-                <ReportedExperiencesImage source={Luffy} />
-              </ReportedExperiencesHeader>
-              <ReportedExperiencesName>Passeio com Monkey D. Luffy</ReportedExperiencesName>
-              <ReportedExperiencesAlert>Falta de Segurança</ReportedExperiencesAlert>
-              <ReportedExperiencesDate>23/11/2021</ReportedExperiencesDate>
-            </ReportedExperiencesItem>
+            </Touchable>
           </ReportedExperiencesRow>
         </ReportedExperiencesList>
       </Content>
