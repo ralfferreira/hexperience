@@ -54,7 +54,8 @@ import {
   CommentsList,
   AddComments,
   AddCommentButton,
-  AddCommentIcon
+  AddCommentIcon,
+  AlignRating
 } from './styles';
 
 const Experience = () => {
@@ -302,11 +303,13 @@ const Experience = () => {
 
                 <Title>Comentários</Title>
                 <Form ref={formRef} onSubmit={handleCreateComment} >
-                  <Rating
-                    rating={rating}
-                    disabled={false}
-                    setRating={setRating}
-                  />
+                  <AlignRating>
+                    <Rating
+                      rating={rating}
+                      disabled={false}
+                      setRating={setRating}
+                    />
+                  </AlignRating>
                   <AddComments>
                     <KeyboardAvoidingView
                       behavior={Platform.OS === "ios" ? "padding" : undefined}

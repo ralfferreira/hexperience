@@ -114,3 +114,8 @@ export const AddCommentButton = styled.TouchableOpacity`
 `
 export const AddCommentIcon = styled.Image`
 `
+export const AlignRating = styled.View`
+    display: flex;
+    width: 35%;
+    padding-left: 15px;
+`
