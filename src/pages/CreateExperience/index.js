@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup'
 import * as ImagePicker from 'expo-image-picker';
+import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceTitleInput from '../../components/ExperienceTitleInput';
@@ -32,6 +33,7 @@ import {
   AddExperienceImage, 
   ExperienceDetails, 
   ExperienceDetailsRow, 
+  ExperienceDetailsRowAddress,
   ParentalRating, 
   ParentalRatingOption, 
   PlusImg, 
@@ -44,6 +46,7 @@ import {
 } from './styles';
 
 const CreateExperience = () => {
+  console.disableYellowBox = true
   const navigation = useNavigation();
   const formRef = useRef(null);
 
@@ -204,16 +207,30 @@ const CreateExperience = () => {
 
           <Title>Detalhes</Title>
           <ExperienceDetails>
-            <ExperienceDetailsRow>
+            <ExperienceDetailsRowAddress>
               <ImageDetails source={AddressIcon} />
-              <ExperienceDetailsInput 
-                autoCapitalize="words"
-                name="address"
-                placeholder="Endereço da experiência"
-                placeholderTextColor="gray"
-                maxLength={100}
+              <GooglePlacesAutocomplete
+                placeholder='Endereço da experiência'
+                onPress={(data, details = null) => {
+                  // 'details' is provided when fetchDetails = true
+                  console.log(data, details);
+                }}
+                query={{
+                  key: 'AIzaSyAI34vLZy3XXfTtGuP9yUafYlj4oW43Hu0',
+                  language: 'pt-br',
+                }}
+                fetchDetails={true}
+                styles={{ 
+                  listView:{height:100},
+                  textInput: {
+                    paddingVertical: 0,
+                    paddingBottom: 15,
+                    paddingHorizontal: 0,
+                    fontSize: 14,
+                  },
+                }}
               />
-            </ExperienceDetailsRow>
+            </ExperienceDetailsRowAddress>
             <ExperienceDetailsRow>
               <ImageDetails source={DurationIcon} />
               <ExperienceDetailsInput 

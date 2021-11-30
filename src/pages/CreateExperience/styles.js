@@ -46,6 +46,11 @@ export const ExperienceDetailsRow = styled.View`
     flex-direction: row;
     padding: 10px;
 `
+export const ExperienceDetailsRowAddress = styled.View`
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+`
 export const ParentalRating = styled.View`
     display: flex;
     justify-content: space-evenly;
