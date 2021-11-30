@@ -22,14 +22,17 @@ const Route = () => {
     return <AuthRoute />
   }
 
+  if (user.type === 'admin') {
+    return <AdminDetails />
+  }
+
   return (
     <>
       <Routes.Navigator screenOptions={{
         headerShown: false,
       }}>
         <Routes.Screen name="AppRoute" component={Tabs} />
-        <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
-        <Routes.Screen name="AdminRoute" component={AdminDetails} />
+        <Routes.Screen name="ExperienceRoute" component={experienceDetails} />        
         <Routes.Screen name="SearchRoute" component={SearchPage} />
         <Routes.Screen name="NotificationsRoute" component={NotificationsPage} />
         <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />

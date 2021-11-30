@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { isAfter, format, addMinutes, parseISO, intervalToDuration } from 'date-fns';
@@ -17,6 +17,7 @@ import ParentalRating from '../../components/ParentalRating';
 import { useFavorites } from '../../hooks/favorites';
 
 import api from '../../services/api';
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import ReportImg from '../../assets/img/report-experience.png'
 import UnfavoriteImg from '../../assets/img/heart-icon.png';
@@ -57,6 +58,7 @@ import {
 } from './styles';
 
 const Experience = () => {
+  const formRef = useRef();
   const navigation = useNavigation();
   const route = useRoute();
   
@@ -65,6 +67,7 @@ const Experience = () => {
   const routeParams = route.params;
 
   const [experience, setExperience] = useState(null);
+  const [rating, setRating] = useState(1);
 
   useEffect(() => {
     api.get(`/experiences/${routeParams.exp_id}/show`).then((response) => {
@@ -77,6 +80,44 @@ const Experience = () => {
   const navigateToReportExperience = useCallback((exp_id) => {
     navigation.navigate('ReportExperience', { exp_id });
   }, [navigation]);
+
+  const handleCreateComment = useCallback(async (data) => {
+    try {
+      const schema = Yup.object().shape({
+        comment: Yup.string().required('Comentário é obrigatório') 
+      })
+
+      await schema.validate(data, {
+        abortEarly: true
+      });
+
+      await api.post('/reviews', {
+        comment: data.comment,
+        rating: rating,
+        exp_id: experience.id
+      });
+
+      Alert.alert('Sucesso', 'Comentário realizado com sucesso!');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao realizar comentário',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao realizar comentário',
+        `${err.response.data.message}`
+      );
+    }
+  }, [experience, rating]);
 
   const schedules = useMemo(() => {
     if (!experience) {
@@ -242,7 +283,7 @@ const Experience = () => {
                 <Title>O Que Levar (Opcional)</Title>
                 <ExperienceWhatTake>{experience.requirements}</ExperienceWhatTake>
 
-                <Title>Agendamentos</Title>
+                <Title>Horários</Title>
                 <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
                   {
                     schedules.length 
@@ -260,21 +301,28 @@ const Experience = () => {
                 </ExperienceSchedules>
 
                 <Title>Comentários</Title>
-                <Form>
+                <Form ref={formRef} onSubmit={handleCreateComment} >
+                  <Rating
+                    rating={rating}
+                    disabled={false}
+                    setRating={setRating}
+                  />
                   <AddComments>
                     <KeyboardAvoidingView
                       behavior={Platform.OS === "ios" ? "padding" : undefined}
                       enabled
-                    />
+                    />                    
                     <AddComment 
-                    autoCapitalize="words"
-                    name="comment"
-                    placeholder="Adicione um comentário"
-                    maxLength={200}
-                    multiline
+                      autoCapitalize="words"
+                      name="comment"
+                      placeholder="Adicione um comentário"
+                      maxLength={200}
+                      multiline
                     />
                     <AddCommentButton 
-                    // onPress={handleAddComment}
+                      onPress={() => {
+                        formRef.current?.submitForm();
+                      }}
                     >
                       <AddCommentIcon source={AddCommentImg} />
                     </AddCommentButton>

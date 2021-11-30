@@ -48,7 +48,9 @@ const EditExperience = () => {
 
   const routeParams = route.params;
 
-  const [experience, setExperience] = useState({});
+  const [experience, setExperience] = useState({ photos: [] });
+  const [duration, setDuration] = useState(0);
+  const [maxGuests, setMaxGuests] = useState(0);
 
   const [photos, setPhotos] = useState([]);
 
@@ -59,6 +61,16 @@ const EditExperience = () => {
       Alert.alert('Erro ao carregar Experiência', `${err.response.data.message}`);
     })
   }, []);
+
+  useEffect(() => {
+    if (experience.duration) {
+      setDuration(experience.duration)
+    }
+
+    if (experience.max_guests) {
+      setMaxGuests(experience.max_guests);
+    }
+  }, [experience]);
 
   const handleUpdateCover = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -87,7 +99,7 @@ const EditExperience = () => {
     } catch (err) {
       Alert.alert('Erro ao atualizar capa da experiência', `${err.response.data.message}`);
     }
-  }, []);
+  }, [experience]);
 
   const handleChangeCoverEvent = useCallback(() => {
     Alert.alert(
@@ -137,22 +149,17 @@ const EditExperience = () => {
     } catch (err) {
       Alert.alert('Erro ao atualizar imagem da experiência', `${err.response.data.message}`);
     }
-  }, []);
+  }, [experience]);
 
   const handleDeletePhoto = useCallback((photo_id) => {
-    api.delete(`/experiences/${experience.id}/photos/${photo_id}`).then(() => {
-      api.get(`/experiences/${experience.id}/show`).then((response) => {
-        setExperience(response.data);
+    api.delete(`/experiences/${experience.id}/photos/${photo_id}`).then((response) => {
+      setExperience(response.data);
 
-        Alert.alert('Sucesso', 'Foto foi excluída com sucesso');
-      }).catch((err) => {
-        Alert.alert('Erro ao excluir foto', `${err.response.data.message}`);
-      });
-      
+      Alert.alert('Sucesso', 'Foto foi excluída com sucesso');      
     }).catch((err) => {
       Alert.alert('Erro ao excluir foto', `${err.response.data.message}`);
     })
-  }, []);
+  }, [experience]);
 
   const handlePhotosEvent = useCallback((photo_id) => {
     Alert.alert(
@@ -186,8 +193,8 @@ const EditExperience = () => {
             title: experience.name,
             description: experience.description,
             address: experience.address,
-            duration: experience.duration.toString(),
-            amount_people: experience.max_guests.toString(),
+            duration: duration.toString(),
+            amount_people: maxGuests.toString(),
             price: experience.price,
             requirements: experience.requirements
           }}

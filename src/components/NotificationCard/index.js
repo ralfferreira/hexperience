@@ -1,12 +1,11 @@
 import React from 'react'
-import { Container, Notification, NotificationHeader, NotificationIcon, NotificationTitle, NotificationBody, NotificationText } from './styles';
+import { Container, Notification, NotificationHeader, NotificationTitle, NotificationBody, NotificationText } from './styles';
 
-const NotificationCard = ({image, title, text}) => {
+const NotificationCard = ({title, text}) => {
   return (
     <Container>
       <Notification>
         <NotificationHeader>
-          <NotificationIcon source={(image)} />
           <NotificationTitle>{(title)}</NotificationTitle>
         </NotificationHeader>
         <NotificationBody>

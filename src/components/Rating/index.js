@@ -11,6 +11,10 @@ class Rating extends Component {
   }
 
   onStarRatingPress(rating) {
+    if (this.props.setRating) {
+      this.props.setRating(rating)
+    }
+
     this.setState({
       starCount: rating
     });
