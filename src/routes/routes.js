@@ -8,9 +8,10 @@ import userEditProfile from "./userEditProfile.routes";
 import hostCreateExperience from "./hostCreateExperience.routes";
 import hostEditExperience from "./hostEditExperience.routes";
 import experienceDetails from "./experience.routes";
-import AdminDetails from './admin.routes'
-import SearchPage from './search.routes'
-import NotificationsPage from './notifications.routes'
+import AdminDetails from './admin.routes';
+import SearchPage from './search.routes';
+import NotificationsPage from './notifications.routes';
+
 import { useAuth } from '../hooks/auth';
 
 const Routes = createStackNavigator();

@@ -31,7 +31,6 @@ const Search = () => {
   const [search, setSearch] = useState(null);
   const [categories, setCategories] = useState([]);
   const [experiences, setExperiences] = useState([]);
-  const [hosts, setHosts] = useState([]);
 
   useEffect(() => {
     api.get('/experiences/categories').then((response) => {
@@ -48,14 +47,6 @@ const Search = () => {
       Alert.alert(`${err.message}`);
     })
   }, [setExperiences]);
-
-  useEffect(() => {
-    api.get('/hosts/search').then((response) => {
-      setHosts(response.data);
-    }).catch((err) => {
-      Alert.alert(`${err.message}`);
-    })
-  }, [setHosts]);
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
@@ -134,24 +125,6 @@ const Search = () => {
     });
   }, [search, formattedExperiences]);
 
-  const filteredHosts = useMemo(() => {
-    if (!hosts.length) {
-      return [];
-    }
-
-    if (!search) {
-      return hosts;
-    }
-
-    const regex = new RegExp(`.*${search.toLowerCase()}.*`)
-
-    return hosts.filter(h => {
-     if (regex.test(h.nickname.toLowerCase())) {
-        return h;
-      }
-    });
-  }, [search, hosts]);
-
   return (
     <Container>
       <SearchBar
@@ -227,33 +200,6 @@ const Search = () => {
             : (<></>)
           }      
         </Experiences>
-
-        {/* <Row>
-          <Title>Anfitriões</Title>
-          <SeeAll>ver todos os anfitriões</SeeAll>
-        </Row>
-      
-        <Hosts>
-          {
-            filteredHosts
-            ? filteredHosts.map(h => {
-              return (
-                <HostProfile key={`HostProfile:${h.id}`} >
-                  <HostPhoto 
-                    key={`HostPhoto:${h.id}`} 
-                    source={
-                      h.user.avatar_url
-                      ? { uri: h.user.avatar_url }
-                      : DefaultImg
-                    }
-                    resizeMode="center"
-                  />
-                </HostProfile>
-              )
-            })
-            : (<></>)
-          }
-        </Hosts> */}
       </ScrollView>
     </Container>
   )

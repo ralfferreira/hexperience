@@ -1,12 +1,108 @@
-import React from 'react'
-import { Container, Content, Touchable, RequestList, RequestItem, RequestItemProfile, RequestItemHeader, RequestItemName, RequestItemNickname, RequestItemID, RequestItemDate, RequestListRow } from './styles';
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import formatStringByPattern from 'format-string-by-pattern';
 import { SearchBar } from 'react-native-elements';
-import Luffy from '../../assets/img/luffy.jpg';
+import { format, parseISO } from 'date-fns';
+import { Alert } from 'react-native';
+
+import api from '../../services/api';
+
+import DefaultImg from '../../assets/img/DinoGreenColor.png'
+
+import { 
+  Container, 
+  Content, 
+  Touchable, 
+  RequestList, 
+  RequestItem, 
+  RequestItemProfile, 
+  RequestItemHeader, 
+  RequestItemName, 
+  RequestItemNickname, 
+  RequestItemID, 
+  RequestItemDate, 
+  RequestListRow 
+} from './styles';
+
 const AdminHostRequest = () => {
+  const [requests, setRequests] = useState([]);
+  const [search, setSearch] = useState(null);
+
+  useEffect(() => {
+    api.get('/admin/host-requests').then((response) => {
+      setRequests(response.data);
+    }).catch((err) => {
+      Alert.alert('Erro ao listar as solicitações', `${err.response.data.message}`);
+    })
+  }, []);
+
+  const updateSearch = useCallback((value) => {
+    setSearch(value);
+  }, []);
+
+  const handleDecision = useCallback((id) => {
+    Alert.alert(
+      'Solicitação de privilégio anfitrião',
+      'O que deseja fazer em relação à esta solicitação',
+      [
+        {
+          text: 'Cancelar',
+          style: 'cancel',
+          onPress: () => {}
+        },
+        {
+          text: 'Aprovar',
+          style: 'default',
+          onPress: () => handleApproveRequest(id)
+        },
+        {
+          text: 'Negar',
+          style: 'destructive',
+          onPress: () => handleDestructive(id)
+        }
+      ]
+    )
+  }, [handleApproveRequest, handleDestructive]);
+
+  const handleApproveRequest = useCallback((id) => {
+    api.post('/admin/approve-host', {
+      user_id: id
+    }).then(response => {
+      Alert.alert('Sucesso', `Anfitrião @${response.data.nickname} foi aprovado com sucesso`);
+    }).catch((err) => {
+      Alert.alert('Erro ao aprovar anfitrião', `${err.response.data.message}`);
+    });
+  }, [])
+
+  const handleDestructive = useCallback((id) => {
+    console.log(id);
+  }, [])
+
+  const filteredRequests = useMemo(() => {
+    if (!requests.length) {
+      return [];
+    }
+
+    if (!search) {
+      return requests;
+    }
+
+    const regex = new RegExp(`.*${search.toLowerCase()}.*`)
+
+    return requests.filter(entry => {
+      const { request } = entry;
+
+      if (regex.test(request.nickname.toLowerCase())) {
+        return entry;
+      }
+    })
+  }, [search, requests]);
+
   return (
     <Container>
       <SearchBar
         placeholder="Digite aqui..."
+        onChangeText={(text) => updateSearch(text)}
+        value={search}
         containerStyle={{
           backgroundColor: '#fff',
           borderWidth:  1,
@@ -25,29 +121,58 @@ const AdminHostRequest = () => {
       <Content>
         <RequestList>
           <RequestListRow>
-            <Touchable>
-            <RequestItem>
-              <RequestItemHeader>
-                <RequestItemProfile source={Luffy} />
-              </RequestItemHeader>
-              <RequestItemName>Monkey D. Luffy</RequestItemName>
-              <RequestItemNickname>Luffy</RequestItemNickname>
-              <RequestItemID>113.857.956-11</RequestItemID>
-              <RequestItemDate>23/11/2021</RequestItemDate>
-            </RequestItem>
-            </Touchable>
+            {
+              filteredRequests.length
+              ? filteredRequests.map(entry => {
+                const { request, user } = entry;
 
-            <Touchable>
-            <RequestItem>
-              <RequestItemHeader>
-                <RequestItemProfile source={Luffy} />
-              </RequestItemHeader>
-              <RequestItemName>Monkey D. Luffy</RequestItemName>
-              <RequestItemNickname>Luffy</RequestItemNickname>
-              <RequestItemID>113.857.956-11</RequestItemID>
-              <RequestItemDate>23/11/2021</RequestItemDate>
-            </RequestItem>
-            </Touchable>
+                const parsedDate = parseISO(request.createdAt);
+
+                const formattedDate = format(parsedDate, 'dd/MM/yyyy');
+
+                let formattedID = '';
+
+                if (request.cpf) {
+                  formattedID = formatStringByPattern('999.999.999-99', request.cpf);
+                } else {
+                  formattedID = formatStringByPattern('99.999.999/9999-99', request.cnpj);
+                }
+
+                return (
+                  <Touchable
+                    key={`Touchable:${request._id}`}
+                    onPress={() => handleDecision(user.id)}
+                  >
+                    <RequestItem key={`Item:${request._id}`}>
+                      <RequestItemHeader key={`ItemHeader:${request._id}`}>
+                        <RequestItemProfile
+                          key={`ItemProfile:${request._id}`}
+                          source={
+                            user.avatar_url
+                            ? user.avatar_url
+                            : DefaultImg
+                          }
+                          resizeMode="center"
+                        />
+                      </RequestItemHeader>
+                      <RequestItemName key={`ItemName:${request._id}`}>
+                        {user.name}
+                      </RequestItemName>
+                      <RequestItemNickname key={`ItemNickname:${request._id}`}>
+                        {request.nickname}
+                      </RequestItemNickname>
+                      <RequestItemID key={`ItemID:${request._id}`}>
+                        {formattedID}
+                      </RequestItemID>
+                      <RequestItemDate key={`ItemDate:${request._id}`}>
+                        {formattedDate}
+                      </RequestItemDate>
+                    </RequestItem>
+                  </Touchable>
+                )
+              })
+              : (<></>)
+            }
           </RequestListRow>
         </RequestList>
       </Content>
