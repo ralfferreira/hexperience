@@ -2,8 +2,8 @@ import React from 'react'
 import HeaderText from '../../components/HeaderText';
 import FormInput from '../../components/FormInput';
 import SwitchComponent from '../../components/Switch';
-import { Container, AlignForm, InputTitle, DetailsInput, SaveBtn, SaveBtnText, SaveBtnView, SettingsThemeSwitcher, OptionTitle } from './styles';
-import { ScrollView, KeyboardAvoidingView } from 'react-native';
+import { Container, AlignForm, Touchable, InputTitle, DetailsInput, SaveBtn, SaveBtnText, SaveBtnView, SettingsThemeSwitcher, OptionTitle } from './styles';
+import { ScrollView, KeyboardAvoidingView, StyleSheet } from 'react-native';
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup';
 
@@ -18,6 +18,9 @@ const AdminSettings = () => {
               <OptionTitle>Tema Escuro</OptionTitle>
               <SwitchComponent />
             </SettingsThemeSwitcher>
+            <Touchable>
+              <OptionTitle style={styles.red}>Sair</OptionTitle>
+            </Touchable>
             <KeyboardAvoidingView
               behavior={Platform.OS === "ios" ? "padding" : undefined}
               enabled
@@ -54,5 +57,14 @@ const AdminSettings = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  orange: {
+    color: '#CA8C00',
+  },
+  red: {
+    color: '#FD0303',
+  },
+});
 
 export default AdminSettings;
