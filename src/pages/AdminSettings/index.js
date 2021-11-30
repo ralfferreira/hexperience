@@ -1,24 +1,68 @@
-import React from 'react'
-import HeaderText from '../../components/HeaderText';
-import FormInput from '../../components/FormInput';
-import SwitchComponent from '../../components/Switch';
-import { Container, AlignForm, Touchable, InputTitle, DetailsInput, SaveBtn, SaveBtnText, SaveBtnView, SettingsThemeSwitcher, OptionTitle } from './styles';
-import { ScrollView, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import React, { useCallback, useRef } from 'react'
+import { ScrollView, KeyboardAvoidingView, StyleSheet, Alert } from 'react-native';
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup';
 
+import HeaderText from '../../components/HeaderText';
+import FormInput from '../../components/FormInput';
+import SwitchComponent from '../../components/Switch';
+
+import { useAuth } from '../../hooks/auth';
+
+import { 
+  Container, 
+  AlignForm, 
+  Touchable, 
+  InputTitle, 
+  DetailsInput, 
+  SaveBtn, 
+  SaveBtnText, 
+  SaveBtnView, 
+  SettingsThemeSwitcher, 
+  OptionTitle 
+} from './styles';
+
 const AdminSettings = () => {
+  const formRef = useRef();
+  const { signOut } = useAuth();
+
+  const handleSignOut = useCallback(() => {
+    Alert.alert('Tchauzinho', 'Nos vemos em breve!');
+
+    signOut();
+  }, [signOut]);
+
+  const ensureSignOut = useCallback(() => {
+    Alert.alert(
+      'Sair',
+      'Tem certeza que deseja sair?',
+      [
+        {
+          text: 'Cancelar',
+          onPress: () => {},
+          style: 'cancel'
+        },
+        {
+          text: 'Sair',
+          onPress: () => handleSignOut(),
+        }
+      ]
+    )
+  }, [handleSignOut]);
+
+  const handleAdminConfigureUpdate = useCallback(() => {}, []);
+
   return (
     <Container>
       <HeaderText>Configurações</HeaderText>
       <ScrollView keyboardShouldPersistTaps="handled">
-        <Form>
+        <Form ref={formRef} onSubmit={handleAdminConfigureUpdate}>
           <AlignForm>
             <SettingsThemeSwitcher>
               <OptionTitle>Tema Escuro</OptionTitle>
               <SwitchComponent />
             </SettingsThemeSwitcher>
-            <Touchable>
+            <Touchable onPress={ensureSignOut} >
               <OptionTitle style={styles.red}>Sair</OptionTitle>
             </Touchable>
             <KeyboardAvoidingView
@@ -44,9 +88,9 @@ const AdminSettings = () => {
             />
             <SaveBtn>
               <SaveBtnView
-                // onPress={() => {
-                //   formRef.current?.submitForm();
-                // }}
+                onPress={() => {
+                  formRef.current?.submitForm();
+                }}
               >
                 <SaveBtnText>Salvar Alterações</SaveBtnText>
               </SaveBtnView>
