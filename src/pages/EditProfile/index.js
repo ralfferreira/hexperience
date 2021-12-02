@@ -148,8 +148,19 @@ const EditProfile = () => {
         const errors = getValidationErrors(err);
 
         formRef.current?.setErrors(errors);
-      }
-      Alert.alert('Erro na atualização do perfil', `${err}`);
+
+        Alert.alert(
+          'Erro ao atualizar perfil',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao atualizar perfil',
+        `${err.response.data.message}`
+      );
     }
   }, []);
 

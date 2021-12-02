@@ -1,91 +1,106 @@
-import React from 'react';
-import { Container, Content, Touchable, BugsList, Bug, BugHeader, BugTitle, BugId, BugDescription, BugFooter, BugProfileView, BugProfile, BugName, BugDate } from './styles';
-import Luffy from '../../assets/img/luffy.jpg';
+import React, { useCallback, useEffect, useState } from 'react';
+import { Alert } from 'react-native';
+import { format, parseISO } from 'date-fns';
+
+import api from '../../services/api';
+
+import { 
+  Container, 
+  Touchable, 
+  BugsList, 
+  Bug, 
+  BugHeader, 
+  BugTitle, 
+  BugId, 
+  BugDescription, 
+  BugFooter, 
+  BugDate 
+} from './styles';
+
 const AdminReportedBugs = () => {
+  const [reportedBugs, setReportedBugs] = useState([]);
+
+  useEffect(() => {
+    api.get('/admin/bugs').then((response) => {
+      setReportedBugs(response.data);
+    }).catch((err) => {
+      Alert.alert('Erro ao carregar bugs', `${err.response.data.message}`)
+    })
+  }, []);
+
+  const handleSolveBug = useCallback((id) => {
+    api.patch(`/admin/bugs/${id}`, {
+      resolved: true
+    }).then(() => {
+      Alert.alert('Sucesso', 'Bug atualizado com sucesso!');
+    }).catch((err) => {
+      Alert.alert('Erro ao atualizar bug', `${err.response.data.message}`)
+    })
+  }, [])
+
+  const ensureSolveBug = useCallback((id) => {
+    Alert.alert(
+      'Resolver Bug',
+      'Tem certeza que deseja marcar esse bug como resolvido?',
+      [
+        {
+          text: 'Cancelar', style: 'cancel', onPress: () => {}
+        },
+        {
+          text: 'Marcar como resolvido',
+          style: 'default',
+          onPress: () => handleSolveBug(id)
+        }
+      ]
+    )
+  }, [handleSolveBug]);
+
   return (
     <Container>
-        <BugsList>
-          <Touchable>
-            <Bug>
-              <BugHeader>
-                <BugTitle numberOfLines={2}>Problemas no touchscreen e em tudo, ta travando geral, preciso de ajuda pelo amor de Deus</BugTitle>
-                <BugId numberOfLines={1}>#322</BugId>
-              </BugHeader>
-              <BugDescription numberOfLines={6}>A função "Tap to wake", que permite "acordar" o celular com um toque na tela, está funcionando de maneira intermitente com alguns usuários do iPhone 13 (versões mini, padrão e Pro). Além do recurso, o próprio touchscreen não tem sido tão responsivo, de acordo com publicações no Twitter e Reddit.</BugDescription>
-              <BugFooter>
-                <BugProfileView>
-                  <BugProfile source={Luffy} />
-                  <BugName numberOfLines={1}>Monkey D. Luffy Teste Teste Teste</BugName>
-                </BugProfileView>
-                <BugDate>23/11/2021</BugDate>
-              </BugFooter>
-            </Bug>
-          </Touchable>
-          <Touchable>
-            <Bug>
-              <BugHeader>
-                <BugTitle numberOfLines={2}>Problemas no touchscreen e em tudo, ta travando geral, preciso de ajuda pelo amor de Deus</BugTitle>
-                <BugId numberOfLines={1}>#322</BugId>
-              </BugHeader>
-              <BugDescription numberOfLines={6}>A função "Tap to wake", que permite "acordar" o celular com um toque na tela, está funcionando de maneira intermitente com alguns usuários do iPhone 13 (versões mini, padrão e Pro). Além do recurso, o próprio touchscreen não tem sido tão responsivo, de acordo com publicações no Twitter e Reddit.</BugDescription>
-              <BugFooter>
-                <BugProfileView>
-                  <BugProfile source={Luffy} />
-                  <BugName numberOfLines={1}>Monkey D. Luffy Teste Teste Teste</BugName>
-                </BugProfileView>
-                <BugDate>23/11/2021</BugDate>
-              </BugFooter>
-            </Bug>
-          </Touchable>
-          <Touchable>
-            <Bug>
-              <BugHeader>
-                <BugTitle numberOfLines={2}>Problemas no touchscreen e em tudo, ta travando geral, preciso de ajuda pelo amor de Deus</BugTitle>
-                <BugId numberOfLines={1}>#322</BugId>
-              </BugHeader>
-              <BugDescription numberOfLines={6}>A função "Tap to wake", que permite "acordar" o celular com um toque na tela, está funcionando de maneira intermitente com alguns usuários do iPhone 13 (versões mini, padrão e Pro). Além do recurso, o próprio touchscreen não tem sido tão responsivo, de acordo com publicações no Twitter e Reddit.</BugDescription>
-              <BugFooter>
-                <BugProfileView>
-                  <BugProfile source={Luffy} />
-                  <BugName numberOfLines={1}>Monkey D. Luffy Teste Teste Teste</BugName>
-                </BugProfileView>
-                <BugDate>23/11/2021</BugDate>
-              </BugFooter>
-            </Bug>
-          </Touchable>
-          <Touchable>
-            <Bug>
-              <BugHeader>
-                <BugTitle numberOfLines={2}>Problemas no touchscreen e em tudo, ta travando geral, preciso de ajuda pelo amor de Deus</BugTitle>
-                <BugId numberOfLines={1}>#322</BugId>
-              </BugHeader>
-              <BugDescription numberOfLines={6}>A função "Tap to wake", que permite "acordar" o celular com um toque na tela, está funcionando de maneira intermitente com alguns usuários do iPhone 13 (versões mini, padrão e Pro). Além do recurso, o próprio touchscreen não tem sido tão responsivo, de acordo com publicações no Twitter e Reddit.</BugDescription>
-              <BugFooter>
-                <BugProfileView>
-                  <BugProfile source={Luffy} />
-                  <BugName numberOfLines={1}>Monkey D. Luffy Teste Teste Teste</BugName>
-                </BugProfileView>
-                <BugDate>23/11/2021</BugDate>
-              </BugFooter>
-            </Bug>
-          </Touchable>
-          <Touchable>
-            <Bug>
-              <BugHeader>
-                <BugTitle numberOfLines={2}>Problemas no touchscreen e em tudo, ta travando geral, preciso de ajuda pelo amor de Deus</BugTitle>
-                <BugId numberOfLines={1}>#322</BugId>
-              </BugHeader>
-              <BugDescription numberOfLines={6}>A função "Tap to wake", que permite "acordar" o celular com um toque na tela, está funcionando de maneira intermitente com alguns usuários do iPhone 13 (versões mini, padrão e Pro). Além do recurso, o próprio touchscreen não tem sido tão responsivo, de acordo com publicações no Twitter e Reddit.</BugDescription>
-              <BugFooter>
-                <BugProfileView>
-                  <BugProfile source={Luffy} />
-                  <BugName numberOfLines={1}>Monkey D. Luffy Teste Teste Teste</BugName>
-                </BugProfileView>
-                <BugDate>23/11/2021</BugDate>
-              </BugFooter>
-            </Bug>
-          </Touchable>
-        </BugsList>
+      <BugsList>
+        {
+          reportedBugs.length
+          ? reportedBugs.map(entry => {
+            const parsedDate = parseISO(entry.createdAt);
+
+            const formattedDate = format(parsedDate, 'dd/MM/yyyy');
+
+            return (
+              <Touchable
+                key={`Touchable:${entry._id}`}
+                onPress={() => ensureSolveBug(entry._id)}
+              >
+                <Bug key={`Bug:${entry._id}`}>
+                  <BugHeader key={`Header:${entry._id}`}>
+                    <BugTitle 
+                      key={`Title:${entry._id}`}
+                      numberOfLines={2}                      
+                    >
+                      {entry.what}
+                    </BugTitle>
+                    <BugId 
+                      key={`Id:${entry._id}`}
+                      numberOfLines={1}
+                    >
+                      {entry.where}
+                    </BugId>
+                  </BugHeader>
+                  <BugDescription 
+                    key={`Decription:${entry._id}`}
+                    numberOfLines={6}
+                  >
+                    {entry.description}
+                  </BugDescription>
+                  <BugFooter key={`Footer:${entry._id}`} >
+                    <BugDate key={`Date:${entry._id}`}>{formattedDate}</BugDate>
+                  </BugFooter>
+                </Bug>
+              </Touchable>
+            )
+          })
+          : (<></>)
+        }
+      </BugsList>
     </Container>
   );
 };

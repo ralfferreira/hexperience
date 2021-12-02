@@ -8,6 +8,10 @@ import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import FormInput from '../../components/FormInput';
 import MultilineDetailsInput from '../../components/MultilineDetailsInput';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
+import api from '../../services/api';
+
 import { 
   Container,
   Title,
@@ -17,7 +21,6 @@ import {
   SaveBtnText,
   SaveBtnView
 } from './styles';
-import api from '../../services/api';
 
 const ReportBug = () => {
   const formRef = useRef(null);
@@ -48,7 +51,23 @@ const ReportBug = () => {
 
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Erro ao reportar problema', `${err}`);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao reportar bug',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao reportar bug',
+        `${err.response.data.message}`
+      );
     }
   }, []);
 

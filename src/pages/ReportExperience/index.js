@@ -7,6 +7,8 @@ import { Form } from "@unform/mobile";
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 import MultilineDetailsInput from '../../components/MultilineDetailsInput';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
 import api from '../../services/api';
 
 import BackImg from '../../assets/img/back.png';
@@ -122,9 +124,23 @@ const ReportExperience = () => {
 
       navigation.goBack();
     } catch (err) {
-      console.log(err.response);
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
 
-      Alert.alert('Erro', `${err}`)
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao reportar experiência',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao reportar experiência',
+        `${err.response.data.message}`
+      );
     }
   }, [expId, reason, otherCheckBox, otherReason, comment]);
 

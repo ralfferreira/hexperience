@@ -11,6 +11,8 @@ import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
 import api from '../../services/api';
 
 import PlusIcon from '../../assets/img/plusicon.png';
@@ -46,13 +48,23 @@ import {
 } from './styles';
 
 const CreateExperience = () => {
-  console.disableYellowBox = true
   const navigation = useNavigation();
   const formRef = useRef(null);
 
   const [cover, setCover] = useState(null);
   const [photos, setPhotos] = useState([]);
   const [parentalRating, setParentalRating] = useState(1);
+
+  useEffect(() => {
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+  }, []);
 
   const handleSubmit = useCallback(async (data) => {
     try {
@@ -110,25 +122,25 @@ const CreateExperience = () => {
 
       navigation.navigate('Home');
     } catch (err) {
-      
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao criar experiência',
+          `${err.message}`
+        );
+
+        return;
+      }  
 
       Alert.alert(
-        'Erro na autenticação',
-        `${err}`
+        'Erro ao criar experiência',
+        `${err.response.data.message}`
       );
     }
-  }, [parentalRating, cover, photos, navigation]);
-
-  useEffect(() => {
-    (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
-      }
-    })();
-  }, []);
+  }, [parentalRating, cover, photos, navigation]);  
 
   const handlePickImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({

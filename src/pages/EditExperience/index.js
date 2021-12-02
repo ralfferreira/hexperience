@@ -9,6 +9,8 @@ import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 
+import getValidationErrors from '../../utils/getValidationErrors';
+
 import api from '../../services/api';
 
 import PlusIcon from '../../assets/img/plusicon.png';
@@ -173,7 +175,29 @@ const EditExperience = () => {
     )
   }, [handleUpdatePhoto, handleDeletePhoto]);
 
-  const handleSubmit = useCallback(() => {}, []);  
+  const handleSubmit = useCallback(() => {
+    try {
+
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao atualizar experiência',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao atualizar experiência',
+        `${err.response.data.message}`
+      );
+    }
+  }, []);  
 
   return (
     <Container>
