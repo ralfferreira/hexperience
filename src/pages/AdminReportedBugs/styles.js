@@ -12,10 +12,10 @@ export const BugsList = styled.View`
     align-items: center;
 `
 export const Bug = styled.View`
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     margin-top: 20px;
     width: 375px;
-    height: 280px;
+    height: 160px;
     padding: 10px;
     background: #FCFCFC;
     box-shadow: 0px 1px 20px #B5B5B5;

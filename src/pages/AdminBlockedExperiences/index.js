@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { Alert } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import { format, parseISO } from 'date-fns';
 
 import api from '../../services/api';
 
@@ -28,7 +29,7 @@ const AdminBlockedExperiences = () => {
     try {
       const response = await api.get('/admin/blocked/experiences');
 
-      setBlockedExperiences(reponse.data);
+      setBlockedExperiences(response.data);
     } catch (err) {
       Alert.alert(
         'Erro ao carregar experiências bloqueadas', 
@@ -46,7 +47,7 @@ const AdminBlockedExperiences = () => {
   }, [setSearch]);
 
   const handleUnblockExperience = useCallback((id) => {
-    api.put('/admin/reported/experiences', {
+    api.put('/admin/blocked/experiences', {
       exp_id: id
     }).then(() => {
       Alert.alert('Sucesso', 'Experiência foi desbloqueada com sucesso!');
@@ -63,7 +64,7 @@ const AdminBlockedExperiences = () => {
       'Deseja desbloquear essa experiência?',
       [
         { text: 'Cancelar', style: 'cancel', onPress: () => {} },
-        { text: 'Desbloquear', style: 'default', onPress: () => handleUnblockExperince(id) }
+        { text: 'Desbloquear', style: 'default', onPress: () => handleUnblockExperience(id) }
       ]
     )
   }, [handleUnblockExperience]);
@@ -127,8 +128,8 @@ const AdminBlockedExperiences = () => {
                         <BlockedExperiencesImage 
                           key={`Image:${experience.id}`}
                           source={
-                            experience.host.user.avatar_url
-                            ? { uri: experience.host.user.avatar_url }
+                            experience.cover_url
+                            ? { uri: experience.cover_url }
                             : DefaultImg
                           }
                           resizeMode="center"

@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { Alert } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import { format, parseISO } from 'date-fns';
+import formatStringByPattern from 'format-string-by-pattern';
 
 import api from '../../services/api'
 
@@ -37,7 +39,7 @@ const AdminComplaintUsers = () => {
     try {
       const response = await api.get('/admin/reported/hosts');
 
-      setReportedUsers(reponse.data);
+      setReportedUsers(response.data);
     } catch (err) {
       Alert.alert('Erro ao carregar usuários reportados', `${err.response.data.message}`);
     }
@@ -165,41 +167,43 @@ const AdminComplaintUsers = () => {
           <RequestListRow>
             {
               filteredReportedUsers.length
-              ? filteredReportedUsers.map(user => {
-                const parsedDate = parseISO(user.updated_at);
+              ? filteredReportedUsers.map(host => {
+                const parsedDate = parseISO(host.user.updated_at);
 
                 const formattedDate = format(parsedDate, 'dd/MM/yyyy');
 
                 let formattedID = '';
 
-                if (user.host.cpf) {
-                  formattedID = formatStringByPattern('999.999.999-99', user.host.cpf);
+                if (host.cpf) {
+                  formattedID = formatStringByPattern('999.999.999-99', host.cpf);
                 } else {
-                  formattedID = formatStringByPattern('99.999.999/9999-99', user.host.cnpj);
+                  formattedID = formatStringByPattern('99.999.999/9999-99', host.cnpj);
                 }
+
+                console.log(host);
 
                 return (
                   <Touchable
-                    key={`Touchable:${user.id}`}
-                    onPress={() => handleDecision(user)}
+                    key={`Touchable:${host.id}`}
+                    onPress={() => handleDecision(host.user)}
                   >
-                    <RequestItem key={`Item:${user.id}`}>
-                      <RequestItemHeader key={`Header:${user.id}`}>
+                    <RequestItem key={`Item:${host.id}`}>
+                      <RequestItemHeader key={`Header:${host.id}`}>
                         <RequestItemProfile 
-                          key={`Profile:${user.id}`}
+                          key={`Profile:${host.id}`}
                           source={
-                            user.avatar_url
-                            ? { uri: user.avatar_url }
+                            host.user.avatar_url
+                            ? { uri: host.user.avatar_url }
                             : DefaultImg
                           }
                           resizeMode="center"
                         />
                       </RequestItemHeader>
-                      <RequestItemName key={`Name:${user.id}`}>
-                        {user.name}
+                      <RequestItemName key={`Name:${host.id}`}>
+                        {host.user.name}
                       </RequestItemName>
-                      <RequestItemNickname key={`Touchable:${user.id}`}>
-                        {user.host.nickname}
+                      <RequestItemNickname key={`Touchable:${host.id}`}>
+                        {host.nickname}
                       </RequestItemNickname>
                       <RequestItemID>
                         {formattedID}

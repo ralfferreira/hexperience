@@ -30,7 +30,7 @@ const Login = () => {
   const formRef = useRef(null);
   
   const navigation = useNavigation();
-  const { signIn } = useAuth();
+  const { signIn, user } = useAuth();
 
   const handleSubmit = useCallback(
     async (data) => {
@@ -51,7 +51,7 @@ const Login = () => {
           password: data.password
         })
 
-        navigation.navigate('AppRoute');
+        handleNavigation();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
@@ -72,8 +72,14 @@ const Login = () => {
         );
       }
     },
-    [signIn, navigation]
+    [signIn, navigation, handleNavigation]
   );
+
+  const handleNavigation = useCallback(() => {
+    if (user.type !== 'admin') {
+      navigation.navigate('AppRoute');
+    }    
+  }, [user, navigation]);
 
   return (
     <>

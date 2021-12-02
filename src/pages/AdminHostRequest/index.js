@@ -88,7 +88,7 @@ const AdminHostRequest = () => {
     setModalVisible(true);
   }, [modalVisible])
 
-  const handleDestructive = useCallback(async (data) => {
+  const handleDenyRequest = useCallback(async (data) => {
     try {
       const schema = Yup.object().shape({
         reason: Yup.string().required('É obrigatório informar a razão')

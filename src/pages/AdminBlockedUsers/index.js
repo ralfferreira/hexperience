@@ -1,6 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
 import { Alert } from 'react-native';
 import { SearchBar } from 'react-native-elements';
+import { format, parseISO } from 'date-fns';
+import formatStringByPattern from 'format-string-by-pattern';
 
 import api from '../../services/api'
 
@@ -37,7 +39,7 @@ const AdminBlockedUsers = () => {
     try {
       const response = await api.get('/admin/blocked/hosts');
 
-      setBlockedUsers(reponse.data);
+      setBlockedUsers(response.data);
     } catch (err) {
       Alert.alert('Erro ao carregar usuários bloqueados', `${err.response.data.message}`);
     }
@@ -109,7 +111,7 @@ const AdminBlockedUsers = () => {
     }
     
     try {
-      const response = await api.put('/admin/reported/hosts', {
+      await api.put('/admin/reported/hosts', {
         user_id: selectedUser.id,
         status: selectedStatus
       })
