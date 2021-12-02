@@ -1,5 +1,5 @@
-import React, { useCallback } from 'react'
-import { Alert, StyleSheet } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { Alert, StyleSheet, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'; 
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
@@ -12,10 +12,14 @@ import {
   SettingsBody, 
   SettingsThemeSwitcher, 
   OptionTitle, 
-  Touchable 
+  Touchable,
+  ModalView,
+  Row,
+  Align
 } from './styles';
 
 const Settings = () => {
+  const [modalVisible, setModalVisible] = useState(false);
   const navigation = useNavigation();
   const { signOut, user } = useAuth();
 
@@ -24,24 +28,6 @@ const Settings = () => {
 
     signOut();
   }, [signOut]);
-
-  const ensureSignOut = useCallback(() => {
-    Alert.alert(
-      'Sair',
-      'Tem certeza que deseja sair?',
-      [
-        {
-          text: 'Cancelar',
-          onPress: () => {},
-          style: 'cancel'
-        },
-        {
-          text: 'Sair',
-          onPress: () => handleSignOut(),
-        }
-      ]
-    )
-  }, [handleSignOut]);
 
   return (
     <Container>
@@ -66,8 +52,30 @@ const Settings = () => {
         <Touchable onPress={() => { navigation.navigate('ReportBug') }}>
           <OptionTitle>Reportar Problema</OptionTitle>
         </Touchable>
-        <Touchable onPress={ensureSignOut}>
-          <OptionTitle style={styles.red}>Sair</OptionTitle>
+        <Align>
+          <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+          >
+            <ModalView>
+              <OptionTitle>Tem certeza que deseja sair?</OptionTitle>
+              <Row>
+                <Touchable onPress={handleSignOut}>
+                  <OptionTitle style={styles.orange}>Sim</OptionTitle>
+                </Touchable>
+                <Touchable onPress={() => setModalVisible(!modalVisible)}>
+                  <OptionTitle style={styles.red}>Não</OptionTitle>
+                </Touchable>
+              </Row>
+            </ModalView>
+          </Modal>
+        </Align>
+        <Touchable onPress={() => setModalVisible(true)}>
+        <OptionTitle style={styles.red}>Sair</OptionTitle>
         </Touchable>
       </SettingsBody>
     </Container>
@@ -77,6 +85,7 @@ const Settings = () => {
 const styles = StyleSheet.create({
   orange: {
     color: '#CA8C00',
+    marginRight: 30,
   },
   red: {
     color: '#FD0303',

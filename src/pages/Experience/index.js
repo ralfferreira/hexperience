@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { isAfter, format, addMinutes, parseISO, intervalToDuration } from 'date-fns';
 import ptBR from 'date-fns/esm/locale/pt-BR';
@@ -55,7 +55,12 @@ import {
   AddComments,
   AddCommentButton,
   AddCommentIcon,
-  AlignRating
+  AlignRating,
+  OptionTitle, 
+  Touchable,
+  ModalView,
+  Row,
+  Align
 } from './styles';
 
 const Experience = () => {
@@ -177,6 +182,8 @@ const Experience = () => {
     return `${duration.minutes} min`
   }, [experience]);  
 
+  const [modalVisible, setModalVisible] = useState(false);
+
   const isFavorite = useMemo(() => {
     if (!favoritesRelation || !experience ) {
       return;
@@ -286,11 +293,46 @@ const Experience = () => {
 
                 <Title>Horários</Title>
                 <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
+                <Align>
+                  <Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    setModalVisible(!modalVisible);
+                  }}
+                  >
+                    <ModalView>
+  
+                        {
+                          schedules.length 
+                          ? schedules.map((schedule) => {
+                            return (
+                              <OptionTitle onPress={() => setModalVisible(true)}
+                              key={schedule.id}
+                              >
+                              Você quer agendar a experiência no dia {schedule.formattedDate}, às {schedule.formattedTime} ?
+                              </OptionTitle>
+                            )
+                          })
+                          : (<></>)
+                        }         
+                      <Row>
+                        <Touchable onPress={() => setModalVisible(!modalVisible)}>
+                          <OptionTitle style={styles.red}>Não</OptionTitle>
+                        </Touchable>
+                        <Touchable onPress={() => setModalVisible(!modalVisible)}>
+                          <OptionTitle style={styles.green}>Sim</OptionTitle>
+                        </Touchable>
+                      </Row>
+                    </ModalView>
+                  </Modal>
+                </Align>
                   {
                     schedules.length 
                     ? schedules.map((schedule) => {
                       return (
-                        <ExperienceSchedule
+                        <ExperienceSchedule onPress={() => setModalVisible(true)}
                           key={schedule.id}
                           date={schedule.formattedDate}
                           time={schedule.formattedTime}
@@ -356,5 +398,14 @@ const Experience = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+});
 
 export default Experience;

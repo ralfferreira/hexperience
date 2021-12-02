@@ -21,3 +21,19 @@ export const OptionTitle = styled.Text`
     height: 50px;
 `
 export const Touchable = styled.TouchableOpacity``
+export const ModalView = styled.View`
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`

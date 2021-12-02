@@ -119,3 +119,26 @@ export const AlignRating = styled.View`
     width: 35%;
     padding-left: 15px;
 `
+export const OptionTitle = styled.Text`
+    font-size: 22px;
+    font-weight: 400;
+    text-align: center;
+    padding: 20px;
+`
+export const Touchable = styled.TouchableOpacity``
+export const ModalView = styled.View`
+    display: flex;
+    align-items: center;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
