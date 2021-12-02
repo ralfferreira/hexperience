@@ -55,7 +55,7 @@ const FavoritesProvider = ({children}) => {
 
   const handleSetFavoritesRelation = useCallback(async (array) => {
     if (favoritesRelation) {
-      array.push(...favoritesRelation);
+      array.push([...new Set(favoritesRelation)]);
     }
 
     const favs = [...new Set(array)];
@@ -77,7 +77,7 @@ const FavoritesProvider = ({children}) => {
 
   return (
     <FavoritesContext.Provider
-      value={{ handleSetFavoritesRelation, folders, favoritesRelation }}
+      value={{ handleSetFavoritesRelation, folders, favoritesRelation, loadFavorites }}
     >
       {children}
     </FavoritesContext.Provider>

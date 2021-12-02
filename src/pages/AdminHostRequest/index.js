@@ -3,6 +3,9 @@ import formatStringByPattern from 'format-string-by-pattern';
 import { SearchBar } from 'react-native-elements';
 import { format, parseISO } from 'date-fns';
 import { Alert } from 'react-native';
+import * as Yup from 'yup';
+
+import getValidationErrors from '../../utils/getValidationErrors';
 
 import api from '../../services/api';
 
@@ -27,55 +30,104 @@ const AdminHostRequest = () => {
   const [requests, setRequests] = useState([]);
   const [search, setSearch] = useState(null);
 
-  useEffect(() => {
-    api.get('/admin/host-requests').then((response) => {
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const getHostsRequests = useCallback(async () => {
+    try {
+      const response = await api.get('/admin/host-requests');
+
       setRequests(response.data);
-    }).catch((err) => {
+    } catch (err) {
       Alert.alert('Erro ao listar as solicitações', `${err.response.data.message}`);
-    })
+    }
+  }, []);
+
+  useEffect(() => {
+    getHostsRequests().finally(() => {});
   }, []);
 
   const updateSearch = useCallback((value) => {
     setSearch(value);
   }, []);
 
-  const handleDecision = useCallback((id) => {
+  const handleDecision = useCallback((user) => {
     Alert.alert(
       'Solicitação de privilégio anfitrião',
       'O que deseja fazer em relação à esta solicitação',
       [
-        {
-          text: 'Cancelar',
-          style: 'cancel',
-          onPress: () => {}
-        },
+        { text: 'Cancelar', style: 'cancel', onPress: () => {} },
         {
           text: 'Aprovar',
           style: 'default',
-          onPress: () => handleApproveRequest(id)
+          onPress: () => handleApproveRequest(user.id)
         },
         {
           text: 'Negar',
           style: 'destructive',
-          onPress: () => handleDestructive(id)
+          onPress: () => handleShowModal(user)
         }
       ]
     )
-  }, [handleApproveRequest, handleDestructive]);
+  }, [handleApproveRequest, handleShowModal]);
 
   const handleApproveRequest = useCallback((id) => {
     api.post('/admin/approve-host', {
       user_id: id
     }).then(response => {
       Alert.alert('Sucesso', `Anfitrião @${response.data.nickname} foi aprovado com sucesso`);
+
+      getHostsRequests().finally(() => {});
     }).catch((err) => {
       Alert.alert('Erro ao aprovar anfitrião', `${err.response.data.message}`);
     });
   }, [])
 
-  const handleDestructive = useCallback((id) => {
-    console.log(id);
-  }, [])
+  const handleShowModal = useCallback((user) => {
+    setSelectedUser(user);
+    setModalVisible(true);
+  }, [modalVisible])
+
+  const handleDestructive = useCallback(async (data) => {
+    try {
+      const schema = Yup.object().shape({
+        reason: Yup.string().required('É obrigatório informar a razão')
+      })
+
+      await schema.validate(data, {
+        abortEarly: true
+      });
+
+      await api.delete('admin/deny-host', {
+        data: {
+          user_id: selectedUser.id,
+          reason: data.reason
+        }
+      });
+
+      Alert.alert('Sucesso', 'Solicitação foi negada com sucesso!');
+      setSelectedUser(null);
+      setModalVisible(false);
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro ao realizar comentário',
+          `${err.message}`
+        );
+
+        return;
+      }  
+
+      Alert.alert(
+        'Erro ao realizar comentário',
+        `${err.response.data.message}`
+      );
+    }
+  }, [selectedUser])
 
   const filteredRequests = useMemo(() => {
     if (!requests.length) {
@@ -141,7 +193,7 @@ const AdminHostRequest = () => {
                 return (
                   <Touchable
                     key={`Touchable:${request._id}`}
-                    onPress={() => handleDecision(user.id)}
+                    onPress={() => handleDecision(user)}
                   >
                     <RequestItem key={`Item:${request._id}`}>
                       <RequestItemHeader key={`ItemHeader:${request._id}`}>

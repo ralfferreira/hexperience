@@ -17,7 +17,9 @@ export const ExperienceOptions = styled.View`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     padding: 10px;
+    width: 90%;
 `
 export const ExperienceReport = styled.TouchableOpacity``
 
@@ -122,16 +124,16 @@ export const AlignRating = styled.View`
 export const OptionTitle = styled.Text`
     font-size: 22px;
     font-weight: 400;
-    text-align: center;
+    text-align: left;
     padding: 20px;
 `
 export const Touchable = styled.TouchableOpacity``
 export const ModalView = styled.View`
     display: flex;
-    align-items: center;
     background-color: #fff;
     justify-content: center;
     height: 100%;
+    text-align: left;
 `
 export const Row = styled.View`
     display: flex;
@@ -141,4 +143,31 @@ export const Align = styled.View`
     flex: 1;
     justify-content: center;
     align-items: center;
+`
+export const AlignCallback = styled.View`
+    align-items: center;
+    display: flex;
+`
+export const FolderModalView = styled.ScrollView`
+`
+export const ModalTitle = styled.Text`
+
+`
+export const CreateFolder = styled.View`
+
+`
+export const CreateFolderIcon = styled.Image`
+
+`
+export const FolderText = styled.Text`
+
+`
+export const Folder = styled.View`
+
+`
+export const FolderIcon = styled.Image`
+
+`
+export const FolderName = styled.Text`
+
 `
