@@ -12,12 +12,10 @@ import {
   Content, 
   Touchable, 
   BlockedExperiencesList, 
-  BlockedExperiencesRow, 
   BlockedExperiencesItem, 
   BlockedExperiencesHeader, 
   BlockedExperiencesImage, 
   BlockedExperiencesName, 
-  BlockedExperiencesAlert, 
   BlockedExperiencesDate
 } from './styles';
 
@@ -110,44 +108,42 @@ const AdminBlockedExperiences = () => {
       />
       <Content>
         <BlockedExperiencesList>
-          <BlockedExperiencesRow>
-            {
-              filteredBlockedExperiences.length
-              ? filteredBlockedExperiences.map((experience) => {                
-                const parsedDate = parseISO(experience.updated_at);
+          {
+            filteredBlockedExperiences.length
+            ? filteredBlockedExperiences.map((experience) => {                
+              const parsedDate = parseISO(experience.updated_at);
 
-                const formattedDate = format(parsedDate, 'dd/MM/yyyy');
-                
-                return (
-                  <Touchable
-                    key={`Touchable:${experience.id}`}
-                    onPress={() => handleDecision(experience.id)}
-                  >
-                    <BlockedExperiencesItem key={`Item:${experience.id}`}>
-                      <BlockedExperiencesHeader key={`Header:${experience.id}`}>
-                        <BlockedExperiencesImage 
-                          key={`Image:${experience.id}`}
-                          source={
-                            experience.cover_url
-                            ? { uri: experience.cover_url }
-                            : DefaultImg
-                          }
-                          resizeMode="center"
-                        />
-                      </BlockedExperiencesHeader>
-                      <BlockedExperiencesName key={`Name:${experience.id}`}>
-                        {experience.name}
-                      </BlockedExperiencesName>
-                      <BlockedExperiencesDate>
-                        {formattedDate}
-                      </BlockedExperiencesDate>
-                    </BlockedExperiencesItem>
-                  </Touchable>
-                )
-              })
-              : (<></>)
-            }
-          </BlockedExperiencesRow>
+              const formattedDate = format(parsedDate, 'dd/MM/yyyy');
+              
+              return (
+                <Touchable
+                  key={`Touchable:${experience.id}`}
+                  onPress={() => handleDecision(experience.id)}
+                >
+                  <BlockedExperiencesItem key={`Item:${experience.id}`}>
+                    <BlockedExperiencesHeader key={`Header:${experience.id}`}>
+                      <BlockedExperiencesImage 
+                        key={`Image:${experience.id}`}
+                        source={
+                          experience.cover_url
+                          ? { uri: experience.cover_url }
+                          : DefaultImg
+                        }
+                        resizeMode="center"
+                      />
+                    </BlockedExperiencesHeader>
+                    <BlockedExperiencesName key={`Name:${experience.id}`}>
+                      {experience.name}
+                    </BlockedExperiencesName>
+                    <BlockedExperiencesDate>
+                      {formattedDate}
+                    </BlockedExperiencesDate>
+                  </BlockedExperiencesItem>
+                </Touchable>
+              )
+            })
+            : (<></>)
+          }
         </BlockedExperiencesList>
       </Content>
     </Container>

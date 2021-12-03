@@ -58,11 +58,7 @@ export const ParentalRating = styled.View`
     flex-direction: row;
     padding: 5px;
 `
-export const ParentalRatingOption = styled.TouchableOpacity`
-    border-color: #818f81;
-    border-width: 3px;
-`
-
+export const ParentalRatingOption = styled.TouchableOpacity``
 export const ImageDetails = styled.Image`
     width: 20px;
     height: 20px;
@@ -100,3 +96,4 @@ export const SaveBtnView = styled.TouchableOpacity`
     justify-content: center;
     align-items: center;
 `
+export const Touchable = styled.TouchableOpacity``;

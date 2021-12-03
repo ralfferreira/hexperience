@@ -11,6 +11,7 @@ export const BlockedExperiencesList = styled.View`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    flex-direction: row;
     padding: 15px;
     margin-bottom: 100px;
 `
@@ -24,11 +25,6 @@ export const BlockedExperiencesItem = styled.View`
     flex-direction: column;
     justify-content: space-between;
     margin-bottom: 20px;
-`
-export const BlockedExperiencesRow = styled.View`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
 `
 export const BlockedExperiencesHeader = styled.View`
     display: flex;

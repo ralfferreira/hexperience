@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup'
@@ -44,7 +44,8 @@ import {
   SaveBtn, 
   SaveBtnText, 
   SaveBtnView,
-  ExperienceImageCarrousel
+  ExperienceImageCarrousel,
+  Touchable,
 } from './styles';
 
 const CreateExperience = () => {
@@ -53,7 +54,14 @@ const CreateExperience = () => {
 
   const [cover, setCover] = useState(null);
   const [photos, setPhotos] = useState([]);
+
   const [parentalRating, setParentalRating] = useState(1);
+  const [freeForAll, setFreeForAll] = useState(true);
+  const [tenYears, setTenYears] = useState(false);
+  const [twelveYears, setTwelveYears] = useState(false);
+  const [fourteenYears, setFourteenYears] = useState(false);
+  const [sixteenYears, setSixteenYears] = useState(false);
+  const [eighteenYears, setEighteenYears] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -168,6 +176,123 @@ const CreateExperience = () => {
     setPhotos([...photos, result.uri]);
   }, [cover, photos]);
 
+  const handleCoverDecision = useCallback(() => {
+    Alert.alert(
+      'Capa da experiência',
+      'O que deseja fazer com a capa da experiência?',
+      [
+        { text: 'Fechar', style: 'cancel', onPress: () => {} },
+        { text: 'Alterar', style: 'default', onPress: () => handleChangeCover().finally(() => {}) },
+
+      ]
+    )
+  }, [handleChangeCover]);
+
+  const handleChangeCover = useCallback(async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result.cancelled) {
+      return;
+    }
+
+    setCover(result.uri);
+  }, [cover]);
+
+  const handlePhotoDecision = useCallback(async (i) => {
+    Alert.alert(
+      'Foto da experiência',
+      'O que deseja fazer com esta foto da experiência?',
+      [
+        { text: 'Fechar', style: 'cancel', onPress: () => {} },
+        { text: 'Alterar', style: 'default', onPress: () => handleChangePhoto(i).finally(() => {}) },
+        { text: 'Remover', style: 'destructive', onPress: () => handleRemovePhoto(i) }
+      ]
+    )
+  }, []);
+
+  const handleChangePhoto = useCallback(async (i) => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (result.cancelled) {
+      return;
+    }
+
+    const uris = photos;
+    uris.splice(i, 1, result.uri);
+    setPhotos([...uris]);
+  }, [photos]);
+
+  const handleRemovePhoto = useCallback((i) => {
+    const uris = photos;
+    uris.splice(i, 1);
+
+    setPhotos([...uris]);
+  }, [photos]);
+
+  const handleParentalRating = useCallback((age) => {
+    setParentalRating(age);
+    switch (age) {
+      case 10:
+        setFreeForAll(false);
+        setTenYears(true);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 12:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(true);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 14:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(true);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 16:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(true);
+        setEighteenYears(false);
+        break;
+      case 18:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(true);
+        break;
+      default:
+        setFreeForAll(true);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+    }
+  }, []);
+
   return (
     <Container>
       <HeaderWithoutSearch>
@@ -191,12 +316,24 @@ const CreateExperience = () => {
           <Title>Imagens</Title>
           <ExperienceImageView>
             <ExperienceImageCarrousel horizontal={true} showsHorizontalScrollIndicator={false}>
-              {cover && <ExperienceImage source={{ uri: cover }} /> }
+              {
+                cover && 
+                <Touchable onPress={handleCoverDecision}>
+                  <ExperienceImage 
+                    source={{ uri: cover }}
+                  /> 
+                </Touchable>
+              }
               {
                 photos.length >= 1
                 ? photos.map((photo, i) => {
                   return (
-                    <ExperienceImage key={`Photo:${photo}:${i}`} source={{uri: photo}} />
+                    <Touchable 
+                      key={`Touchable:${photo}:${i}`}
+                      onPress={() => handlePhotoDecision(i)}
+                    >
+                      <ExperienceImage key={`Photo:${photo}:${i}`} source={{uri: photo}} />
+                    </Touchable>
                   )
                 })
                 : (<></>)
@@ -276,27 +413,45 @@ const CreateExperience = () => {
           </ExperienceDetails>
           <Title>Classificação Indicativa</Title>
           <ParentalRating>
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={freeForAll ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(1)}
+            >
               <ParentalRatingImg source={FreeIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={tenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(10)}
+            >
               <ParentalRatingImg source={TenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={twelveYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(12)}
+            >
               <ParentalRatingImg source={TwelveYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={fourteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(14)}
+            >
               <ParentalRatingImg source={FourteenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={sixteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(16)}
+            >
               <ParentalRatingImg source={SixteenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={eighteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(18)}
+            >
               <ParentalRatingImg source={EighteenYearsIcon} />
             </ParentalRatingOption>
           </ParentalRating>
@@ -324,5 +479,12 @@ const CreateExperience = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  parentalRating: {
+    borderColor: '#818f81',
+    borderWidth: 3
+  }
+});
 
 export default CreateExperience;

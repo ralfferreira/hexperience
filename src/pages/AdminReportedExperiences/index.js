@@ -3,8 +3,6 @@ import { SearchBar } from 'react-native-elements';
 import { Alert } from 'react-native';
 import { format, parseISO } from 'date-fns';
 
-import getValidationErrors from '../../utils/getValidationErrors';
-
 import api from '../../services/api';
 
 import DefaultImg from '../../assets/img/DinoGreenColor.png'
@@ -19,7 +17,6 @@ import {
   ReportedExperiencesHeader,
   ReportedExperiencesImage, 
   ReportedExperiencesName, 
-  ReportedExperiencesAlert, 
   ReportedExperiencesDate  
 } from './styles';
 
@@ -109,44 +106,42 @@ const AdminReportedExperiences = () => {
       />
       <Content>
         <ReportedExperiencesList>
-          <ReportedExperiencesRow>
-            {
-              filteredReportedExperiences.length
-              ? filteredReportedExperiences.map(experience => {
-                const parsedDate = parseISO(experience.updated_at);
+          {
+            filteredReportedExperiences.length
+            ? filteredReportedExperiences.map(experience => {
+              const parsedDate = parseISO(experience.updated_at);
 
-                const formattedDate = format(parsedDate, 'dd/MM/yyyy');
-                
-                return (
-                  <Touchable
-                    key={`Touchable:${experience.id}`}
-                    onPress={() => handleDecision(experience.id)}
-                  >
-                    <ReportedExperiencesItem key={`Item:${experience.id}`}>
-                      <ReportedExperiencesHeader key={`Header:${experience.id}`}>
-                        <ReportedExperiencesImage 
-                          key={`Image:${experience.id}`}
-                          source={
-                            experience.cover_url
-                            ? { uri: experience.cover_url }
-                            : DefaultImg
-                          }
-                          resizeMode="center"
-                        />
-                      </ReportedExperiencesHeader>
-                      <ReportedExperiencesName key={`Name:${experience.id}`}>
-                        {experience.name}
-                      </ReportedExperiencesName>
-                      <ReportedExperiencesDate>
-                        {formattedDate}
-                      </ReportedExperiencesDate>
-                    </ReportedExperiencesItem>
-                  </Touchable>
-                )
-              })
-              : (<></>)
-            }
-          </ReportedExperiencesRow>
+              const formattedDate = format(parsedDate, 'dd/MM/yyyy');
+              
+              return (
+                <Touchable
+                  key={`Touchable:${experience.id}`}
+                  onPress={() => handleDecision(experience.id)}
+                >
+                  <ReportedExperiencesItem key={`Item:${experience.id}`}>
+                    <ReportedExperiencesHeader key={`Header:${experience.id}`}>
+                      <ReportedExperiencesImage 
+                        key={`Image:${experience.id}`}
+                        source={
+                          experience.cover_url
+                          ? { uri: experience.cover_url }
+                          : DefaultImg
+                        }
+                        resizeMode="center"
+                      />
+                    </ReportedExperiencesHeader>
+                    <ReportedExperiencesName key={`Name:${experience.id}`}>
+                      {experience.name}
+                    </ReportedExperiencesName>
+                    <ReportedExperiencesDate>
+                      {formattedDate}
+                    </ReportedExperiencesDate>
+                  </ReportedExperiencesItem>
+                </Touchable>
+              )
+            })
+            : (<></>)
+          }
         </ReportedExperiencesList>
       </Content>
     </Container>

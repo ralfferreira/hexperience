@@ -11,6 +11,7 @@ export const RequestList = styled.View`
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
+    flex-direction: row;
     padding: 15px;
     margin-bottom: 100px;
 `

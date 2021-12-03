@@ -82,7 +82,7 @@ const Favorites = () => {
             </Folder>
           </FolderButton>
           {
-            folders
+            folders.length
             ? folders.map(f => {
               return (
                 <FolderButton 

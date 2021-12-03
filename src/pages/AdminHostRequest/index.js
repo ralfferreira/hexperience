@@ -172,60 +172,58 @@ const AdminHostRequest = () => {
       />
       <Content>
         <RequestList>
-          <RequestListRow>
-            {
-              filteredRequests.length
-              ? filteredRequests.map(entry => {
-                const { request, user } = entry;
+          {
+            filteredRequests.length
+            ? filteredRequests.map(entry => {
+              const { request, user } = entry;
 
-                const parsedDate = parseISO(request.createdAt);
+              const parsedDate = parseISO(request.createdAt);
 
-                const formattedDate = format(parsedDate, 'dd/MM/yyyy');
+              const formattedDate = format(parsedDate, 'dd/MM/yyyy');
 
-                let formattedID = '';
+              let formattedID = '';
 
-                if (request.cpf) {
-                  formattedID = formatStringByPattern('999.999.999-99', request.cpf);
-                } else {
-                  formattedID = formatStringByPattern('99.999.999/9999-99', request.cnpj);
-                }
+              if (request.cpf) {
+                formattedID = formatStringByPattern('999.999.999-99', request.cpf);
+              } else {
+                formattedID = formatStringByPattern('99.999.999/9999-99', request.cnpj);
+              }
 
-                return (
-                  <Touchable
-                    key={`Touchable:${request._id}`}
-                    onPress={() => handleDecision(user)}
-                  >
-                    <RequestItem key={`Item:${request._id}`}>
-                      <RequestItemHeader key={`ItemHeader:${request._id}`}>
-                        <RequestItemProfile
-                          key={`ItemProfile:${request._id}`}
-                          source={
-                            user.avatar_url
-                            ? user.avatar_url
-                            : DefaultImg
-                          }
-                          resizeMode="center"
-                        />
-                      </RequestItemHeader>
-                      <RequestItemName key={`ItemName:${request._id}`}>
-                        {user.name}
-                      </RequestItemName>
-                      <RequestItemNickname key={`ItemNickname:${request._id}`}>
-                        {request.nickname}
-                      </RequestItemNickname>
-                      <RequestItemID key={`ItemID:${request._id}`}>
-                        {formattedID}
-                      </RequestItemID>
-                      <RequestItemDate key={`ItemDate:${request._id}`}>
-                        {formattedDate}
-                      </RequestItemDate>
-                    </RequestItem>
-                  </Touchable>
-                )
-              })
-              : (<></>)
-            }
-          </RequestListRow>
+              return (
+                <Touchable
+                  key={`Touchable:${request._id}`}
+                  onPress={() => handleDecision(user)}
+                >
+                  <RequestItem key={`Item:${request._id}`}>
+                    <RequestItemHeader key={`ItemHeader:${request._id}`}>
+                      <RequestItemProfile
+                        key={`ItemProfile:${request._id}`}
+                        source={
+                          user.avatar_url
+                          ? user.avatar_url
+                          : DefaultImg
+                        }
+                        resizeMode="center"
+                      />
+                    </RequestItemHeader>
+                    <RequestItemName key={`ItemName:${request._id}`}>
+                      {user.name}
+                    </RequestItemName>
+                    <RequestItemNickname key={`ItemNickname:${request._id}`}>
+                      {request.nickname}
+                    </RequestItemNickname>
+                    <RequestItemID key={`ItemID:${request._id}`}>
+                      {formattedID}
+                    </RequestItemID>
+                    <RequestItemDate key={`ItemDate:${request._id}`}>
+                      {formattedDate}
+                    </RequestItemDate>
+                  </RequestItem>
+                </Touchable>
+              )
+            })
+            : (<></>)
+          }
         </RequestList>
       </Content>
     </Container>

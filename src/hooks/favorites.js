@@ -58,7 +58,8 @@ const FavoritesProvider = ({children}) => {
       array.push([...new Set(favoritesRelation)]);
     }
 
-    const favs = [...new Set(array)];
+    const stringFavs = [...new Set(array.map(i => JSON.stringify(i)))];
+    const favs = [...new Set(stringFavs.map(s => JSON.parse(s)))];
     
     await AsyncStorage.setItem('@Hexperience:favorites', JSON.stringify(favs));
 
@@ -67,7 +68,7 @@ const FavoritesProvider = ({children}) => {
 
   const folders = useMemo(() => {
     if (!favoritesRelation) {
-      return null;
+      return [];
     }
 
     return [...new Set(favoritesRelation.map(fav => {
