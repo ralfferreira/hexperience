@@ -178,8 +178,6 @@ const AdminComplaintUsers = () => {
                 formattedID = formatStringByPattern('99.999.999/9999-99', host.cnpj);
               }
 
-              console.log(host);
-
               return (
                 <Touchable
                   key={`Touchable:${host.id}`}

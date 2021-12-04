@@ -167,7 +167,10 @@ const Experience = () => {
   const handleMakeAppointment = useCallback(async (data) => {
     try {
       const schema = Yup.object().shape({
-        guests: Yup.number().min(1).required('Comentário é obrigatório') 
+        guests: Yup.number()
+          .min(1, 'Ao minímo uma pessoa deve ir')
+          .max(selectedSchedule.availability, 'Número de pessoas ultrapassa a disponibilidade')
+          .required('Comentário é obrigatório') 
       })
 
       await schema.validate(data, {
@@ -177,6 +180,7 @@ const Experience = () => {
       await api.post('/appointments', {
         guests: data.guests,
         paid: false,
+        schedule_id: selectedSchedule.id
       });
       
       Alert.alert('Sucesso', 'Agendamento foi feito com sucesso!');
@@ -202,7 +206,7 @@ const Experience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [appointmentModalVisible]);
+  }, [appointmentModalVisible, selectedSchedule]);
 
   const handleAddToFavorites = useCallback(async (data) => {
     try {
@@ -214,15 +218,15 @@ const Experience = () => {
         abortEarly: true
       });
 
-      formData = { exp_id: experience.id };
+      const formData = { exp_id: experience.id };
 
       if (data.folder) {
         Object.assign(formData, {
           folder: data.folder
         })
-      } // to arrumando ainda <3     // MAN VOU DORMIR KSKSKSKS TO CANSADÃO! 
+      }
       
-      const reponse = await api.post('experiences/favorites', formData);
+      const response = await api.post('experiences/favorites', formData);
 
       Alert.alert('Sucesso', 'Experiência foi adicionada aos favoritos com sucesso');
 
@@ -486,6 +490,10 @@ const Experience = () => {
 
                             <OptionTitle>
                               Preço da experiência: {`R$ ${experience.price}`}
+                            </OptionTitle>
+
+                            <OptionTitle>
+                              Disponibilidade: {selectedSchedule.availability} pessoas
                             </OptionTitle>
                             
                             <Row>

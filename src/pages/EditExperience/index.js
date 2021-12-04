@@ -8,6 +8,7 @@ import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
+import AddSchedule from '../../components/AddSchedule';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -40,21 +41,32 @@ import {
   ParentalRatingImg, 
   SaveBtn, 
   SaveBtnText, 
-  SaveBtnView 
+  SaveBtnView, 
+  Touchable,
+  ExperienceSchedules
 } from './styles';
 
 const EditExperience = () => {
-  const formRef = useRef()
+  const updateFormRef = useRef()
   const navigation = useNavigation();
   const route = useRoute();
 
   const routeParams = route.params;
 
-  const [experience, setExperience] = useState({ photos: [] });
+  const [experience, setExperience] = useState({ photos: [], schedules: [] });
   const [duration, setDuration] = useState(0);
   const [maxGuests, setMaxGuests] = useState(0);
+  const [cover, setCover] = useState(null);
 
-  const [photos, setPhotos] = useState([]);
+  const [parentalRating, setParentalRating] = useState(1);
+  const [freeForAll, setFreeForAll] = useState(true);
+  const [tenYears, setTenYears] = useState(false);
+  const [twelveYears, setTwelveYears] = useState(false);
+  const [fourteenYears, setFourteenYears] = useState(false);
+  const [sixteenYears, setSixteenYears] = useState(false);
+  const [eighteenYears, setEighteenYears] = useState(false);
+
+  const [schedulesModalVisible, setSchedulesModalVisible] = useState(true);
 
   useEffect(() => {
     api.get(`/experiences/${routeParams.exp_id}/show`).then((response) => {
@@ -71,6 +83,14 @@ const EditExperience = () => {
 
     if (experience.max_guests) {
       setMaxGuests(experience.max_guests);
+    }
+
+    if (experience.cover_url) {
+      setCover(experience.cover_url)
+    }
+
+    if (experience.parental_rating) {
+      handleParentalRating(experience.parental_rating);
     }
   }, [experience]);
 
@@ -175,6 +195,102 @@ const EditExperience = () => {
     )
   }, [handleUpdatePhoto, handleDeletePhoto]);
 
+  const handleAddPhotosEvent = useCallback(async () => {
+    if (!cover) {
+      await handleUpdateCover();
+      return;
+    }
+
+    if (experience.photos.length >= 4) {
+      Alert.alert('Limite atingido', 'Cada experiência pode ter apenas 5 fotos');
+      return;
+    }
+    
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1
+    });
+
+    if (result.cancelled) {
+      return;
+    }
+
+    const photoForm = new FormData();
+
+    photoForm.append('photo', {
+      type: 'image/jpeg',
+      name: `photo:${result.uri.substr(-10, 10)}.jpg`,
+      uri: result.uri,
+    });
+
+    try {
+      const response = await api.patch(
+        `/experiences/${experience.id}/photos`, 
+        photoForm
+      );
+
+      setExperience(response.data);
+    } catch (err) {
+      Alert.alert('Erro ao atualizar imagem da experiência', `${err.response.data.message}`);
+    }
+  }, [cover, experience]);
+
+  const handleParentalRating = useCallback((age) => {
+    setParentalRating(age);
+    switch (age) {
+      case 10:
+        setFreeForAll(false);
+        setTenYears(true);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 12:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(true);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 14:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(true);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+      case 16:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(true);
+        setEighteenYears(false);
+        break;
+      case 18:
+        setFreeForAll(false);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(true);
+        break;
+      default:
+        setFreeForAll(true);
+        setTenYears(false);
+        setTwelveYears(false);
+        setFourteenYears(false);
+        setSixteenYears(false);
+        setEighteenYears(false);
+        break;
+    }
+  }, []);
+
   const handleSubmit = useCallback(() => {
     try {
 
@@ -182,7 +298,7 @@ const EditExperience = () => {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        updateFormRef.current?.setErrors(errors);
 
         Alert.alert(
           'Erro ao atualizar experiência',
@@ -208,10 +324,9 @@ const EditExperience = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           enabled
-        />        
-
+        />
         <Form 
-          ref={formRef} 
+          ref={updateFormRef} 
           onSubmit={handleSubmit}
           initialData={{ 
             title: experience.name,
@@ -235,23 +350,27 @@ const EditExperience = () => {
           <Title>Imagens</Title>
           <ExperienceImageView>
             {
-              experience.cover_url && 
-              <ExperienceImage 
-                source={{ uri: experience.cover_url }} 
-              />
+              cover && 
+              <Touchable onPress={handleChangeCoverEvent}> 
+                <ExperienceImage 
+                  source={{ uri: cover }} 
+                />
+              </Touchable>
             }
             {
               experience.photos.length
               ? experience.photos.map(photo => {
                 return (
-                  <ExperienceImage 
-                    source={{ uri: photo.photo_url }} 
-                  />
+                  <Touchable onPress={() => handlePhotosEvent(photo.id)}>
+                    <ExperienceImage 
+                      source={{ uri: photo.photo_url }} 
+                    />
+                  </Touchable>
                 )
               })
               : (<></>)
             }
-            <AddExperienceImage>
+            <AddExperienceImage onPress={handleAddPhotosEvent}>
               <PlusImg source={PlusIcon} />
             </AddExperienceImage>
           </ExperienceImageView>
@@ -309,29 +428,48 @@ const EditExperience = () => {
               />
             </ExperienceDetailsRow>
           </ExperienceDetails>
+
           <Title>Classificação Indicativa</Title>
           <ParentalRating>
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={freeForAll ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(1)}
+            >
               <ParentalRatingImg source={FreeIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={tenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(10)}
+            >
               <ParentalRatingImg source={TenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={twelveYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(12)}
+            >
               <ParentalRatingImg source={TwelveYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={fourteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(14)}
+            >
               <ParentalRatingImg source={FourteenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={sixteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(16)}
+            >
               <ParentalRatingImg source={SixteenYearsIcon} />
             </ParentalRatingOption>
 
-            <ParentalRatingOption>
+            <ParentalRatingOption
+              style={eighteenYears ? styles.parentalRating : {}}
+              onPress={() => handleParentalRating(18)}
+            >
               <ParentalRatingImg source={EighteenYearsIcon} />
             </ParentalRatingOption>
           </ParentalRating>
@@ -345,8 +483,31 @@ const EditExperience = () => {
             maxLength={300}
             multiline
           />
+
+          <Title>Horários</Title>
+          <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
+            {
+              experience.schedules.length
+              ? experience.schedules.map(schedule => {
+                return (
+                  <AddSchedule 
+                    key={`AddSchedule:${schedule.id}`}
+                    datetime={schedule.date}                  
+                  />
+                )
+              })
+              : (<></>)
+            }
+            <AddExperienceImage onPress={() => setSchedulesModalVisible(true)}>              
+              <PlusImg source={PlusIcon} />
+            </AddExperienceImage>
+          </ExperienceSchedules>
           <SaveBtn>
-            <SaveBtnView onPress={() => { navigation.navigate('Home') }}>
+            <SaveBtnView 
+              onPress={() => { 
+                updateFormRef.current?.submitForm();
+              }}
+            >
               <SaveBtnText>Salvar Alterações</SaveBtnText>
             </SaveBtnView>
           </SaveBtn>

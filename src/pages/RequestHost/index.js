@@ -74,7 +74,6 @@ const RequestHost = () => {
       }
 
       await api.post('hosts/request-privilege', postData)
-        .catch((err) => { console.log(err.response);});
 
       Alert.alert(
         'Sucesso', 

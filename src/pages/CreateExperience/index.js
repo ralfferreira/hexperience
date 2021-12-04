@@ -1,5 +1,6 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
 import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet } from 'react-native';
+import { geocodeAsync, requestForegroundPermissionsAsync } from 'expo-location';
 import { useNavigation } from '@react-navigation/native'; 
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup'
@@ -63,13 +64,23 @@ const CreateExperience = () => {
   const [sixteenYears, setSixteenYears] = useState(false);
   const [eighteenYears, setEighteenYears] = useState(false);
 
+  const [address, setAddress] = useState(null);
+  const [geocode, setGeocode] = useState(null);
+
   useEffect(() => {
     (async () => {
-      if (Platform.OS !== 'web') {
-        const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (status !== 'granted') {
-          alert('Sorry, we need camera roll permissions to make this work!');
-        }
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Precisamos de permissão para acessar a galeria.');
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const response = await requestForegroundPermissionsAsync();
+      if (response.status !== 'granted') {
+        alert('Precisamos de permissão para acessar a localização');
       }
     })();
   }, []);
@@ -79,7 +90,6 @@ const CreateExperience = () => {
       const schema = Yup.object().shape({
         title: Yup.string().required('Título é obrigatório'),
         description: Yup.string().required('Descrição é obrigatório'),
-        address: Yup.string().required('Descrição é obrigatório'),
         duration: Yup.number().max(360).required('Duração é obrigatório'),
         amount_people: Yup.number().required('Número de pessoas por horário é obrigatório'),
         price: Yup.number().min(0).required('Preço é obrigatorio'),
@@ -91,10 +101,10 @@ const CreateExperience = () => {
       });
 
       if (!cover) {
-        throw new Error('No minimo uma mensagem deve ser enviada');
+        throw new Error('No minimo uma imagem deve ser enviada');
       }
 
-      const result = await api.post('/experiences', {
+      const createData = {
         name: data.title,
         duration: data.duration,
         description: data.description,
@@ -102,9 +112,23 @@ const CreateExperience = () => {
         requirements: data.requirements,
         parental_rating: parentalRating,
         max_guests: data.amount_people,
-        is_online: data.address ? false : true,
         category_id: 1
-      });
+      }
+
+      if (address && geocode) {
+        Object.assign(createData, {
+          latitude: geocode.latitude,
+          longitude: geocode.longitude,
+          address: address,
+          is_online: false
+        });
+      } else {
+        Object.assign(createData, {
+          is_online: true
+        });
+      }
+
+      const result = await api.post('/experiences', createData);
 
       const coverData = new FormData();
 
@@ -128,7 +152,9 @@ const CreateExperience = () => {
         await api.post(`/experiences/${result.data.id}/photos`, photoData);
       }
 
-      navigation.navigate('Home');
+      Alert.alert('Sucesso', 'Experiência criada com sucesso!');
+
+      navigation.navigate('Profile');
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -148,7 +174,7 @@ const CreateExperience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [parentalRating, cover, photos, navigation]);  
+  }, [parentalRating, cover, photos, navigation, geocode, address]);  
 
   const handlePickImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -293,6 +319,30 @@ const CreateExperience = () => {
     }
   }, []);
 
+  const searchForAddress = useCallback(async (address) => {
+    const results = await geocodeAsync(address);
+
+    if (!results.length) {
+      Alert.alert('Erro ao procurar endereço', 'Nenhum endereço foi encontrado');
+      setGeocode(null);
+      return;
+    }
+
+    if (results.length > 1) {
+      Alert.alert(
+        'Erro ao procurar endereço', 
+        'Muitos resultados foram retornados, tente ser mais específico'
+      );
+      setGeocode(null);
+      return;
+    }
+
+    setGeocode({ 
+      latitude: results[0].latitude.toFixed(5),
+      longitude: results[0].longitude.toFixed(5)
+    })
+  }, []);
+
   return (
     <Container>
       <HeaderWithoutSearch>
@@ -358,26 +408,14 @@ const CreateExperience = () => {
           <ExperienceDetails>
             <ExperienceDetailsRowAddress>
               <ImageDetails source={AddressIcon} />
-              <GooglePlacesAutocomplete
-                placeholder='Endereço da experiência'
-                onPress={(data, details = null) => {
-                  // 'details' is provided when fetchDetails = true
-                  console.log(data, details);
-                }}
-                query={{
-                  key: 'AIzaSyAI34vLZy3XXfTtGuP9yUafYlj4oW43Hu0',
-                  language: 'pt-br',
-                }}
-                fetchDetails={true}
-                styles={{ 
-                  listView:{height:100},
-                  textInput: {
-                    paddingVertical: 0,
-                    paddingBottom: 15,
-                    paddingHorizontal: 0,
-                    fontSize: 14,
-                  },
-                }}
+              <ExperienceDetailsInput           
+                name="address"
+                placeholder="Endereço (Se nenhum for fornecido, então ela será online)"
+                placeholderTextColor="gray"
+                maxLength={100}
+                value={address}
+                onChangeText={(text) => setAddress(text)}
+                onEndEditing={() => searchForAddress(address)}
               />
             </ExperienceDetailsRowAddress>
             <ExperienceDetailsRow>

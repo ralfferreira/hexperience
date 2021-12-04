@@ -157,22 +157,22 @@ const Calendar = () => {
       <ScrollView>
         {
           formattedData.length
-          ? formattedData.map((y, iy) => {
+          ? formattedData.map((y) => {
             return (
-              <>
-                <CalendarHeader key={`CalendarHeader:${y.year}:${iy}`} >
-                  <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}:${iy}`}>
+              <React.Fragment key={`YearFragment:${y.year}`}>
+                <CalendarHeader key={`CalendarHeader:${y.year}`} >
+                  <CalendarHeaderTitle key={`CalendarHeaderTitle:${y.year}`}>
                     {y.year}
                   </CalendarHeaderTitle>
                 </CalendarHeader>
-                <CalendarContent key={`CalendarContent:${y.year}:${iy}`} >
+                <CalendarContent key={`CalendarContent:${y.year}`} >
                   {
                     y.months.length 
-                    ? y.months.map((m, im) => {
+                    ? y.months.map((m) => {
                       return (
-                        <>    
+                        <React.Fragment key={`MonthFragment:${m.month}:${y.year}`}>    
                           <CalendarMonth 
-                            key={`CalendarMonth:${y.year}:${m.month}:${im}`}
+                            key={`CalendarMonth:${m.month}:${y.year}`}
                             month={m.month} 
                             day={m.days[0].day} 
                           />
@@ -180,16 +180,16 @@ const Calendar = () => {
                             m.days.length 
                             ? m.days.map((d, i) => {
                               return (
-                                <>
+                                <React.Fragment key={`DayFragment:${d.day}:${m.month}:${y.year}`}>
                                   {
                                     i > 0
                                     ? (
                                       <CalendarMonth
-                                        key={`CalendarDay:${y.year}:${m.month}:${d.day}:${i}`}
+                                        key={`CalendarDay:${d.day}:${m.month}:${y.year}`}
                                         day={d.day}
                                       />
                                     )
-                                    : (<></>)
+                                    : (<React.Fragment key={`FirstDayFragment:${d.day}:${m.month}:${y.year}`}></React.Fragment>)
                                   }
                                   {
                                     d.data.length
@@ -199,7 +199,7 @@ const Calendar = () => {
 
                                       return (
                                         <HorizontalCard 
-                                          key={`Appointment:${y.year}:${m.month}:${d.day}:${a.id}:${i}`}
+                                          key={`Appointment:${d.day}:${m.month}:${y.year}:${a.id}`}
                                           image={e.cover_url}
                                           name={e.name}
                                           address={e.address}
@@ -212,20 +212,20 @@ const Calendar = () => {
                                         />
                                       )
                                     })
-                                    : (<></>)
+                                    : (<React.Fragment key={`EmptyDataFragment:${d.day}:${m.month}:${y.year}`}></React.Fragment>)
                                   }
-                                </>
+                                </React.Fragment>
                               )
                             })
-                            : (<></>)
+                            : (<React.Fragment key={`EmptyMonthFragment:${m.month}:${y.year}`}></React.Fragment>)
                           }
-                        </>                       
+                        </React.Fragment>                       
                       )                      
                     })
-                    : (<></>)
+                    : (<React.Fragment key={`EmptyYearFragment:${y.year}`}></React.Fragment>)
                   }
                 </CalendarContent>                  
-              </>
+              </React.Fragment>
             )
           })
           : (<></>)

@@ -119,3 +119,7 @@ export const SaveBtnView = styled.TouchableOpacity`
     justify-content: center;
     align-items: center;
 `
+export const Touchable = styled.TouchableOpacity``;
+export const ExperienceSchedules = styled.ScrollView`
+    margin-left: 15px;
+`
