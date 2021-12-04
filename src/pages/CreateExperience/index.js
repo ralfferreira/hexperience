@@ -415,7 +415,7 @@ const CreateExperience = () => {
                 maxLength={100}
                 value={address}
                 onChangeText={(text) => setAddress(text)}
-                onEndEditing={() => searchForAddress(address)}
+                onEndEditing={() => searchForAddress(address)}                
               />
             </ExperienceDetailsRowAddress>
             <ExperienceDetailsRow>

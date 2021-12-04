@@ -35,7 +35,7 @@ const Favorites = () => {
     api.get('/experiences/favorites').then(response => {
       setFavorites(response.data);
     }).catch(err => {
-      Alert.alert(`${err.message}`)
+      Alert.alert('Erro ao carregar favoritos', `${err.response.data.message}`)
     });
   }, []);
 

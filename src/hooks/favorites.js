@@ -6,6 +6,7 @@ import React, {
   useState,
   useMemo
 } from "react";
+import { Alert } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import api from "../services/api";
@@ -17,68 +18,72 @@ const FavoritesContext = createContext({});
 const FavoritesProvider = ({children}) => {
   const { loading, user  } = useAuth();
 
-  const [favoritesRelation, setFavoritesRelation] = useState([]);
+  const [favorites, setFavorites] = useState([]);
   
   useEffect(() => {
-    async function loadFavoritesRelation() {
-      const storagedFavorites = await AsyncStorage.getItem('@Hexperience:favorites');    
+    async function loadStorage() {
+      const favorites = await AsyncStorage.getItem('@Hexperience:favorites');
 
-      if (storagedFavorites) {
-        const parsedFavorites = JSON.parse(storagedFavorites);
-
-        setFavoritesRelation(parsedFavorites);
-      }
+      if (favorites) {
+        setFavorites(JSON.parse(favorites));
+      }      
     }
 
-    loadFavoritesRelation().then(() => {
-      if (loading && !user) {
-        return;
-      }
+    loadStorage().then(() => loadFavorites());
+  }, []);
 
-      loadFavorites()
-    });
+  const loadFavorites = useCallback(async () => {
+    if (!loading) {
+      return;
+    }
+
+    if (!user) {
+      return;
+    }
+
+    try {
+      const response = await api.get('/experiences/favorites');
+
+      await AsyncStorage.setItem('@Hexperience:favorites', JSON.stringify(response.data));
+
+      setFavorites(response.data);
+    } catch (err) {
+      Alert.alert('Erro ao carregar favoritos', `${err.response.data.message}`);
+    }
   }, [loading, user]);
 
-  const loadFavorites = useCallback(async () => {    
-    const { data } = await api.get('/experiences/favorites');
+  const favoritesRelation = useMemo(() => {
+    if (!favorites.length) {
+      return [];
+    }
 
-    const favs = data.map(fav => {
+    const relations = favorites.map((fav) => {
       return {
         id: fav.id,
+        user_id: user.id,
         exp_id: fav.experience.id,
         folder: fav.folder
       }
     });
 
-    await handleSetFavoritesRelation(favs);
-  }, [handleSetFavoritesRelation]);
-
-  const handleSetFavoritesRelation = useCallback(async (array) => {
-    if (favoritesRelation) {
-      array.push([...new Set(favoritesRelation)]);
-    }
-
-    const stringFavs = [...new Set(array.map(i => JSON.stringify(i)))];
-    const favs = [...new Set(stringFavs.map(s => JSON.parse(s)))];
-    
-    await AsyncStorage.setItem('@Hexperience:favorites', JSON.stringify(favs));
-
-    setFavoritesRelation(favs);
-  }, [favoritesRelation, setFavoritesRelation]);
+    return relations
+  }, [favorites]);
 
   const folders = useMemo(() => {
-    if (!favoritesRelation) {
+    if (!favoritesRelation.length) {
       return [];
     }
 
-    return [...new Set(favoritesRelation.map(fav => {
+    const listOfFolders = [...new Set(favoritesRelation.map(fav => {
       return fav.folder;
     }))];
+
+    return listOfFolders;
   }, [favoritesRelation]);
 
   return (
     <FavoritesContext.Provider
-      value={{ handleSetFavoritesRelation, folders, favoritesRelation, loadFavorites }}
+      value={{ folders, favoritesRelation, loadFavorites }}
     >
       {children}
     </FavoritesContext.Provider>

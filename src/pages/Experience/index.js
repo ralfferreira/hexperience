@@ -96,7 +96,7 @@ const Experience = () => {
     api.get(`/experiences/${routeParams.exp_id}/show`).then((response) => {
       setExperience(response.data);
     }).catch((err) => {
-      Alert.alert(`${err.message}`)
+      Alert.alert('Erro ao carregar experiência', `${err.response.data.message}`)
     });
   }, [routeParams]);
 

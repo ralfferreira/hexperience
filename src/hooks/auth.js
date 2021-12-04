@@ -5,6 +5,7 @@ import React, {
   useContext,
   useEffect
 } from "react";
+import { Alert } from 'react-native'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { differenceInHours, parseISO } from "date-fns";
 
@@ -93,25 +94,29 @@ const AuthProvider = ({children}) => {
 
       return;
     }
-    
-    const response = await api.put('/sessions', {
-      token: data.token,
-      user_id: data.user.id
-    });
-    
-    const { user, newToken } = response.data;
 
-    await AsyncStorage.multiSet([
-      ['@Hexperience:token', newToken],
-      ['@Hexperience:user', JSON.stringify(user)],
-      ['@Hexperience:lastLoginDate', new Date().toISOString()],
-    ]);
-
-    api.defaults.headers.authorization = `Bearer ${newToken}`;
-
-    setData({ token: newToken, user: user, lastLoginDate: new Date() });
-
-    setLoading(false);
+    try {
+      const response = await api.put('/sessions', {
+        token: data.token,
+        user_id: data.user.id
+      });
+      
+      const { user, newToken } = response.data;
+  
+      await AsyncStorage.multiSet([
+        ['@Hexperience:token', newToken],
+        ['@Hexperience:user', JSON.stringify(user)],
+        ['@Hexperience:lastLoginDate', new Date().toISOString()],
+      ]);
+  
+      api.defaults.headers.authorization = `Bearer ${newToken}`;
+  
+      setData({ token: newToken, user: user, lastLoginDate: new Date() });
+  
+      setLoading(false);
+    } catch (err) {
+      Alert.alert('Erro ao renovar sessão', `${err.response.data.message}`);
+    }        
   }, [data, setData, setLoading]);
 
   return (

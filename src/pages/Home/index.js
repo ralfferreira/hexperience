@@ -42,7 +42,7 @@ const Home = () => {
     api.get('/experiences').then((response) => {
       setRecommendedExperiences(response.data);
     }).catch((err) => { 
-      Alert.alert(`${err.response.data.message}`)
+      Alert.alert('Erro ao carregar experiências recomendadas', `${err.response.data.message}`)
     });
   }, []);
 
@@ -61,11 +61,14 @@ const Home = () => {
         }).then ((response) => {
           setNearExperiences(response.data);
         }).catch((err) => {
-          Alert.alert(`${err.response.data.message}`)
+          Alert.alert(
+            'Erro ao carregar experiências próximas à você',
+            `${err.response.data.message}`
+          )
         });
       })
       .catch((err) => {
-        Alert.alert(`${err.message}`)
+        Alert.alert('Erro ao atualizar localização', `${err.message}`)
       })
   }, [])
 

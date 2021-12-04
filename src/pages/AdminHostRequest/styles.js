@@ -60,3 +60,34 @@ export const RequestItemDate = styled.Text`
     color: #161616;
 `
 export const Touchable = styled.TouchableOpacity``
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+export const ModalView = styled.View`
+    display: flex;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+    text-align: left;
+`
+export const AlignCallback = styled.View`
+    align-items: center;
+    display: flex;
+`
+export const Title = styled.Text`
+    font-size: 24px;
+    font-weight: bold;
+    padding: 15px;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const OptionTitle = styled.Text`
+    font-size: 22px;
+    font-weight: 400;
+    text-align: left;
+    padding: 20px;
+`

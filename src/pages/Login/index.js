@@ -125,9 +125,9 @@ const Login = () => {
           </SignButton>
         </Form>
 
-        <ForgotPassword>
+        {/* <ForgotPassword>
           <ForgotPasswordText>Esqueci minha senha</ForgotPasswordText>
-        </ForgotPassword>
+        </ForgotPassword> */}
 
         <CreateAccount onPress={() => { navigation.navigate('SignUp') }}>
           <CreateAccountText>Não possui uma conta? <Underline>Cadastre-se</Underline></CreateAccountText>

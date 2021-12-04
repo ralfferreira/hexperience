@@ -36,7 +36,7 @@ const Search = () => {
     api.get('/experiences/categories').then((response) => {
       setCategories(response.data);
     }).catch((err) => {
-      Alert.alert(`${err.message}`);
+      Alert.alert('Erro ao carregar as categorias', `${err.response.data.message}`);
     })
   }, [setCategories]);
   
@@ -44,7 +44,7 @@ const Search = () => {
     api.get('/experiences').then((response) => {
       setExperiences(response.data);
     }).catch((err) => {
-      Alert.alert(`${err.message}`);
+      Alert.alert('Erro ao carregar experiências disponíveis', `${err.response.data.message}`);
     })
   }, [setExperiences]);
 

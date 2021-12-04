@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import formatStringByPattern from 'format-string-by-pattern';
+import { Alert, Modal, StyleSheet } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { format, parseISO } from 'date-fns';
-import { Alert } from 'react-native';
 import * as Yup from 'yup';
+
+import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -22,11 +24,19 @@ import {
   RequestItemName, 
   RequestItemNickname, 
   RequestItemID, 
-  RequestItemDate, 
-  RequestListRow 
+  RequestItemDate,
+  Align,
+  ModalView,
+  AlignCallback,
+  Title,
+  Row,
+  OptionTitle
 } from './styles';
+import { Form } from '@unform/core';
 
 const AdminHostRequest = () => {
+  const denyFormRef = useRef();
+
   const [requests, setRequests] = useState([]);
   const [search, setSearch] = useState(null);
 
@@ -60,7 +70,7 @@ const AdminHostRequest = () => {
         {
           text: 'Aprovar',
           style: 'default',
-          onPress: () => handleApproveRequest(user.id)
+          onPress: () => handleApproveRequest(user.user.id)
         },
         {
           text: 'Negar',
@@ -72,7 +82,7 @@ const AdminHostRequest = () => {
   }, [handleApproveRequest, handleShowModal]);
 
   const handleApproveRequest = useCallback((id) => {
-    api.post('/admin/approve-host', {
+    api.post('/admin/host-requests', {
       user_id: id
     }).then(response => {
       Alert.alert('Sucesso', `Anfitrião @${response.data.nickname} foi aprovado com sucesso`);
@@ -88,22 +98,24 @@ const AdminHostRequest = () => {
     setModalVisible(true);
   }, [modalVisible])
 
-  const handleDenyRequest = useCallback(async (data) => {
+  const handleDenyRequest = useCallback(async (formData) => {
     try {
       const schema = Yup.object().shape({
         reason: Yup.string().required('É obrigatório informar a razão')
       })
 
-      await schema.validate(data, {
+      await schema.validate(formData, {
         abortEarly: true
       });
 
-      await api.delete('admin/deny-host', {
+      await api.delete('/admin/host-requests', {
         data: {
-          user_id: selectedUser.id,
-          reason: data.reason
+          user_id: selectedUser.user.id,
+          reason: formData.reason
         }
       });
+
+      await getHostsRequests();
 
       Alert.alert('Sucesso', 'Solicitação foi negada com sucesso!');
       setSelectedUser(null);
@@ -112,10 +124,10 @@ const AdminHostRequest = () => {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
-        formRef.current?.setErrors(errors);
+        denyFormRef.current?.setErrors(errors);
 
         Alert.alert(
-          'Erro ao realizar comentário',
+          'Erro negar privilégio de anfitrião',
           `${err.message}`
         );
 
@@ -123,7 +135,7 @@ const AdminHostRequest = () => {
       }  
 
       Alert.alert(
-        'Erro ao realizar comentário',
+        'Erro negar privilégio de anfitrião',
         `${err.response.data.message}`
       );
     }
@@ -192,7 +204,12 @@ const AdminHostRequest = () => {
               return (
                 <Touchable
                   key={`Touchable:${request._id}`}
-                  onPress={() => handleDecision(user)}
+                  onPress={() => handleDecision({
+                    request: entry.request,
+                    user: entry.user,
+                    formattedID: formattedID,
+                    formattedDate: formattedDate
+                  })}
                 >
                   <RequestItem key={`Item:${request._id}`}>
                     <RequestItemHeader key={`ItemHeader:${request._id}`}>
@@ -224,10 +241,101 @@ const AdminHostRequest = () => {
             })
             : (<></>)
           }
+          <Align>
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={modalVisible}
+            onRequestClose={() => {
+              setSelectedUser(null);
+              setModalVisible(false);
+            }}
+          >
+            <ModalView>
+              <AlignCallback>
+                <Title>Negar solicitação de anfitrião</Title>
+              </AlignCallback>
+              {
+                selectedUser
+                ? (
+                  <Form ref={denyFormRef} onSubmit={handleDenyRequest}>
+                    <RequestItem >
+                      <RequestItemHeader >
+                        <RequestItemProfile                          
+                          source={
+                            selectedUser.user.avatar_url
+                            ? selectedUser.user.avatar_url
+                            : DefaultImg
+                          }
+                          resizeMode="center"
+                        />
+                      </RequestItemHeader>
+                      <RequestItemName >
+                        {selectedUser.user.name}
+                      </RequestItemName>
+                      <RequestItemNickname >
+                        {selectedUser.request.nickname}
+                      </RequestItemNickname>
+                      <RequestItemID>
+                        {selectedUser.formattedID}
+                      </RequestItemID>
+                      <RequestItemDate>
+                        {selectedUser.formattedDate}
+                      </RequestItemDate>
+                    </RequestItem>                  
+                    <OptionTitle>Justificativa: </OptionTitle> 
+                    <ExperienceDescriptionInput 
+                      autoCapitalize="words"
+                      name="reason"
+                      placeholder="Justificativa para negar privilégio de anfitrião. Ex: CPF inválido"
+                      style={{fontSize:18, textAlign: 'left', marginTop: 7,}} 
+                      maxLength={100}
+                      multiline
+                    />
+                    <AlignCallback>
+                      <OptionTitle style={styles.center}>Deseja mesmo recusar o usuário?</OptionTitle>
+                      <Row>
+                        <Touchable
+                          onPress={() => {
+                            setSelectedUser(null);
+                            setModalVisible(false);
+                          }}
+                        >
+                          <OptionTitle style={styles.red}>Não</OptionTitle>
+                        </Touchable>
+                        <Touchable 
+                          onPress={() => {
+                            denyFormRef.current.submitForm()
+                          }}
+                        >
+                          <OptionTitle style={styles.green}>Sim</OptionTitle>
+                        </Touchable>
+                      </Row>
+                    </AlignCallback>               
+                  </Form>
+                )
+                : (<></>)
+              }                      
+            </ModalView>
+          </Modal>
+        </Align>
         </RequestList>
       </Content>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+  center: {
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+});
 
 export default AdminHostRequest;
