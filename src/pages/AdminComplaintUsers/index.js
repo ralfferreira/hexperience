@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
-import { Alert } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { Alert, Modal, StyleSheet } from 'react-native';
+import { CheckBox, SearchBar } from 'react-native-elements';
 import { format, parseISO } from 'date-fns';
 import formatStringByPattern from 'format-string-by-pattern';
 
@@ -19,7 +19,13 @@ import {
   RequestItemName, 
   RequestItemNickname, 
   RequestItemID, 
-  RequestItemDate, 
+  RequestItemDate,
+  Align,
+  ModalView,
+  AlignCallback,
+  Title,
+  Row,
+  OptionTitle
 } from './styles';
 
 const AdminComplaintUsers = () => {
@@ -42,7 +48,7 @@ const AdminComplaintUsers = () => {
     } catch (err) {
       Alert.alert('Erro ao carregar usuários reportados', `${err.response.data.message}`);
     }
-  }, [setReportedUsers]);
+  }, []);
 
   useEffect(() => {
     getReportedUsers().finally(() => {})
@@ -50,10 +56,10 @@ const AdminComplaintUsers = () => {
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
-  }, [setSearch]);
+  }, []);
 
   const handleDecision = useCallback((user) => {
-    const status = user.status === 'blocked' ? 'bloqueado' : 'em análise';
+    const status = user.user.status === 'blocked' ? 'bloqueado' : 'em análise';
 
     Alert.alert(
       'Usuário ' + status,
@@ -63,19 +69,19 @@ const AdminComplaintUsers = () => {
         { text: 'Mudar status', style: 'default', onPress: () => handleShowUpdateModal(user) }
       ]
     )
-  }, [handleShowUpdateModal]);
+  }, []);
 
   const handleShowUpdateModal = useCallback((user) => {
-    setSelectedUser(user);
-    handleChangeStatusOption(user.status);
+    setSelectedUser(user.user);
+    handleChangeStatusOption(user.user.status);
     setModalVisible(true);
-  }, [setSelectedUser, handleChangeStatusOption, setModalVisible]);
+  }, []);
 
   const handleHideUpdateModal = useCallback(() => {
     setModalVisible(false);
     handleChangeStatusOption('analyzing');
     setSelectedUser(null);
-  }, [setSelectedUser, handleChangeStatusOption, setModalVisible]);
+  }, []);
 
   const handleChangeStatusOption = useCallback((option) => {
     setSelectedStatus(option);
@@ -96,31 +102,29 @@ const AdminComplaintUsers = () => {
         setBlocked(true)
         break;
     }
-  }, [setSelectedStatus, setOk, setAnalyzing, setBlocked])
+  }, [])
 
-  const handleUpdateStatus = useCallback(async () => {
+  const handleUpdateStatus = useCallback(() => {
     if (!selectedUser) {
-      Alert.alert('Erro', 'Nenhum usuário foi escolhido');
-      return;
-    }
-
-    if (!selectedStatus) {
-      Alert.alert('Erro', 'Nenhum status foi escolhido');
+      Alert.alert('Erro ao atualizar status', 'Nenhum usuário foi escolhido');
       return;
     }
     
     try {
-      const response = await api.put('/admin/reported/hosts', {
+      const request = api.put('/admin/reported/hosts', {
         user_id: selectedUser.id,
         status: selectedStatus
       })
 
+      Promise.resolve(request);
+
       Alert.alert('Sucesso', 'Status do usuário foi atualizado com sucesso!');
-      getReportedUsers().finally(() => handleHideUpdateModal());
+      handleHideUpdateModal();
+      getReportedUsers().finally(() => {});
     } catch (err) {
       Alert.alert('Erro ao atualizar status do usuário', `${err.response.data.message}`);
     }
-  }, [getReportedUsers, handleHideUpdateModal]);
+  }, [selectedUser, selectedStatus]);
 
   const filteredReportedUsers = useMemo(() => {
     if (!reportedUsers.length) {
@@ -181,7 +185,11 @@ const AdminComplaintUsers = () => {
               return (
                 <Touchable
                   key={`Touchable:${host.id}`}
-                  onPress={() => handleDecision(host.user)}
+                  onPress={() => handleDecision({
+                    formattedDate: formattedDate,
+                    formattedID: formattedID,
+                    user: host.user
+                  })}
                 >
                   <RequestItem key={`Item:${host.id}`}>
                     <RequestItemHeader key={`Header:${host.id}`}>
@@ -213,10 +221,80 @@ const AdminComplaintUsers = () => {
             })
             : (<></>)
           }
+          <Align>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => handleHideUpdateModal()}
+            >
+              <ModalView>
+                <AlignCallback>
+                  <Title>Atualizar status do usuário</Title>
+                </AlignCallback>
+
+                <CheckBox
+                  title='Ok'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={ok}
+                  onPress={() => handleChangeStatusOption('ok')}
+                />
+                <CheckBox
+                  title='Em análise'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={analyzing}
+                  onPress={() => handleChangeStatusOption('analyzing')}
+                />
+                <CheckBox
+                  title='Bloqueado'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={blocked}
+                  onPress={() => handleChangeStatusOption('blocked')}
+                />
+
+                <AlignCallback>
+                  <OptionTitle style={styles.center}>Deseja mesmo recusar o usuário?</OptionTitle>
+                  <Row>
+                    <Touchable
+                      onPress={() => handleHideUpdateModal()}
+                    >
+                      <OptionTitle style={styles.red}>Não</OptionTitle>
+                    </Touchable>
+                    <Touchable 
+                      onPress={() => handleUpdateStatus()}
+                    >
+                      <OptionTitle style={styles.green}>Sim</OptionTitle>
+                    </Touchable>
+                  </Row>
+                </AlignCallback>
+              </ModalView>
+            </Modal>
+          </Align>
         </RequestList>
       </Content>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  checkbox: {
+    backgroundColor: '#fff',
+    borderWidth: 0,
+    paddingLeft: 0,
+  },
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+  center: {
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+});
 
 export default AdminComplaintUsers;

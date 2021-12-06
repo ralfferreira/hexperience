@@ -53,6 +53,10 @@ const FavoritesProvider = ({children}) => {
   }, [loading, user]);
 
   const favoritesRelation = useMemo(() => {
+    if (!user) {
+      return [];
+    }
+    
     if (!favorites.length) {
       return [];
     }
@@ -67,7 +71,7 @@ const FavoritesProvider = ({children}) => {
     });
 
     return relations
-  }, [favorites]);
+  }, [favorites, user]);
 
   const folders = useMemo(() => {
     if (!favoritesRelation.length) {

@@ -1,13 +1,13 @@
-import React, {useRef, useState} from 'react';
+import React, {useCallback, useMemo, useRef, useState} from 'react';
 import { Animated, TouchableOpacity, StyleSheet } from 'react-native';
 import LottieView from 'lottie-react-native';
 import like from '../../assets/lottie/like.json';
 
-const Like = () => {
+const Like = ({onPress, isFavorite, ...rest}) => {
   const progress = useRef(new Animated.Value(0)).current;
-  const [hasLiked, setHasLiked] = useState(false);
+  const [hasLiked, setHasLiked] = useState(isFavorite);
 
-  const handleLikeAnimation = () => {
+  const handleLikeAnimation = useCallback(() => {
     const newValue = hasLiked ? 0 : 1;
 
     Animated.timing(progress, {
@@ -17,10 +17,13 @@ const Like = () => {
     }).start();
 
     setHasLiked(!hasLiked);
-  };
+  }, [hasLiked]);
 
   return (
-      <TouchableOpacity onPress={handleLikeAnimation}>
+      <TouchableOpacity onPress={() => { 
+        handleLikeAnimation()
+        onPress()
+      }}>
         <LottieView progress={progress} style={styles.heart} source={like} />
       </TouchableOpacity>
   );

@@ -97,3 +97,19 @@ export const SaveBtnView = styled.TouchableOpacity`
     align-items: center;
 `
 export const Touchable = styled.TouchableOpacity``;
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+export const ModalView = styled.View`
+    display: flex;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+    text-align: left;
+`
+export const AlignCallback = styled.View`
+    align-items: center;
+    display: flex;
+`

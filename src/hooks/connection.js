@@ -40,7 +40,7 @@ const ConnectionProvider = ({children}) => {
 
   const handleConnectivityChange = useCallback(() => {
     setConnecting(!connecting);
-  }, []);
+  }, [connecting]);
 
   const tryToConnect = useCallback(async () => {
     const network = await Network.getNetworkStateAsync();
@@ -48,10 +48,10 @@ const ConnectionProvider = ({children}) => {
     setConnecting(network.isConnected);
   }, []);
 
-  const handleFirstTime = useCallback(() => {
-    AsyncStorage.setItem('@Hexperience:firstTime', 'false').then(() => {
-      setFirstTime(false);
-    });
+  const handleFirstTime = useCallback(async () => {
+    await AsyncStorage.setItem('@Hexperience:firstTime', 'false')
+
+    setFirstTime(false);
   }, [setFirstTime]);
 
   return (

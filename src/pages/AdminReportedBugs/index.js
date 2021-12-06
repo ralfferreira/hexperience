@@ -20,12 +20,18 @@ import {
 const AdminReportedBugs = () => {
   const [reportedBugs, setReportedBugs] = useState([]);
 
-  useEffect(() => {
-    api.get('/admin/bugs').then((response) => {
+  const getReportedBugs = useCallback(async () => {
+    try {
+      const response = await api.get('/admin/bugs');
+
       setReportedBugs(response.data);
-    }).catch((err) => {
+    } catch (err) {
       Alert.alert('Erro ao carregar bugs', `${err.response.data.message}`)
-    })
+    }
+  }, [])
+
+  useEffect(() => {
+    getReportedBugs().finally(() => {});
   }, []);
 
   const handleSolveBug = useCallback((id) => {
@@ -33,6 +39,7 @@ const AdminReportedBugs = () => {
       resolved: true
     }).then(() => {
       Alert.alert('Sucesso', 'Bug atualizado com sucesso!');
+      getReportedBugs().finally(() => {});
     }).catch((err) => {
       Alert.alert('Erro ao atualizar bug', `${err.response.data.message}`)
     })

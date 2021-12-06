@@ -112,10 +112,9 @@ const Experience = () => {
   const handleShowFavoriteModal = useCallback(() => {
     if (isFavorite) {
       handleRemoveFromFavorites();
-      return;
+    } else {
+      setFavoriteModalVisible(true);
     }
-
-    setFavoriteModalVisible(true);
   }, [isFavorite, handleRemoveFromFavorites]);
 
   const handleCreateComment = useCallback(async (data) => {
@@ -186,7 +185,7 @@ const Experience = () => {
       Alert.alert('Sucesso', 'Agendamento foi feito com sucesso!');
 
       setSelectedSchedule(null)
-      setAppointmentModalVisible(!appointmentModalVisible)
+      setAppointmentModalVisible(false)
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -206,7 +205,7 @@ const Experience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [appointmentModalVisible, selectedSchedule]);
+  }, [selectedSchedule]);
 
   const handleAddToFavorites = useCallback(async (data) => {
     try {
@@ -232,7 +231,7 @@ const Experience = () => {
 
       setExperience(response.data.experience);
       await loadFavorites();
-      setFavoriteModalVisible(!favoriteModalVisible);
+      setFavoriteModalVisible(false);
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -252,21 +251,21 @@ const Experience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [experience, loadFavorites, favoriteModalVisible, setFavoriteModalVisible]);
+  }, [experience, loadFavorites, setFavoriteModalVisible]);
 
   const handleRemoveFromFavorites = useCallback(async () => {
     try {
       await api.delete(`/experiences/favorites/${experience.id}`);
 
       Alert.alert('Sucesso', 'Experiência foi removida de favoritos com sucesso!')
-      loadFavorites().then(() => setFavoriteModalVisible(!favoriteModalVisible))
+      loadFavorites().then(() => setFavoriteModalVisible(false))
     } catch (err) {
       Alert.alert(
         'Erro ao remover experiência de favoritos',
         `${err.response.data.message}`
       );
     }
-  }, [favoriteModalVisible, experience, loadFavorites]);
+  }, [experience, loadFavorites]);
 
   const schedules = useMemo(() => {
     if (!experience) {
@@ -370,31 +369,33 @@ const Experience = () => {
                   />
                 </ExperienceRating>
                   <ExperienceCategory name={experience.category.name} />
-                  <Touchable onPress={() => handleShowFavoriteModal()}>
-                    <ExperienceDescription>
-                      <Like />
-                    </ExperienceDescription>
-                    <Modal
-                      animationType="slide"
-                      transparent={true}
-                      visible={favoriteModalVisible}
-                      onRequestClose={() => {
-                        setFavoriteModalVisible(!favoriteModalVisible);
-                      }}
-                    >
-                      <FolderModalView>
-                        <ModalTitle>Seus favoritos</ModalTitle>
-                        <CreateFolder>
-                          <CreateFolderIcon />
-                          <FolderText>Criar nova pasta de favoritos</FolderText>
-                        </CreateFolder>
-                        <Folder>
-                          <FolderIcon />
-                          <FolderName>Florianópolis</FolderName>
-                        </Folder>
-                      </FolderModalView>
-                    </Modal>
-                  </Touchable>
+                  
+                  <ExperienceDescription>
+                    <Like 
+                      onPress={handleShowFavoriteModal}
+                      isFavorite={isFavorite}
+                    />
+                  </ExperienceDescription>
+                  <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={favoriteModalVisible}
+                    onRequestClose={() => {
+                      setFavoriteModalVisible(!favoriteModalVisible);
+                    }}
+                  >
+                    <FolderModalView>
+                      <ModalTitle>Seus favoritos</ModalTitle>
+                      <CreateFolder>
+                        <CreateFolderIcon />
+                        <FolderText>Criar nova pasta de favoritos</FolderText>
+                      </CreateFolder>
+                      <Folder>
+                        <FolderIcon />
+                        <FolderName>Florianópolis</FolderName>
+                      </Folder>
+                    </FolderModalView>
+                  </Modal>                  
               </ExperienceOptions>
 
               <ExperienceHost>
@@ -474,7 +475,7 @@ const Experience = () => {
                     visible={appointmentModalVisible}
                     onRequestClose={() => {
                       setSelectedSchedule(null)
-                      setAppointmentModalVisible(!appointmentModalVisible)
+                      setAppointmentModalVisible(true)
                     }}>
                     <ModalView>
                       <AlignCallback>
@@ -489,11 +490,11 @@ const Experience = () => {
                             </OptionTitle>
 
                             <OptionTitle>
-                              Preço da experiência: {`R$ ${experience.price}`}
+                              Disponibilidade: {selectedSchedule.availability} pessoas
                             </OptionTitle>
 
                             <OptionTitle>
-                              Disponibilidade: {selectedSchedule.availability} pessoas
+                              Preço da experiência: {`R$ ${experience.price}`}
                             </OptionTitle>
                             
                             <Row>

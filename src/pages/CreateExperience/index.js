@@ -1,5 +1,5 @@
 import React, { useRef, useCallback, useEffect, useState } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal } from 'react-native';
 import { geocodeAsync, requestForegroundPermissionsAsync } from 'expo-location';
 import { useNavigation } from '@react-navigation/native'; 
 import { Form } from "@unform/mobile";
@@ -11,6 +11,7 @@ import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
+import ExperienceCategory from '../../components/ExperienceCategory'
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -47,6 +48,9 @@ import {
   SaveBtnView,
   ExperienceImageCarrousel,
   Touchable,
+  Align,
+  ModalView,
+  AlignCallback
 } from './styles';
 
 const CreateExperience = () => {
@@ -55,6 +59,10 @@ const CreateExperience = () => {
 
   const [cover, setCover] = useState(null);
   const [photos, setPhotos] = useState([]);
+  
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState({ name: null, id: 0 });
 
   const [parentalRating, setParentalRating] = useState(1);
   const [freeForAll, setFreeForAll] = useState(true);
@@ -85,6 +93,20 @@ const CreateExperience = () => {
     })();
   }, []);
 
+  useEffect(() => {
+    api.get('/experiences/categories').then((response) => {
+      setCategories(response.data);
+    }).catch((err) => {
+      Alert.alert('Erro ao carregar as categorias', `${err.response.data.message}`);
+    })
+  }, []);
+
+  useEffect(() => {
+    if (categories.length) {
+      setSelectedCategory(categories[0]); 
+    }    
+  }, [categories]);
+
   const handleSubmit = useCallback(async (data) => {
     try {
       const schema = Yup.object().shape({
@@ -97,11 +119,15 @@ const CreateExperience = () => {
       });
 
       await schema.validate(data, {
-        abortEarly: false
+        abortEarly: true
       });
 
       if (!cover) {
         throw new Error('No minimo uma imagem deve ser enviada');
+      }
+
+      if (selectedCategory.id === 0) {
+        throw new Error("Escolha uma categoria");
       }
 
       const createData = {
@@ -112,7 +138,7 @@ const CreateExperience = () => {
         requirements: data.requirements,
         parental_rating: parentalRating,
         max_guests: data.amount_people,
-        category_id: 1
+        category_id: selectedCategory.id
       }
 
       if (address && geocode) {
@@ -132,25 +158,35 @@ const CreateExperience = () => {
 
       const coverData = new FormData();
 
-      coverData.append('photo', {
+      coverData.append('cover', {
         type: 'image/jpeg',
-        name: `cover:${result.data.name}:${result.data.id}.jpg`,
+        name: `cover:${cover.substr(-10, 10)}.jpg`,
         uri: cover,
       })
 
-      await api.post(`/experiences/${result.data.id}/cover`, coverData);
+      const coverUpdate = setTimeout(() => { 
+        api.patch(`/experiences/${result.data.id}/cover`, coverData)
+      }, 500)
 
-      for (const photo of photos) {
+      Promise.resolve(coverUpdate);
+
+      const addPhotos = photos.map(uri => {
         const photoData = new FormData();
 
         photoData.append('photo', {
           type: 'image/jpeg',
-          name: `photo:${result.data.id}.jpg`,
-          uri: photo,
+          name: `photo:${uri.substr(-10, 10)}.jpg`,
+          uri: uri,
         });
 
-        await api.post(`/experiences/${result.data.id}/photos`, photoData);
-      }
+        const requests = setTimeout(() => {
+          api.post(`/experiences/${result.data.id}/photos`, photoData)
+        }, 500);
+
+        return requests
+      });
+
+      Promise.all(addPhotos);
 
       Alert.alert('Sucesso', 'Experiência criada com sucesso!');
 
@@ -167,14 +203,14 @@ const CreateExperience = () => {
         );
 
         return;
-      }  
+      }
 
       Alert.alert(
         'Erro ao criar experiência',
         `${err.response.data.message}`
       );
     }
-  }, [parentalRating, cover, photos, navigation, geocode, address]);  
+  }, [parentalRating, cover, photos, navigation, geocode, address, selectedCategory]);  
 
   const handlePickImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -343,6 +379,15 @@ const CreateExperience = () => {
     })
   }, []);
 
+  const handleShowCategoryModal = useCallback(() => {
+    setCategoryModalVisible(true);
+  }, []);
+
+  const handleSelectCategory = useCallback((cat) => {
+    setSelectedCategory(cat);
+    setCategoryModalVisible(false);
+  }, []);
+
   return (
     <Container>
       <HeaderWithoutSearch>
@@ -355,7 +400,6 @@ const CreateExperience = () => {
         />        
         <Form ref={formRef} onSubmit={handleSubmit} >          
           <ExperienceTitleInput 
-            autoCapitalize="words"
             name="title"
             placeholder="Título da Experiência"
             placeholderTextColor="gray"
@@ -394,9 +438,52 @@ const CreateExperience = () => {
             </ExperienceImageCarrousel>
           </ExperienceImageView>
 
+          <Title>Categoria</Title>
+          <ExperienceDetailsRow>
+            <Touchable
+              onPress={handleShowCategoryModal}
+            >
+              <ExperienceCategory name={selectedCategory.name} />
+            </Touchable>
+            <Align>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={categoryModalVisible}
+                onRequestClose={() => {                  
+                  setCategoryModalVisible(false);
+                }}
+              >
+                <ModalView>
+                  <AlignCallback>
+                    <Title>Selecionar Categoria</Title>
+                  </AlignCallback>
+                  <ExperienceImageCarrousel>
+                    {
+                      categories.length
+                      ? categories.map(cat => {
+                        return (
+                          <Touchable
+                            key={`CatTouchable:${cat.id}`}
+                            onPress={() => handleSelectCategory(cat)}
+                          >
+                            <ExperienceCategory 
+                              key={`Category:$:${cat.id}`}
+                              name={cat.name} 
+                            />
+                          </Touchable>
+                        )
+                      })
+                      : (<></>)
+                    }
+                  </ExperienceImageCarrousel>
+                </ModalView>
+              </Modal>
+            </Align>
+          </ExperienceDetailsRow>
+
           <Title>Descrição</Title>
           <ExperienceDescriptionInput 
-            autoCapitalize="words"
             name="description"
             placeholder="Descreva sua experiência para o mundo!"
             placeholderTextColor="gray"
@@ -415,7 +502,8 @@ const CreateExperience = () => {
                 maxLength={100}
                 value={address}
                 onChangeText={(text) => setAddress(text)}
-                onEndEditing={() => searchForAddress(address)}                
+                onEndEditing={() => searchForAddress(address)}
+                multiline              
               />
             </ExperienceDetailsRowAddress>
             <ExperienceDetailsRow>

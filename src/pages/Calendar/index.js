@@ -46,7 +46,7 @@ const Calendar = () => {
         exp_id
       }
     })
-  });
+  }, [navigation]);
 
   const formattedData = useMemo(() => {
     if (!appointments.length) {

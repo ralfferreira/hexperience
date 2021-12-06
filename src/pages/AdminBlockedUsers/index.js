@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react'
-import { Alert } from 'react-native';
-import { SearchBar } from 'react-native-elements';
+import { Alert, Modal, StyleSheet } from 'react-native';
+import { CheckBox, SearchBar } from 'react-native-elements';
 import { format, parseISO } from 'date-fns';
 import formatStringByPattern from 'format-string-by-pattern';
 
@@ -20,6 +20,12 @@ import {
   RequestItemNickname, 
   RequestItemID, 
   RequestItemDate,
+  Align,
+  AlignCallback,
+  ModalView,
+  OptionTitle,
+  Row,
+  Title
 } from './styles';
 
 const AdminBlockedUsers = () => {
@@ -42,7 +48,7 @@ const AdminBlockedUsers = () => {
     } catch (err) {
       Alert.alert('Erro ao carregar usuários bloqueados', `${err.response.data.message}`);
     }
-  }, [setBlockedUsers]);
+  }, []);
 
   useEffect(() => {
     getBlockedUsers().finally(() => {})
@@ -50,32 +56,30 @@ const AdminBlockedUsers = () => {
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
-  }, [setSearch]);
+  }, []);
 
   const handleDecision = useCallback((user) => {
-    const status = user.status === 'blocked' ? 'bloqueado' : 'em análise';
-
     Alert.alert(
-      'Usuário ' + status,
+      'Usuário bloqueado',
       'Deseja mudar o status desse usuário?',
       [
         { text: 'Cancelar', style: 'cancel', onPress: () => {} },
         { text: 'Mudar status', style: 'default', onPress: () => handleShowUpdateModal(user) }
       ]
     )
-  }, [handleShowUpdateModal]);
+  }, []);
 
   const handleShowUpdateModal = useCallback((user) => {
     setSelectedUser(user);
     handleChangeStatusOption(user.status);
     setModalVisible(true);
-  }, [setSelectedUser, handleChangeStatusOption, setModalVisible]);
+  }, []);
 
   const handleHideUpdateModal = useCallback(() => {
     setModalVisible(false);
     handleChangeStatusOption('analyzing');
     setSelectedUser(null);
-  }, [setSelectedUser, handleChangeStatusOption, setModalVisible]);
+  }, []);
 
   const handleChangeStatusOption = useCallback((option) => {
     setSelectedStatus(option);
@@ -96,31 +100,29 @@ const AdminBlockedUsers = () => {
         setBlocked(true)
         break;
     }
-  }, [setSelectedStatus, setOk, setAnalyzing, setBlocked])
+  }, [])
 
-  const handleUpdateStatus = useCallback(async () => {
+  const handleUpdateStatus = useCallback(() => {
     if (!selectedUser) {
       Alert.alert('Erro', 'Nenhum usuário foi escolhido');
       return;
     }
-
-    if (!selectedStatus) {
-      Alert.alert('Erro', 'Nenhum status foi escolhido');
-      return;
-    }
     
     try {
-      await api.put('/admin/reported/hosts', {
+      const request = api.put('/admin/reported/hosts', {
         user_id: selectedUser.id,
         status: selectedStatus
-      })
+      });
+
+      Promise.resolve(request);
 
       Alert.alert('Sucesso', 'Status do usuário foi atualizado com sucesso!');
-      getBlockedUsers().finally(() => handleHideUpdateModal());
+      handleHideUpdateModal();
+      getBlockedUsers().finally(() => {});
     } catch (err) {
       Alert.alert('Erro ao atualizar status do usuário', `${err.response.data.message}`);
     }
-  }, [getBlockedUsers, handleHideUpdateModal]);
+  }, []);
 
   const filteredBlockedUsers = useMemo(() => {
     if (!blockedUsers.length) {
@@ -213,10 +215,80 @@ const AdminBlockedUsers = () => {
             })
             : (<></>)
           }
+          <Align>
+            <Modal
+              animationType="slide"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => handleHideUpdateModal()}
+            >
+              <ModalView>
+                <AlignCallback>
+                  <Title>Atualizar status do usuário</Title>
+                </AlignCallback>
+
+                <CheckBox
+                  title='Ok'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={ok}
+                  onPress={() => handleChangeStatusOption('ok')}
+                />
+                <CheckBox
+                  title='Em análise'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={analyzing}
+                  onPress={() => handleChangeStatusOption('analyzing')}
+                />
+                <CheckBox
+                  title='Bloqueado'
+                  containerStyle={styles.checkbox}
+                  checkedColor="green"
+                  checked={blocked}
+                  onPress={() => handleChangeStatusOption('blocked')}
+                />
+
+                <AlignCallback>
+                  <OptionTitle style={styles.center}>Deseja mesmo recusar o usuário?</OptionTitle>
+                  <Row>
+                    <Touchable
+                      onPress={() => handleHideUpdateModal()}
+                    >
+                      <OptionTitle style={styles.red}>Não</OptionTitle>
+                    </Touchable>
+                    <Touchable 
+                      onPress={() => handleUpdateStatus()}
+                    >
+                      <OptionTitle style={styles.green}>Sim</OptionTitle>
+                    </Touchable>
+                  </Row>
+                </AlignCallback>
+              </ModalView>
+            </Modal>
+          </Align>
         </RequestList>
       </Content>
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  checkbox: {
+    backgroundColor: '#fff',
+    borderWidth: 0,
+    paddingLeft: 0,
+  },
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+  center: {
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
+});
 
 export default AdminBlockedUsers;

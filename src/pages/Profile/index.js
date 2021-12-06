@@ -43,16 +43,28 @@ const Profile = () => {
 
   const [experiences, setExperiences] = useState([]);
 
+  const getHostExperiences = useCallback(async () => {
+    try {
+      const response = await api.get(`/experiences/host/${user.host.id}`);
+
+      setExperiences(response.data);
+    } catch (err) {
+      Alert.alert(
+        'Erro ao carregar experiências', 
+        `${err.response.data.message}`
+      );
+    }
+  }, [user]);
+
   useEffect(() => {
     if (user.type === 'host') {
-      api.get(`/experiences/host/${user.host.id}`).then((response) => {
-        setExperiences(response.data);
-      }).catch((err) => {
-        Alert.alert(
-          'Erro ao carregar experiências', 
-          `${err.response.data.message}`
-        );
-      })
+      getHostExperiences().finally(() => {});
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user.type === 'host') {
+      getHostExperiences().finally(() => {});
     } else if (user.type === 'user') {
       api.get(`/experiences/user/${user.id}`).then((response) => {
         setExperiences(response.data);
@@ -74,7 +86,12 @@ const Profile = () => {
     })
   }, [navigation]);
 
-  const navigateToEditExperience = useCallback((exp_id) => {
+  const navigateToEditExperience = useCallback((exp_id, is_blocked) => {
+    if (is_blocked) {
+      Alert.alert('Experiência Bloqueada', 'Experiências bloqueadas não podem ser editadas');
+      return;
+    }
+
     navigation.navigate('EditExperienceRoute', { 
       screen: 'EditExperience',
       params: {
@@ -85,7 +102,9 @@ const Profile = () => {
 
   const handleDeleteExperience = useCallback(async (exp_id) => {
     api.delete(`/experiences/${exp_id}`).then((response) => {
-      Alert.alert('Sucesso', 'Experiência apagada com sucesso')
+      Alert.alert('Sucesso', 'Experiência apagada com sucesso');
+
+      getHostExperiences().then(() => {});
     }).catch((err) => {
       Alert.alert('Erro ao deletar experiência', `${err.response.data.message}`);
     })
@@ -190,7 +209,7 @@ const Profile = () => {
                     image={entry.cover_url}
                     name={entry.name}
                     price={entry.price}
-                    onEditPress={() => navigateToEditExperience(entry.id)}
+                    onEditPress={() => navigateToEditExperience(entry.id, entry.is_blocked)}
                     onDeletePress={
                       () => ensureDeleteExperience(entry.id, entry.name)
                     }

@@ -282,7 +282,8 @@ const AdminHostRequest = () => {
                       <RequestItemDate>
                         {selectedUser.formattedDate}
                       </RequestItemDate>
-                    </RequestItem>                  
+                    </RequestItem>
+                                      
                     <OptionTitle>Justificativa: </OptionTitle> 
                     <ExperienceDescriptionInput 
                       autoCapitalize="words"

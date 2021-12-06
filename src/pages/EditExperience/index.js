@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import { Form } from "@unform/mobile";
@@ -516,5 +516,12 @@ const EditExperience = () => {
     </Container>
   );
 };
+
+const styles = StyleSheet.create({
+  parentalRating: {
+    borderColor: '#818f81',
+    borderWidth: 3
+  }
+});
 
 export default EditExperience;
