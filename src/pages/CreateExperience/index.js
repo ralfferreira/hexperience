@@ -15,7 +15,8 @@ import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 import ExperienceCategory from '../../components/ExperienceCategory'
-import AddCategory from '../../components/AddCategory'
+import AddCategory from '../../components/AddCategory';
+import ExperienceSchedule from '../../components/ExperienceSchedule';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -202,6 +203,11 @@ const CreateExperience = () => {
 
       Promise.all(addPhotos);
 
+      await api.post('/experiences/schedules', {
+        date: selectedTime,
+        experience_id: result.data.id
+      }); 
+
       Alert.alert('Sucesso', 'Experiência criada com sucesso!');
 
       navigation.navigate('Profile');
@@ -224,7 +230,7 @@ const CreateExperience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [parentalRating, cover, photos, navigation, geocode, address, selectedCategory]);  
+  }, [parentalRating, cover, photos, navigation, geocode, address, selectedCategory, selectedTime]);  
 
   const handlePickImage = useCallback(async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -430,8 +436,6 @@ const CreateExperience = () => {
     }
 
     setSchedulesModalVisible(false);
-
-    Alert.alert('Sucesso', 'Horário criado com sucesso');
 
     setMode('date');
     setShowDateTimePicker(false);
@@ -661,6 +665,19 @@ const CreateExperience = () => {
 
           <Title>Horários</Title>
           <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
+            <ExperienceSchedule
+              date={formattedDate}
+              time={formattedDuration}
+              buttonText='Editar'
+              onPress={() => {
+                if (!duration) {
+                  Alert.alert('Adicionar horário', 'Não é possível adicionar horários, sem antes mencionar a duração')
+                  return;
+                }
+  
+                setSchedulesModalVisible(true);
+              }}
+            />
             <Align>
               <Modal
                 animationType="slide"
@@ -676,7 +693,7 @@ const CreateExperience = () => {
                     <Title>Adicionar Horário</Title>
                   </AlignCallback>                  
                   <AlignCallback>
-                    <Title>{formattedDate}</Title>
+                    <Title style={styles.center}>{formattedDate}</Title>
                   </AlignCallback>
                   <AlignCallback>
                     <Title>{formattedDuration}</Title>
@@ -722,9 +739,21 @@ const CreateExperience = () => {
                 </ModalView>
               </Modal>
             </Align>
-            <AddExperienceImage onPress={() => setSchedulesModalVisible(true)}>              
-              <PlusImg source={PlusIcon} />
-            </AddExperienceImage>
+            {
+              selectedTime === false &&
+              (
+                <AddExperienceImage onPress={() => {
+                  if (!duration) {
+                    Alert.alert('Adicionar horário', 'Não é possível adicionar horários, sem antes mencionar a duração')
+                    return;
+                  }
+    
+                  setSchedulesModalVisible(true);
+                }}>              
+                  <PlusImg source={PlusIcon} />
+                </AddExperienceImage>
+              )
+            }            
           </ExperienceSchedules>
 
           <Title>O Que Levar? (Opcional)</Title>

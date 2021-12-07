@@ -28,10 +28,11 @@ import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
 import DefaultImg from '../../assets/img/DinoGreenColor.png'
 import AddCommentImg from '../../assets/img/add-comment.png'
+import PlusIcon from '../../assets/img/plusicon.png';
+import FolderImg from '../../assets/img/folder.png';
 
 import { 
   Container, 
-  ExperienceImage, 
   ExperienceTitle, 
   ExperienceOptions, 
   ExperienceReport, 
@@ -68,7 +69,9 @@ import {
   FolderText,
   Folder,
   FolderIcon,
-  FolderName
+  FolderName,
+  AlignFolder,
+  PlusImg
 } from './styles';
 import ExperienceCarousel from '../../components/ExperienceCarousel';
 
@@ -89,7 +92,7 @@ const Experience = () => {
   const [appointmentModalVisible, setAppointmentModalVisible] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [finalPrice, setFinalPrice] = useState(0);
-  const [guests, setGuests] = useState(0);
+  const [guests, setGuests] = useState(null);
 
   const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);  
 
@@ -186,7 +189,7 @@ const Experience = () => {
 
       await api.post('/appointments', {
         guests: data.guests,
-        paid: false,
+        status: 'unpaid',
         schedule_id: selectedSchedule.id
       });
       
@@ -196,6 +199,8 @@ const Experience = () => {
       setAppointmentModalVisible(false)
       await getExperience();
     } catch (err) {
+      console.log(err.response)
+
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
@@ -312,6 +317,25 @@ const Experience = () => {
       });
   }, [experience]);
 
+  const comments = useMemo(() => {
+    if (!experience) {
+      return [];
+    }
+
+    return experience.reviews.map(r => {
+      return r  
+    }).sort((a,b) => {
+      const parsedA = parseISO(a.created_at)
+      const parsedB = parseISO(b.created_at)
+      
+      if (isAfter(parsedA, parsedB)) {
+        return -1;
+      }
+
+      return 1;
+    })
+  }, [experience]);
+
   const formattedDuration = useMemo(() => {
     if (!experience) {
       return null;
@@ -407,15 +431,28 @@ const Experience = () => {
                     }}
                   >
                     <FolderModalView>
-                      <ModalTitle>Seus favoritos</ModalTitle>
-                      <CreateFolder>
-                        <CreateFolderIcon />
-                        <FolderText>Criar nova pasta de favoritos</FolderText>
-                      </CreateFolder>
-                      <Folder>
-                        <FolderIcon />
-                        <FolderName>Florianópolis</FolderName>
-                      </Folder>
+                      <AlignFolder>
+                        <ModalTitle>Seus favoritos</ModalTitle>
+                        <CreateFolder>
+                          <CreateFolderIcon>
+                            <PlusImg source={PlusIcon} />
+                          </CreateFolderIcon>
+                          <Touchable>
+                            <FolderText>Criar nova pasta de favoritos</FolderText>
+                          </Touchable>
+                          {/* <Touchable>
+                            <SubmitForm />
+                          </Touchable> */}
+                        </CreateFolder>
+                        <Folder>
+                          <FolderIcon source={FolderImg} />
+                          <FolderName>Florianópolis</FolderName>
+                        </Folder>
+                        <Folder>
+                          <FolderIcon source={FolderImg} />
+                          <FolderName>São Paulo</FolderName>
+                        </Folder>
+                      </AlignFolder>
                     </FolderModalView>
                   </Modal>                  
               </ExperienceOptions>
@@ -506,7 +543,7 @@ const Experience = () => {
                       {
                         selectedSchedule
                         ? (
-                          <Form ref={appointmentFormRef} Submit={handleMakeAppointment}>
+                          <Form ref={appointmentFormRef} onSubmit={handleMakeAppointment}>
                             <OptionTitle>
                               Data: {selectedSchedule.formattedDate}, às {selectedSchedule.formattedTime}
                             </OptionTitle>
@@ -550,7 +587,7 @@ const Experience = () => {
                                 </Touchable>
                                 <Touchable 
                                   onPress={() => {
-                                    appointmentFormRef.current.submitForm()
+                                    appointmentFormRef.current?.submitForm()
                                   }}
                                 >
                                   <OptionTitle style={styles.green}>Sim</OptionTitle>
@@ -598,8 +635,8 @@ const Experience = () => {
               </Form>
               <CommentsList>
                 {
-                  experience.reviews 
-                  ? experience.reviews.map((review) => {
+                  comments 
+                  ? comments.map((review) => {
                     return (
                       <Comment
                         key={review.id}

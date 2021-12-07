@@ -259,8 +259,9 @@ const AdminHostRequest = () => {
                 selectedUser
                 ? (
                   <Form ref={denyFormRef} onSubmit={handleDenyRequest}>
-                    <RequestItem >
-                      <RequestItemHeader >
+                    <AlignCallback>
+                    <RequestItem style={styles.card} >
+                      <RequestItemHeader>
                         <RequestItemProfile                          
                           source={
                             selectedUser.user.avatar_url
@@ -269,22 +270,24 @@ const AdminHostRequest = () => {
                           }
                           resizeMode="center"
                         />
-                      </RequestItemHeader>
-                      <RequestItemName >
-                        {selectedUser.user.name}
-                      </RequestItemName>
+                        <RequestItemName >
+                          {selectedUser.user.name}
+                        </RequestItemName>
+                        
                       <RequestItemNickname >
                         {selectedUser.request.nickname}
                       </RequestItemNickname>
+                      
                       <RequestItemID>
                         {selectedUser.formattedID}
                       </RequestItemID>
                       <RequestItemDate>
                         {selectedUser.formattedDate}
                       </RequestItemDate>
+                      </RequestItemHeader>
                     </RequestItem>
-                                      
-                    <OptionTitle>Justificativa: </OptionTitle> 
+                  </AlignCallback>
+                    <OptionTitle style={styles.center} >Justificativa</OptionTitle> 
                     <ExperienceDescriptionInput 
                       autoCapitalize="words"
                       name="reason"
@@ -336,6 +339,9 @@ const styles = StyleSheet.create({
   center: {
     textAlign: 'center',
     fontWeight: 'bold'
+  },
+  card: {
+    width: '90%',
   },
 });
 

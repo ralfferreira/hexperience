@@ -21,6 +21,8 @@ import getValidationErrors from '../../utils/getValidationErrors';
 
 import api from '../../services/api';
 
+import { useAuth } from '../../hooks/auth';
+
 import PlusIcon from '../../assets/img/plusicon.png';
 import AddressIcon from '../../assets/img/address.png';
 import DurationIcon from '../../assets/img/duration.png';
@@ -64,6 +66,7 @@ const EditExperience = () => {
   const updateFormRef = useRef()
   const navigation = useNavigation();
   const route = useRoute();
+  const { user } = useAuth();
 
   const routeParams = route.params;
 
@@ -386,6 +389,31 @@ const EditExperience = () => {
       Alert.alert('Erro ao adicionar horário', `${err.response.data.message}`);
     }
   }, [experience, selectedTime]);
+
+  const handleDeleteSchedule = useCallback(async (id) => {
+    try {
+      await api.delete('/experiences/schedules', {
+        schedule_id: id,
+        host_id: user.host.id       
+      });
+
+      await getExperience();
+      Alert.alert('Sucesso', 'Horário para agendamento foi cancelado com sucesso');
+    } catch (err) {
+      Alert.alert('Erro ao deletar horário', `${err.response.data.message}`);
+    }
+  }, [user]);
+
+  const ensureDeleteSchedule = useCallback((id) => {
+    Alert.alert(
+      'Deletar horário para agendamentos',
+      'Tem certeza que deseja deletar este horário para agendamento',
+      [
+        { text: 'Cancelar', style: 'cancel', onPress: () => {} },
+        { text: 'Deletar', style: 'destructive', onPress: () => handleDeleteSchedule(id) }
+      ]
+    )
+  }, []);
 
   const handleShowCategoryModal = useCallback(() => {
     setCategoryModalVisible(true);
@@ -774,7 +802,8 @@ const EditExperience = () => {
                   <AddSchedule 
                     key={`AddSchedule:${schedule.id}`}
                     datetime={schedule.date}
-                    duration={experience.duration ? experience.duration : 0}                 
+                    duration={experience.duration ? experience.duration : 0}
+                    onPress={() => ensureDeleteSchedule(schedule.id)}             
                   />
                 )
               })
@@ -795,7 +824,7 @@ const EditExperience = () => {
                     <Title>Adicionar Horário</Title>
                   </AlignCallback>                  
                   <AlignCallback>
-                    <Title>{formattedDate}</Title>
+                    <Title style={styles.center}>{formattedDate}</Title>
                   </AlignCallback>
                   <AlignCallback>
                     <Title>{formattedDuration}</Title>

@@ -5,7 +5,6 @@ import * as Yup from 'yup';
 
 import HeaderText from '../../components/HeaderText';
 import FormInput from '../../components/FormInput';
-import SwitchComponent from '../../components/Switch';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -22,7 +21,6 @@ import {
   SaveBtn, 
   SaveBtnText, 
   SaveBtnView, 
-  SettingsThemeSwitcher, 
   OptionTitle 
 } from './styles';
 
@@ -119,10 +117,6 @@ const AdminSettings = () => {
           }}
         >
           <AlignForm>
-            <SettingsThemeSwitcher>
-              <OptionTitle>Tema Escuro</OptionTitle>
-              <SwitchComponent />
-            </SettingsThemeSwitcher>
             <Touchable onPress={ensureSignOut} >
               <OptionTitle style={styles.red}>Sair</OptionTitle>
             </Touchable>

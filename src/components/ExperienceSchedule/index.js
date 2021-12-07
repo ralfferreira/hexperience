@@ -1,13 +1,13 @@
 import React from 'react'
 import { Experience, ExperienceDate, ExperienceTime, ExperienceButton, ExperienceButtonText } from './styles';
 
-const ExperienceSchedule = ({date, time, onPress }) => {
+const ExperienceSchedule = ({date, time, onPress, buttonText }) => {
   return (
     <Experience>
       <ExperienceDate>{date}</ExperienceDate>
       <ExperienceTime>{time}</ExperienceTime>
       <ExperienceButton onPress={onPress} >
-        <ExperienceButtonText>Agendar</ExperienceButtonText>
+        <ExperienceButtonText>{buttonText ? buttonText : 'Agendar'}</ExperienceButtonText>
       </ExperienceButton>
     </Experience>
   );

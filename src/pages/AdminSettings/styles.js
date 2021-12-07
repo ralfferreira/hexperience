@@ -54,13 +54,6 @@ export const SaveBtnView = styled.TouchableOpacity`
     justify-content: center;
     align-items: center;
 `
-export const SettingsThemeSwitcher = styled.View`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    padding-right: 10px;
-`
 export const OptionTitle = styled.Text`
     font-size: 22px;
     font-weight: 400;

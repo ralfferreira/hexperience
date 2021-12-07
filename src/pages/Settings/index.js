@@ -3,14 +3,12 @@ import { Alert, StyleSheet, Modal } from 'react-native'
 import { useNavigation } from '@react-navigation/native'; 
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch'
-import SwitchComponent from '../../components/Switch';
 
 import { useAuth } from '../../hooks/auth';
 
 import { 
   Container, 
-  SettingsBody, 
-  SettingsThemeSwitcher, 
+  SettingsBody,  
   OptionTitle, 
   Touchable,
   ModalView,
@@ -34,10 +32,6 @@ const Settings = () => {
       <HeaderWithoutSearch>Configurações</HeaderWithoutSearch>
 
       <SettingsBody>
-        <SettingsThemeSwitcher>
-          <OptionTitle>Tema Escuro</OptionTitle>
-          <SwitchComponent />
-        </SettingsThemeSwitcher>
         
         {
           user.type === 'host' 

@@ -56,10 +56,10 @@ export default class ExperienceCarousel extends Component {
           slideInterpolatedStyle={animatedStyles}
           useScrollView={true}          
         />
-        <Text style={styles.counter}
+        {/* <Text style={styles.counter}
         >
           {this.state.index}
-        </Text>
+        </Text> */}
       </View>
     );
   }
@@ -80,10 +80,4 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 24
   },
-  counter: {
-    marginTop: 25,
-    fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center'
-  }
 });
