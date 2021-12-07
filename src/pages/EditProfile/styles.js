@@ -26,7 +26,7 @@ export const EditProfilePhoto = styled.TouchableOpacity`
 export const EditProfilePhotoImage = styled.Image`
     width: 160px;
     height: 160px;
-    border-radius: 80px;
+    border-radius: 540px;
 `
 export const EditProfileChangePhoto = styled.Image`
     position: absolute;

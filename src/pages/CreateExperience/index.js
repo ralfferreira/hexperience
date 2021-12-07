@@ -1,10 +1,13 @@
-import React, { useRef, useCallback, useEffect, useState } from 'react'
+import React, { useRef, useCallback, useEffect, useState, useMemo } from 'react'
 import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal } from 'react-native';
 import { geocodeAsync, requestForegroundPermissionsAsync } from 'expo-location';
+import { isAfter, parseISO, format, addMinutes, getHours } from 'date-fns';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native'; 
+import * as ImagePicker from 'expo-image-picker';
+import ptBR from 'date-fns/esm/locale/pt-BR';
 import { Form } from "@unform/mobile";
 import * as Yup from 'yup'
-import * as ImagePicker from 'expo-image-picker';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
@@ -12,6 +15,7 @@ import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 import ExperienceCategory from '../../components/ExperienceCategory'
+import AddCategory from '../../components/AddCategory'
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -50,7 +54,10 @@ import {
   Touchable,
   Align,
   ModalView,
-  AlignCallback
+  AlignCallback,
+  ExperienceSchedules,
+  OptionTitle,
+  Row
 } from './styles';
 
 const CreateExperience = () => {
@@ -59,6 +66,7 @@ const CreateExperience = () => {
 
   const [cover, setCover] = useState(null);
   const [photos, setPhotos] = useState([]);
+  const [duration, setDuration] = useState(null);
   
   const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -74,6 +82,12 @@ const CreateExperience = () => {
 
   const [address, setAddress] = useState(null);
   const [geocode, setGeocode] = useState(null);
+
+  const [schedulesModalVisible, setSchedulesModalVisible] = useState(false);
+  const [mode, setMode] = useState('date');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -388,6 +402,67 @@ const CreateExperience = () => {
     setCategoryModalVisible(false);
   }, []);
 
+  const handleSelectDate = useCallback((event, selectedValue) => {
+    setShowDateTimePicker(Platform.OS === 'ios');
+
+    if (mode === 'date') {
+      const currentDate = selectedValue || new Date();
+      setSelectedDate(currentDate);
+      setMode('time');
+      setShowDateTimePicker(Platform.OS !== 'ios')
+    } else {
+      const selectedTime = selectedValue || new Date();
+      setSelectedTime(selectedTime);
+      setMode('date');
+      setShowDateTimePicker(Platform.OS === 'ios');
+    }
+  }, [mode]);
+
+  const handleAddSchedule = useCallback(async () => {
+    if (!isAfter(selectedTime, new Date())) {
+      Alert.alert('Erro ao adicionar horário', 'Não é possível adicionar um horário que já passou');
+      return;
+    }
+
+    if (getHours(selectedTime) < 5 && getHours(selectedTime) > 0) {
+      Alert.alert('Erro ao adicionar horário', 'Agendamentos não podem ocorrer entre às 00h00 e 05h00');
+      return;
+    }
+
+    setSchedulesModalVisible(false);
+
+    Alert.alert('Sucesso', 'Horário criado com sucesso');
+
+    setMode('date');
+    setShowDateTimePicker(false);
+  }, [selectedTime]);
+
+  const formattedDate = useMemo(() => {
+    const date = format(selectedTime, "EEEE',' dd 'de' MMMM 'de' yyyy", {
+      locale: ptBR,            
+    }); 
+
+    const dateText = date.charAt(0).toUpperCase() + date.slice(1);
+
+    return dateText
+  }, [selectedTime]);
+
+  const formattedDuration = useMemo(() => {
+    if (duration === null) {
+      return '';
+    }
+
+    const startsAt = format(selectedTime, "HH:mm", {
+      locale: ptBR
+    });
+
+    const endsAt = format(addMinutes(selectedTime, duration), "HH:mm", {
+      locale: ptBR
+    });
+
+    return `${startsAt} - ${endsAt}`
+  }, [selectedTime, duration]);
+
   return (
     <Container>
       <HeaderWithoutSearch>
@@ -467,7 +542,7 @@ const CreateExperience = () => {
                             key={`CatTouchable:${cat.id}`}
                             onPress={() => handleSelectCategory(cat)}
                           >
-                            <ExperienceCategory 
+                            <AddCategory 
                               key={`Category:$:${cat.id}`}
                               name={cat.name} 
                             />
@@ -513,6 +588,8 @@ const CreateExperience = () => {
                 name="duration"
                 placeholder="Duração da experiência em minutos"
                 placeholderTextColor="gray"
+                value={duration}
+                onChangeText={(value) => setDuration(value)}
                 maxLength={100}
               />
             </ExperienceDetailsRow>
@@ -582,6 +659,74 @@ const CreateExperience = () => {
             </ParentalRatingOption>
           </ParentalRating>
 
+          <Title>Horários</Title>
+          <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
+            <Align>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={schedulesModalVisible}
+                onRequestClose={() => {
+                  setSelectedDate(new Date())
+                  setSelectedTime(new Date())
+                  setSchedulesModalVisible(false);
+                }}>
+                <ModalView>
+                  <AlignCallback>
+                    <Title>Adicionar Horário</Title>
+                  </AlignCallback>                  
+                  <AlignCallback>
+                    <Title>{formattedDate}</Title>
+                  </AlignCallback>
+                  <AlignCallback>
+                    <Title>{formattedDuration}</Title>
+                  </AlignCallback>
+                  {
+                    showDateTimePicker 
+                    && (
+                      <DateTimePicker
+                        value={selectedDate}
+                        mode={mode}
+                        is24Hour={true}
+                        display='default'
+                        onChange={handleSelectDate}
+                      />
+                    )
+                  }
+                  <SaveBtn>
+                    <SaveBtnView 
+                      onPress={() => setShowDateTimePicker(true)}
+                    >
+                      <SaveBtnText>Selecionar Horário</SaveBtnText>
+                    </SaveBtnView>
+                  </SaveBtn>
+                  <AlignCallback>
+                      <OptionTitle style={styles.center}>Deseja confirmar a criação do horário?</OptionTitle>
+                      <Row>
+                        <Touchable
+                          onPress={() => {
+                            setSelectedDate(new Date())
+                            setSelectedTime(new Date())
+                            setSchedulesModalVisible(false);
+                          }}
+                        >
+                          <OptionTitle style={styles.red}>Não</OptionTitle>
+                        </Touchable>
+                        <Touchable 
+                          onPress={() => handleAddSchedule()}
+                        >
+                          <OptionTitle style={styles.green}>Sim</OptionTitle>
+                        </Touchable>
+                      </Row>
+                    </AlignCallback>  
+                </ModalView>
+              </Modal>
+            </Align>
+            <AddExperienceImage onPress={() => setSchedulesModalVisible(true)}>              
+              <PlusImg source={PlusIcon} />
+            </AddExperienceImage>
+          </ExperienceSchedules>
+
           <Title>O Que Levar? (Opcional)</Title>
           <ExperienceDescriptionInput
             autoCapitalize="words"
@@ -608,9 +753,20 @@ const CreateExperience = () => {
 
 const styles = StyleSheet.create({
   parentalRating: {
-    borderColor: '#818f81',
-    borderWidth: 3
-  }
+    borderColor: '#ff07f0',
+    borderWidth: 4,
+    borderRadius: 8,
+  },
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+  center: {
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
 });
 
 export default CreateExperience;

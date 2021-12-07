@@ -113,3 +113,16 @@ export const AlignCallback = styled.View`
     align-items: center;
     display: flex;
 `
+export const ExperienceSchedules = styled.ScrollView`
+    margin-left: 15px;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const OptionTitle = styled.Text`
+    font-size: 22px;
+    font-weight: 400;
+    text-align: left;
+    padding: 20px;
+`

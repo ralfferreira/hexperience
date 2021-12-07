@@ -1,14 +1,21 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet } from 'react-native';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react'
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { isAfter, parseISO, format, addMinutes, getHours } from 'date-fns';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
+import ptBR from 'date-fns/esm/locale/pt-BR';
 import { Form } from "@unform/mobile";
+import * as Yup from 'yup';
 
+import ExperienceCategory from '../../components/ExperienceCategory';
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import ExperienceDescriptionInput from '../../components/ExperienceDescriptionInput';
 import ExperienceDetailsInput from '../../components/ExperienceDetailsInput';
 import AddSchedule from '../../components/AddSchedule';
+import AddCategory from '../../components/AddCategory';
 
 import getValidationErrors from '../../utils/getValidationErrors';
 
@@ -43,7 +50,14 @@ import {
   SaveBtnText, 
   SaveBtnView, 
   Touchable,
-  ExperienceSchedules
+  ExperienceSchedules,
+  ExperienceImageCarrousel,
+  Align,
+  AlignCallback,
+  ModalView,
+  OptionTitle,
+  Row,
+  ExperienceDetailsRowAddress
 } from './styles';
 
 const EditExperience = () => {
@@ -58,6 +72,13 @@ const EditExperience = () => {
   const [maxGuests, setMaxGuests] = useState(0);
   const [cover, setCover] = useState(null);
 
+  const [address, setAddress] = useState(null);
+  const [geocode, setGeocode] = useState(null);
+
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState({ name: null, id: 0 });
+
   const [parentalRating, setParentalRating] = useState(1);
   const [freeForAll, setFreeForAll] = useState(true);
   const [tenYears, setTenYears] = useState(false);
@@ -66,14 +87,52 @@ const EditExperience = () => {
   const [sixteenYears, setSixteenYears] = useState(false);
   const [eighteenYears, setEighteenYears] = useState(false);
 
-  const [schedulesModalVisible, setSchedulesModalVisible] = useState(true);
+  const [schedulesModalVisible, setSchedulesModalVisible] = useState(false);
+  const [mode, setMode] = useState('date');
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [showDateTimePicker, setShowDateTimePicker] = useState(false);
 
   useEffect(() => {
-    api.get(`/experiences/${routeParams.exp_id}/show`).then((response) => {
+    (async () => {
+      const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('Precisamos de permissão para acessar a galeria.');
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const response = await Location.requestForegroundPermissionsAsync();
+      if (response.status !== 'granted') {
+        alert('Precisamos de permissão para acessar a localização');
+      }
+    })();
+  }, []);
+
+  const getExperience = useCallback(async () => {
+    try {
+      const response = await api.get(`/experiences/${routeParams.exp_id}/show`);
+
       setExperience(response.data);
-    }).catch((err) => {
+    } catch (err) {
       Alert.alert('Erro ao carregar Experiência', `${err.response.data.message}`);
-    })
+    }
+  }, [routeParams]);
+
+  const getCategories = useCallback(async () => {
+    try {
+      const response = await api.get('/experiences/categories');
+
+      setCategories(response.data);
+    } catch (err) {
+      Alert.alert('Erro ao carregar categorias', `${err.response.data.message}`);
+    }
+  }, []);
+
+  useEffect(() => {
+    getExperience().finally(() => {});
   }, []);
 
   useEffect(() => {
@@ -92,6 +151,12 @@ const EditExperience = () => {
     if (experience.parental_rating) {
       handleParentalRating(experience.parental_rating);
     }
+
+    if (experience.category) {
+      setSelectedCategory(experience.category);
+    }
+
+    getCategories().finally(() => {});
   }, [experience]);
 
   const handleUpdateCover = useCallback(async () => {
@@ -226,7 +291,7 @@ const EditExperience = () => {
     });
 
     try {
-      const response = await api.patch(
+      const response = await api.post(
         `/experiences/${experience.id}/photos`, 
         photoForm
       );
@@ -291,10 +356,121 @@ const EditExperience = () => {
     }
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    try {
+  const handleAddSchedule = useCallback(async () => {
+    if (!isAfter(selectedTime, new Date())) {
+      Alert.alert('Erro ao adicionar horário', 'Não é possível adicionar um horário que já passou');
+      return;
+    }
 
+    if (getHours(selectedTime) < 5 && getHours(selectedTime) > 0) {
+      Alert.alert('Erro ao adicionar horário', 'Agendamentos não podem ocorrer entre às 00h00 e 05h00');
+      return;
+    }
+
+    try {
+      await api.post('/experiences/schedules', {
+        date: selectedTime,
+        experience_id: experience.id
+      }); 
+
+      await getExperience();
+      setSelectedDate(new Date());
+      setSelectedTime(new Date());
+      setSchedulesModalVisible(false);
+
+      Alert.alert('Sucesso', 'Horário criado com sucesso');
+
+      setMode('date');
+      setShowDateTimePicker(false);
     } catch (err) {
+      Alert.alert('Erro ao adicionar horário', `${err.response.data.message}`);
+    }
+  }, [experience, selectedTime]);
+
+  const handleShowCategoryModal = useCallback(() => {
+    setCategoryModalVisible(true);
+  }, []);
+
+  const handleSelectCategory = useCallback((cat) => {
+    setSelectedCategory(cat);
+    setCategoryModalVisible(false);
+  }, []);
+
+  const searchForAddress = useCallback(async (address) => {
+    const results = await geocodeAsync(address);
+
+    if (!results.length) {
+      Alert.alert('Erro ao procurar endereço', 'Nenhum endereço foi encontrado');
+      setGeocode(null);
+      return;
+    }
+
+    if (results.length > 1) {
+      Alert.alert(
+        'Erro ao procurar endereço', 
+        'Muitos resultados foram retornados, tente ser mais específico'
+      );
+      setGeocode(null);
+      return;
+    }
+
+    setGeocode({ 
+      latitude: results[0].latitude.toFixed(5),
+      longitude: results[0].longitude.toFixed(5)
+    })
+  }, []);
+
+  const handleSubmit = useCallback(async (data) => {
+    try {
+      const schema = Yup.object().shape({
+        title: Yup.string().required('Título é obrigatório'),
+        description: Yup.string().required('Descrição é obrigatório'),
+        duration: Yup.number().max(360).required('Duração é obrigatório'),
+        amount_people: Yup.number().required('Número de pessoas por horário é obrigatório'),
+        price: Yup.number().min(0).required('Preço é obrigatorio'),
+        requirements: Yup.string().optional()
+      });
+
+      await schema.validate(data, {
+        abortEarly: true
+      });
+
+      if (selectedCategory.id === 0) {
+        throw new Error("Escolha uma categoria");
+      }
+
+      const updateData = {
+        name: data.title,
+        duration: data.duration,
+        description: data.description,
+        price: data.price,
+        requirements: data.requirements,
+        parental_rating: parentalRating,
+        max_guests: data.amount_people,
+        category_id: selectedCategory.id,
+        experience_id: experience.id
+      }
+
+      if (address && geocode) {
+        Object.assign(updateData, {
+          latitude: geocode.latitude,
+          longitude: geocode.longitude,
+          address: address,
+          is_online: false
+        });
+      } else {
+        Object.assign(updateData, {
+          is_online: true
+        });
+      }
+
+      await api.put('/experiences', updateData);
+
+      Alert.alert('Sucesso', 'Experiência foi atualizada com sucesso');
+      navigation.navigate('Profile')
+    } catch (err) {
+      console.log(err.response);
+
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
@@ -313,7 +489,59 @@ const EditExperience = () => {
         `${err.response.data.message}`
       );
     }
-  }, []);  
+  }, [experience, address, geocode, selectedCategory, parentalRating, navigation]);
+
+  const handleSelectDate = useCallback((event, selectedValue) => {
+    setShowDateTimePicker(Platform.OS === 'ios');
+
+    if (mode === 'date') {
+      const currentDate = selectedValue || new Date();
+      setSelectedDate(currentDate);
+      setMode('time');
+      setShowDateTimePicker(Platform.OS !== 'ios')
+    } else {
+      const selectedTime = selectedValue || new Date();
+      setSelectedTime(selectedTime);
+      setMode('date');
+      setShowDateTimePicker(Platform.OS === 'ios');
+    }
+  }, [mode])
+ 
+  const schedules = useMemo(() => {
+    if (!experience.schedules.length) {
+      return [];
+    }
+
+    return experience.schedules.filter(schedule => {
+      const parsedDate = parseISO(schedule.date);
+
+      if (isAfter(parsedDate, new Date())) {
+        return schedule;
+      }
+    });
+  }, [experience]);
+
+  const formattedDate = useMemo(() => {
+    const date = format(selectedTime, "EEEE',' dd 'de' MMMM 'de' yyyy", {
+      locale: ptBR,            
+    }); 
+
+    const dateText = date.charAt(0).toUpperCase() + date.slice(1);
+
+    return dateText
+  }, [selectedTime]);
+
+  const formattedDuration = useMemo(() => {
+    const startsAt = format(selectedTime, "HH:mm", {
+      locale: ptBR
+    });
+
+    const endsAt = format(addMinutes(selectedTime, duration), "HH:mm", {
+      locale: ptBR
+    });
+
+    return `${startsAt} - ${endsAt}`
+  }, [selectedTime, duration]);
 
   return (
     <Container>
@@ -349,31 +577,81 @@ const EditExperience = () => {
 
           <Title>Imagens</Title>
           <ExperienceImageView>
-            {
-              cover && 
-              <Touchable onPress={handleChangeCoverEvent}> 
-                <ExperienceImage 
-                  source={{ uri: cover }} 
-                />
-              </Touchable>
-            }
-            {
-              experience.photos.length
-              ? experience.photos.map(photo => {
-                return (
-                  <Touchable onPress={() => handlePhotosEvent(photo.id)}>
-                    <ExperienceImage 
-                      source={{ uri: photo.photo_url }} 
-                    />
-                  </Touchable>
-                )
-              })
-              : (<></>)
-            }
-            <AddExperienceImage onPress={handleAddPhotosEvent}>
-              <PlusImg source={PlusIcon} />
-            </AddExperienceImage>
+            <ExperienceImageCarrousel horizontal={true} showsHorizontalScrollIndicator={false}>
+              {
+                cover && 
+                <Touchable onPress={handleChangeCoverEvent}> 
+                  <ExperienceImage 
+                    source={{ uri: cover }} 
+                  />
+                </Touchable>
+              }
+              {
+                experience.photos.length
+                ? experience.photos.map(photo => {
+                  return (
+                    <Touchable 
+                      key={`TouchablePhoto:${photo.id}`}
+                      onPress={() => handlePhotosEvent(photo.id)}
+                    >
+                      <ExperienceImage 
+                        key={`Photo:${photo.id}`}
+                        source={{ uri: photo.photo_url }} 
+                      />
+                    </Touchable>
+                  )
+                })
+                : (<></>)
+              }
+              <AddExperienceImage onPress={handleAddPhotosEvent}>
+                <PlusImg source={PlusIcon} />
+              </AddExperienceImage>
+            </ExperienceImageCarrousel>
           </ExperienceImageView>
+
+          <Title>Categoria</Title>
+          <ExperienceDetailsRow>
+            <Touchable
+              onPress={handleShowCategoryModal}
+            >
+              <ExperienceCategory name={selectedCategory.name} />
+            </Touchable>
+            <Align>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={categoryModalVisible}
+                onRequestClose={() => {                  
+                  setCategoryModalVisible(false);
+                }}
+              >
+                <ModalView>
+                  <AlignCallback>
+                    <Title>Selecionar Categoria</Title>
+                  </AlignCallback>
+                  <ExperienceImageCarrousel>
+                    {
+                      categories.length
+                      ? categories.map(cat => {
+                        return (
+                          <Touchable
+                            key={`CatTouchable:${cat.id}`}
+                            onPress={() => handleSelectCategory(cat)}
+                          >
+                            <AddCategory 
+                              key={`Category:$:${cat.id}`}
+                              name={cat.name} 
+                            />
+                          </Touchable>
+                        )
+                      })
+                      : (<></>)
+                    }
+                  </ExperienceImageCarrousel>
+                </ModalView>
+              </Modal>
+            </Align>
+          </ExperienceDetailsRow>
 
           <Title>Descrição</Title>
           <ExperienceDescriptionInput 
@@ -387,16 +665,19 @@ const EditExperience = () => {
 
           <Title>Detalhes</Title>
           <ExperienceDetails>
-            <ExperienceDetailsRow>
+            <ExperienceDetailsRowAddress>
               <ImageDetails source={AddressIcon} />
-              <ExperienceDetailsInput 
-                autoCapitalize="words"
+              <ExperienceDetailsInput           
                 name="address"
-                placeholder="Endereço da experiência"
+                placeholder="Endereço (Se nenhum for fornecido, então ela será online)"
                 placeholderTextColor="gray"
                 maxLength={100}
+                value={address}
+                onChangeText={(text) => setAddress(text)}
+                onEndEditing={() => searchForAddress(address)}
+                multiline              
               />
-            </ExperienceDetailsRow>
+            </ExperienceDetailsRowAddress>
             <ExperienceDetailsRow>
               <ImageDetails source={DurationIcon} />
               <ExperienceDetailsInput 
@@ -487,21 +768,84 @@ const EditExperience = () => {
           <Title>Horários</Title>
           <ExperienceSchedules horizontal={true} showsHorizontalScrollIndicator={false}>
             {
-              experience.schedules.length
-              ? experience.schedules.map(schedule => {
+              schedules.length
+              ? schedules.map(schedule => {
                 return (
                   <AddSchedule 
                     key={`AddSchedule:${schedule.id}`}
-                    datetime={schedule.date}                  
+                    datetime={schedule.date}
+                    duration={experience.duration ? experience.duration : 0}                 
                   />
                 )
               })
               : (<></>)
             }
+            <Align>
+              <Modal
+                animationType="slide"
+                transparent={true}
+                visible={schedulesModalVisible}
+                onRequestClose={() => {
+                  setSelectedDate(new Date())
+                  setSelectedTime(new Date())
+                  setSchedulesModalVisible(false);
+                }}>
+                <ModalView>
+                  <AlignCallback>
+                    <Title>Adicionar Horário</Title>
+                  </AlignCallback>                  
+                  <AlignCallback>
+                    <Title>{formattedDate}</Title>
+                  </AlignCallback>
+                  <AlignCallback>
+                    <Title>{formattedDuration}</Title>
+                  </AlignCallback>
+                  {
+                    showDateTimePicker 
+                    && (
+                      <DateTimePicker
+                        value={selectedDate}
+                        mode={mode}
+                        is24Hour={true}
+                        display='default'
+                        onChange={handleSelectDate}
+                      />
+                    )
+                  }
+                  <SaveBtn>
+                    <SaveBtnView 
+                      onPress={() => setShowDateTimePicker(true)}
+                    >
+                      <SaveBtnText>Selecionar Horário</SaveBtnText>
+                    </SaveBtnView>
+                  </SaveBtn>
+                  <AlignCallback>
+                      <OptionTitle style={styles.center}>Deseja confirmar a criação do horário?</OptionTitle>
+                      <Row>
+                        <Touchable
+                          onPress={() => {
+                            setSelectedDate(new Date())
+                            setSelectedTime(new Date())
+                            setSchedulesModalVisible(false);
+                          }}
+                        >
+                          <OptionTitle style={styles.red}>Não</OptionTitle>
+                        </Touchable>
+                        <Touchable 
+                          onPress={() => handleAddSchedule()}
+                        >
+                          <OptionTitle style={styles.green}>Sim</OptionTitle>
+                        </Touchable>
+                      </Row>
+                    </AlignCallback>  
+                </ModalView>
+              </Modal>
+            </Align>
             <AddExperienceImage onPress={() => setSchedulesModalVisible(true)}>              
               <PlusImg source={PlusIcon} />
             </AddExperienceImage>
           </ExperienceSchedules>
+
           <SaveBtn>
             <SaveBtnView 
               onPress={() => { 
@@ -519,9 +863,20 @@ const EditExperience = () => {
 
 const styles = StyleSheet.create({
   parentalRating: {
-    borderColor: '#818f81',
-    borderWidth: 3
-  }
+    borderColor: '#ff07f0',
+    borderWidth: 4,
+    borderRadius: 8,
+  },
+  green: {
+    color: '#32cd32',
+  },
+  red: {
+    color: '#910101',
+  },
+  center: {
+    textAlign: 'center',
+    fontWeight: 'bold'
+  },
 });
 
 export default EditExperience;

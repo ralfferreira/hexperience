@@ -41,7 +41,7 @@ const AuthProvider = ({children}) => {
     }
 
     loadStorageData().then(() => renewSession());
-  }, [renewSession]);
+  }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
     const response = await api.post('sessions', {

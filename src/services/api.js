@@ -5,3 +5,6 @@ const api = axios.create({
 });
 
 export default api;
+
+// const accessToken = localStorage.getItem('access_token');
+// accessToken && (request.headers.authorization = 'bearer ' + accessToken);

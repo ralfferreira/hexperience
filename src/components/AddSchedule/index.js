@@ -10,7 +10,7 @@ import {
   ExperienceButtonText 
 } from './styles';
 
-const AddSchedule = ({datetime, onPress }) => {
+const AddSchedule = ({datetime, onPress, duration }) => {
   const date = useMemo(() => {
     const parsedDate = parseISO(datetime);
 
@@ -30,12 +30,12 @@ const AddSchedule = ({datetime, onPress }) => {
       locale: ptBR
     });
 
-    const endsAt = format(addMinutes(parsedDate, experience.duration), "HH:mm", {
+    const endsAt = format(addMinutes(parsedDate, duration), "HH:mm", {
       locale: ptBR
     });
 
     return `${startsAt} - ${endsAt}`
-  }, [datetime]);
+  }, [datetime, duration]);
 
   return (
     <Experience>

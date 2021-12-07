@@ -43,7 +43,7 @@ const GettingStartedThree = () => {
 
       <Start>
         <StartView onPress={() => handleNavigation('SignUp')}>
-          <StartText>Começe agora</StartText>
+          <StartText>Comece agora</StartText>
         </StartView>
       </Start>
 

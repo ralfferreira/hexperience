@@ -32,7 +32,7 @@ export const EditProfileBtn = styled.Image `
 export const ProfileImage = styled.Image `
     width: 160px;
     height: 160px;
-    border-radius: 120px;
+    border-radius: 540px;
 `
 export const Settings = styled.Image `
     width: 50px;

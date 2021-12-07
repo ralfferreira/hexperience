@@ -70,6 +70,7 @@ import {
   FolderIcon,
   FolderName
 } from './styles';
+import ExperienceCarousel from '../../components/ExperienceCarousel';
 
 const Experience = () => {
   const commentFormRef = useRef();
@@ -90,15 +91,21 @@ const Experience = () => {
   const [finalPrice, setFinalPrice] = useState(0);
   const [guests, setGuests] = useState(0);
 
-  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
+  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);  
 
-  useEffect(() => {
-    api.get(`/experiences/${routeParams.exp_id}/show`).then((response) => {
+  const getExperience = useCallback(async () => {
+    try {
+      const response = await api.get(`/experiences/${routeParams.exp_id}/show`);
+
       setExperience(response.data);
-    }).catch((err) => {
+    } catch (err) {
       Alert.alert('Erro ao carregar experiência', `${err.response.data.message}`)
-    });
+    }
   }, [routeParams]);
+  
+  useEffect(() => {
+    getExperience().finally(() => {});
+  }, []);
 
   const navigateToReportExperience = useCallback((exp_id) => {
     navigation.navigate('ReportExperience', { exp_id });
@@ -134,6 +141,7 @@ const Experience = () => {
       });
 
       Alert.alert('Sucesso', 'Comentário realizado com sucesso!');
+      await getExperience();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -186,6 +194,7 @@ const Experience = () => {
 
       setSelectedSchedule(null)
       setAppointmentModalVisible(false)
+      await getExperience();
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -337,6 +346,24 @@ const Experience = () => {
     return false;
   }, [favoritesRelation, experience]);
 
+  const photos = useMemo(() => {
+    let array = [];
+    
+    if (!experience) {
+      return [];
+    }
+
+    if (experience.cover_url) {
+      array.push(experience.cover_url);
+    }
+
+    if (experience.photos.length) {
+      array.push(...experience.photos.map(p => { return p.photo_url }))
+    }
+
+    return array;
+  }, [experience])
+
   return (
     <Container>
       <HeaderWithoutSearch>Experiência</HeaderWithoutSearch>
@@ -349,13 +376,8 @@ const Experience = () => {
           experience 
           ? (
             <>
-              <ExperienceImage 
-                resizeMode="center" 
-                source={
-                  experience.cover_url
-                  ? { uri: experience.cover_url }
-                  : DefaultImg
-                } 
+              <ExperienceCarousel
+                photos={photos}
               />
               <ExperienceTitle>{experience.name}</ExperienceTitle>
               <ExperienceOptions>
@@ -475,7 +497,7 @@ const Experience = () => {
                     visible={appointmentModalVisible}
                     onRequestClose={() => {
                       setSelectedSchedule(null)
-                      setAppointmentModalVisible(true)
+                      setAppointmentModalVisible(fals)
                     }}>
                     <ModalView>
                       <AlignCallback>
@@ -521,7 +543,7 @@ const Experience = () => {
                                 <Touchable
                                   onPress={() => {
                                     setSelectedSchedule(null)
-                                    setAppointmentModalVisible(!appointmentModalVisible)
+                                    setAppointmentModalVisible(false)
                                   }}
                                 >
                                   <OptionTitle style={styles.red}>Não</OptionTitle>

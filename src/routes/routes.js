@@ -1,5 +1,6 @@
-import React from "react";
+import React, {useState} from "react";
 import { createStackNavigator } from "@react-navigation/stack";
+import { ActivityIndicator, View } from "react-native"
 
 import AuthRoute from "./auth.routes";
 import Tabs from "./app.routes";
@@ -17,10 +18,24 @@ import { useAuth } from '../hooks/auth';
 const Routes = createStackNavigator();
 
 const Route = () => {
-  const { user } = useAuth();  
+  const { user } = useAuth();
+  const [processingTimeEnded, setProcessingTimeEnded] = useState(false);
 
   if (!user) {
-    return <AuthRoute />
+    setTimeout(() => {
+      setProcessingTimeEnded(true);
+    }, 300);
+    return (
+      <>
+        {processingTimeEnded === true ? (
+          <AuthRoute />
+        ): (
+          <View style={{ flex: 1, justifyContent: 'center' }}>
+            <ActivityIndicator size="large" color="#0000ff" />
+          </View>
+        )}
+      </>
+    );
   }
 
   if (user.type === 'admin') {
@@ -33,13 +48,13 @@ const Route = () => {
         headerShown: false,
       }}>
         <Routes.Screen name="AppRoute" component={Tabs} />
-        <Routes.Screen name="ExperienceRoute" component={experienceDetails} />        
+        <Routes.Screen name="ExperienceRoute" component={experienceDetails} />
         <Routes.Screen name="SearchRoute" component={SearchPage} />
         <Routes.Screen name="NotificationsRoute" component={NotificationsPage} />
         <Routes.Screen name="CreateExperienceRoute" component={hostCreateExperience} />
         <Routes.Screen name="EditExperienceRoute" component={hostEditExperience} />
         <Routes.Screen name="SettingsRoute" component={userSettings} />
-        <Routes.Screen name="EditProfileRoute" component={userEditProfile} />      
+        <Routes.Screen name="EditProfileRoute" component={userEditProfile} />
       </Routes.Navigator>
     </>
   );

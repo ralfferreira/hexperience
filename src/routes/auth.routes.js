@@ -20,14 +20,13 @@ const AuthRoute = () => {
     >
       {
         firstTime === true
-        ? (
+        && (
           <>
             <Auth.Screen name="GettingStartedOne" component={GettingStartedOne} />
             <Auth.Screen name="GettingStartedTwo" component={GettingStartedTwo} />
             <Auth.Screen name="GettingStartedThree" component={GettingStartedThree} />
           </>
         )
-        : (<></>)        
       }
       <Auth.Screen name="Login" component={Login} />
       <Auth.Screen name="SignUp" component={SignUp} />
