@@ -6,6 +6,10 @@ import { Container, Month, Day } from './styles';
 
 const CalendarMonth = ({month, day }) => {
   const formattedMonth = useMemo(() => {
+    if (month === undefined) {
+      return null;
+    }
+
     const date = setMonth(new Date(), month);
 
     const monthName = format(date, 'MMMM', { locale: ptBR });

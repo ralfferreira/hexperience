@@ -52,7 +52,7 @@ const AdminBlockedUsers = () => {
 
   useEffect(() => {
     getBlockedUsers().finally(() => {})
-  }, [getBlockedUsers]);
+  }, []);
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
@@ -102,27 +102,26 @@ const AdminBlockedUsers = () => {
     }
   }, [])
 
-  const handleUpdateStatus = useCallback(() => {
+  const handleUpdateStatus = useCallback(async () => {
     if (!selectedUser) {
       Alert.alert('Erro', 'Nenhum usuário foi escolhido');
       return;
     }
     
     try {
-      const request = api.put('/admin/reported/hosts', {
+      await api.put('/admin/reported/hosts', {
         user_id: selectedUser.id,
         status: selectedStatus
       });
 
-      Promise.resolve(request);
+      await getBlockedUsers();
 
       Alert.alert('Sucesso', 'Status do usuário foi atualizado com sucesso!');
       handleHideUpdateModal();
-      getBlockedUsers().finally(() => {});
     } catch (err) {
       Alert.alert('Erro ao atualizar status do usuário', `${err.response.data.message}`);
     }
-  }, []);
+  }, [selectedUser, selectedStatus]);
 
   const filteredBlockedUsers = useMemo(() => {
     if (!blockedUsers.length) {

@@ -79,18 +79,22 @@ const AdminHostRequest = () => {
         }
       ]
     )
-  }, [handleApproveRequest, handleShowModal]);
+  }, []);
 
-  const handleApproveRequest = useCallback((id) => {
-    api.post('/admin/host-requests', {
-      user_id: id
-    }).then(response => {
+  const handleApproveRequest = useCallback(async (id) => {
+    try {
+      const response = await api.post('/admin/host-requests', {
+        user_id: id
+      });
+
       Alert.alert('Sucesso', `Anfitrião @${response.data.nickname} foi aprovado com sucesso`);
 
-      getHostsRequests().finally(() => {});
-    }).catch((err) => {
+      await getHostsRequests();
+      setSelectedUser(null);
+      setModalVisible(false);
+    } catch (err) {
       Alert.alert('Erro ao aprovar anfitrião', `${err.response.data.message}`);
-    });
+    }
   }, [])
 
   const handleShowModal = useCallback((user) => {

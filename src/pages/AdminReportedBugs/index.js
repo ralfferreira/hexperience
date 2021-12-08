@@ -34,15 +34,17 @@ const AdminReportedBugs = () => {
     getReportedBugs().finally(() => {});
   }, []);
 
-  const handleSolveBug = useCallback((id) => {
-    api.patch(`/admin/bugs/${id}`, {
-      resolved: true
-    }).then(() => {
+  const handleSolveBug = useCallback(async (id) => {
+    try {
+      await api.patch(`/admin/bugs/${id}`, {
+        resolved: true
+      });
+
+      await getReportedBugs();
       Alert.alert('Sucesso', 'Bug atualizado com sucesso!');
-      getReportedBugs().finally(() => {});
-    }).catch((err) => {
-      Alert.alert('Erro ao atualizar bug', `${err.response.data.message}`)
-    })
+    } catch (err) {
+      Alert.alert('Erro ao atualizar bug', `${err.response.data.message}`)    
+    }
   }, [])
 
   const ensureSolveBug = useCallback((id) => {
@@ -60,7 +62,7 @@ const AdminReportedBugs = () => {
         }
       ]
     )
-  }, [handleSolveBug]);
+  }, []);
 
   return (
     <Container>

@@ -80,7 +80,7 @@ const AuthProvider = ({children}) => {
       token: data.token,
       user: user
     });
-  }, [setData, data.token]);
+  }, [data.token]);
 
   const renewSession = useCallback(async () => {    
     if (!data.user) {      
@@ -117,7 +117,7 @@ const AuthProvider = ({children}) => {
     } catch (err) {
       Alert.alert('Erro ao renovar sessão', `${err.response.data.message}`);
     }        
-  }, [data, setData, setLoading]);
+  }, [data]);
 
   return (
     <AuthContext.Provider

@@ -16,7 +16,7 @@ export const CommentProfile = styled.Image`
     width: 50px;
     height: 50px;
     margin-right: 10px;
-    border-radius: 30px;
+    border-radius: 540px;
 `
 export const CommentName = styled.Text`
     margin-right: 10px;

@@ -52,7 +52,7 @@ const AdminComplaintUsers = () => {
 
   useEffect(() => {
     getReportedUsers().finally(() => {})
-  }, [getReportedUsers]);
+  }, []);
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
@@ -104,23 +104,22 @@ const AdminComplaintUsers = () => {
     }
   }, [])
 
-  const handleUpdateStatus = useCallback(() => {
+  const handleUpdateStatus = useCallback(async () => {
     if (!selectedUser) {
       Alert.alert('Erro ao atualizar status', 'Nenhum usuário foi escolhido');
       return;
     }
     
     try {
-      const request = api.put('/admin/reported/hosts', {
+      await api.put('/admin/reported/hosts', {
         user_id: selectedUser.id,
         status: selectedStatus
       })
-
-      Promise.resolve(request);
+      
+      await getReportedUsers();
 
       Alert.alert('Sucesso', 'Status do usuário foi atualizado com sucesso!');
       handleHideUpdateModal();
-      getReportedUsers().finally(() => {});
     } catch (err) {
       Alert.alert('Erro ao atualizar status do usuário', `${err.response.data.message}`);
     }

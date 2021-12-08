@@ -62,7 +62,7 @@ const AdminSettings = () => {
         }
       ]
     )
-  }, [handleSignOut]);
+  }, []);
 
   const handleAdminConfigureUpdate = useCallback(async (data) => {
     try {

@@ -31,19 +31,20 @@ const Calendar = () => {
     api.get(`/appointments/users/${user.id}`).then((response) => {
       setAppointments(response.data);
     }).catch((err) => {
+      console.log(err);
       Alert.alert('Erro ao carregar agendamentos', `${err.response.data.message}`)
     });
   }, []);
 
-  const handleNavigation = useCallback(({ isHost, exp_id }) => {
+  const handleNavigation = useCallback(({ isHost, appointment_id }) => {
     if (isHost) {
       return;
     }
     
     navigation.navigate('ExperienceRoute', { 
-      screen: 'Experience',
+      screen: 'CalendarExperience',
       params: {
-        exp_id
+        appointment_id
       }
     })
   }, [navigation]);
@@ -206,7 +207,7 @@ const Calendar = () => {
                                           price={e.price}
                                           onPress={() => handleNavigation({
                                             isHost: dt.isHost,
-                                            exp_id: e.id
+                                            appointment_id: a.id
                                           })}
                                           isFavorite={dt.isFavorite}
                                         />

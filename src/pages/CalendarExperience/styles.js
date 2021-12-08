@@ -200,3 +200,9 @@ export const FolderName = styled.Text`
     padding-left: 10px;
 `
 export const PlusImg = styled.Image``
+export const CancelExperience = styled.Text`
+    color: red;
+    font-size: 18px;
+    padding: 15px;
+    text-align: center;
+`

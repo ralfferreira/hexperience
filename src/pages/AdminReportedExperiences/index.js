@@ -42,16 +42,18 @@ const AdminReportedExperiences = () => {
     setSearch(value);
   }, []);
 
-  const handleBlockExperince = useCallback((id) => {
-    api.put('/admin/reported/experiences', {
-      exp_id: id
-    }).then(() => {
-      Alert.alert('Sucesso', 'Experiência foi desbloqueada com sucesso!');
+  const handleBlockExperince = useCallback(async (id) => {
+    try {
+      api.put('/admin/reported/experiences', {
+        exp_id: id
+      })
+
+      await getBlockedExperiences();
       
-      getBlockedExperiences().finally(() => {});
-    }).catch((err) => {
+      Alert.alert('Sucesso', 'Experiência foi desbloqueada com sucesso!');
+    } catch (err) {
       Alert.alert('Erro ao desbloquear experiência', `${err.response.data.message}`);
-    })
+    }
   }, []);
 
   const handleDecision = useCallback((id) => {
@@ -63,7 +65,7 @@ const AdminReportedExperiences = () => {
         { text: 'Bloquear', style: 'default', onPress: () => handleBlockExperince(id) }
       ]
     )
-  }, [handleBlockExperince]);
+  }, []);
 
   const filteredReportedExperiences = useMemo(() => {
     if (!reportedExperiences.length) {

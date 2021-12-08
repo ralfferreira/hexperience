@@ -25,18 +25,13 @@ import { useNavigation } from '@react-navigation/core';
 
 const Favorites = () => {
   const { user } = useAuth();
-  const { folders } = useFavorites();
+  const { folders, favorites, loadFavorites } = useFavorites();
   const navigation = useNavigation();
 
-  const [favorites, setFavorites] = useState([]);
   const [selectedFolder, setSelectedFolder] = useState(null);
 
   useEffect(() => {
-    api.get('/experiences/favorites').then(response => {
-      setFavorites(response.data);
-    }).catch(err => {
-      Alert.alert('Erro ao carregar favoritos', `${err.response.data.message}`)
-    });
+    loadFavorites().finally(() => {});
   }, []);
 
   const handleNavigateToExperience = useCallback((exp_id) => {

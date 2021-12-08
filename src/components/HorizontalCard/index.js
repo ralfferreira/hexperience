@@ -15,7 +15,8 @@ import {
   ExperienceLocalizationText,
   ExperienceName,
   ExperiencePrice,
-  ExperienceFavorite 
+  ExperienceFavorite,
+  Row
 } from './styles';
 
 const HorizontalCard = ({ name, image, address, price, onPress, isFavorite }) => {
@@ -26,7 +27,7 @@ const HorizontalCard = ({ name, image, address, price, onPress, isFavorite }) =>
     >
       <Experience>
         <ExperienceImage
-          resizeMode="center" 
+          resizeMode="cover" 
           source={
             image
             ? { uri: image }
@@ -36,18 +37,22 @@ const HorizontalCard = ({ name, image, address, price, onPress, isFavorite }) =>
         <ExperienceDescription>
           <ExperienceName>{name}</ExperienceName>
           <ExperienceDetails>
-            <LocalizationIcon source={LocalizationImg} />
-            <ExperienceLocalizationText>
-              {address ? address : 'Online'}
-            </ExperienceLocalizationText>
-            <ExperiencePrice>{`R$ ${price}`}</ExperiencePrice>
+            <Row>
+              <LocalizationIcon source={LocalizationImg} />
+              <ExperienceLocalizationText numberOfLines={1}>
+                {address ? address : 'Online'}
+              </ExperienceLocalizationText>
+            </Row>
+            <Row>
             <ExperienceFavorite 
-              source={
-                isFavorite
-                ? FavoriteImg
-                : UnfavoriteImg
-              } 
-            />
+                source={
+                  isFavorite
+                  ? FavoriteImg
+                  : UnfavoriteImg
+                } 
+              />
+              <ExperiencePrice>{`R$ ${price}`}</ExperiencePrice>
+            </Row>
           </ExperienceDetails>
         </ExperienceDescription>
       </Experience>

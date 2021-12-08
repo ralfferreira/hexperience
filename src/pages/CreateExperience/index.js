@@ -212,6 +212,7 @@ const CreateExperience = () => {
 
       navigation.navigate('Profile');
     } catch (err) {
+      console.log(err);
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 

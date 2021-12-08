@@ -3,6 +3,7 @@ import { HeaderContent, Back, BackIcon, Title, Logo, Touchable } from './styles'
 import { useNavigation } from '@react-navigation/native';
 import BackImg from '../../assets/img/back.png'
 import LogoImg from '../../assets/img/dinoDaleGreen.png'
+
 const HeaderWithoutSearch = ({ children, ...rest }) => {
   const navigation = useNavigation();
   return (
