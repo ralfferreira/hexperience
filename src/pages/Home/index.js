@@ -194,7 +194,7 @@ const Home = () => {
                           key={experience.id}
                           image={experience.cover_url}
                           name={experience.name}
-                          address={experience.addresss}
+                          address={experience.address}
                           price={experience.price}
                           onPress={() => navigateToExperience(experience.id)}
                           rating={experience.rating}

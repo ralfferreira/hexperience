@@ -51,7 +51,7 @@ const HorizontalCard = ({ name, image, address, price, onPress, isFavorite }) =>
                   : UnfavoriteImg
                 } 
               />
-              <ExperiencePrice>{`R$ ${price}`}</ExperiencePrice>
+              <ExperiencePrice>{price > 0 ? `R$ ${price}` : 'Gratuito'}</ExperiencePrice>
             </Row>
           </ExperienceDetails>
         </ExperienceDescription>

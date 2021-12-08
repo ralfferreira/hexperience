@@ -29,16 +29,7 @@ const Search = () => {
   const { favoritesRelation } = useFavorites();
 
   const [search, setSearch] = useState(null);
-  const [categories, setCategories] = useState([]);
   const [experiences, setExperiences] = useState([]);
-
-  useEffect(() => {
-    api.get('/experiences/categories').then((response) => {
-      setCategories(response.data);
-    }).catch((err) => {
-      Alert.alert('Erro ao carregar as categorias', `${err.response.data.message}`);
-    })
-  }, [setCategories]);
   
   useEffect(() => {
     api.get('/experiences').then((response) => {
@@ -46,7 +37,7 @@ const Search = () => {
     }).catch((err) => {
       Alert.alert('Erro ao carregar experiências disponíveis', `${err.response.data.message}`);
     })
-  }, [setExperiences]);
+  }, []);
 
   const updateSearch = useCallback((value) => {
     setSearch(value)
@@ -86,24 +77,6 @@ const Search = () => {
 
     return format;
   }, [experiences, favoritesRelation]);
-
-  const filteredCategories = useMemo(() => {
-    if (!categories.length) {
-      return [];
-    }
-
-    if (!search) {
-      return categories;
-    }
-
-    const regex = new RegExp(`.*${search.toLowerCase()}.*`)
-
-    return categories.filter(c => {
-      if (regex.test(c.name.toLowerCase())) {
-        return c;
-      }
-    });
-  }, [search, categories]);
 
   const filteredExperiences = useMemo(() => {
     if (!formattedExperiences.length) {
@@ -152,26 +125,7 @@ const Search = () => {
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           enabled
-        />
-        <Row>
-          <Title>Categorias</Title>
-          <SeeAll>ver todas as categorias</SeeAll>
-        </Row>
-        <Categories horizontal={true} showsHorizontalScrollIndicator={false}>
-          {
-            filteredCategories
-            ? filteredCategories.map(c => {
-              return (
-                <ExperienceCategory 
-                  key={`Category:${c.id}:${c.name}`}
-                  name={c.name}
-                />
-              )
-            })
-            : (<></>)
-          }
-        </Categories>
-      
+        />      
         <Row>
           <Title>Experiências</Title>
           <SeeAll>ver todas as experiências</SeeAll>

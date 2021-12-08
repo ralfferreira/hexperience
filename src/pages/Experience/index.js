@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
-import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal, View, Text } from 'react-native';
+import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, Modal } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { isAfter, format, addMinutes, parseISO, intervalToDuration } from 'date-fns';
 import ptBR from 'date-fns/esm/locale/pt-BR';
@@ -12,9 +12,11 @@ import ExperienceSchedule from '../../components/ExperienceSchedule';
 import Comment from '../../components/Comment';
 import Rating from '../../components/Rating';
 import AddComment from '../../components/AddComment';
+import FormInput from '../../components/FormInput';
 import ParentalRating from '../../components/ParentalRating';
 import ExperienceTitleInput from '../../components/ExperienceTitleInput';
 import Like from '../../components/Like'
+import ExperienceCarousel from '../../components/ExperienceCarousel';
 
 import { useFavorites } from '../../hooks/favorites';
 
@@ -73,7 +75,6 @@ import {
   AlignFolder,
   PlusImg
 } from './styles';
-import ExperienceCarousel from '../../components/ExperienceCarousel';
 
 const Experience = () => {
   const commentFormRef = useRef();
@@ -82,7 +83,7 @@ const Experience = () => {
   const navigation = useNavigation();
   const route = useRoute();
   
-  const { favoritesRelation, loadFavorites } = useFavorites();
+  const { favoritesRelation, loadFavorites, folders } = useFavorites();
 
   const routeParams = route.params;
 
@@ -94,7 +95,9 @@ const Experience = () => {
   const [finalPrice, setFinalPrice] = useState(0);
   const [guests, setGuests] = useState(null);
 
-  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);  
+  const [favoriteModalVisible, setFavoriteModalVisible] = useState(false);
+  const [newFolder, setNewFolder] = useState(null);
+  const [selectedFolder, setSelectedFolder] = useState('Nenhuma pasta');
 
   const getExperience = useCallback(async () => {
     try {
@@ -117,7 +120,7 @@ const Experience = () => {
   const handleShowAppointmentModal = useCallback((schedule) => {
     setSelectedSchedule(schedule)
     setAppointmentModalVisible(true);
-  }, [setSelectedSchedule, setAppointmentModalVisible]);
+  }, []);
 
   const handleShowFavoriteModal = useCallback(() => {
     if (isFavorite) {
@@ -125,7 +128,7 @@ const Experience = () => {
     } else {
       setFavoriteModalVisible(true);
     }
-  }, [isFavorite, handleRemoveFromFavorites]);
+  }, [isFavorite]);
 
   const handleCreateComment = useCallback(async (data) => {
     try {
@@ -199,8 +202,6 @@ const Experience = () => {
       setAppointmentModalVisible(false)
       await getExperience();
     } catch (err) {
-      console.log(err.response)
-
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
@@ -221,21 +222,13 @@ const Experience = () => {
     }
   }, [selectedSchedule]);
 
-  const handleAddToFavorites = useCallback(async (data) => {
+  const handleAddToFavorites = useCallback(async () => {
     try {
-      const schema = Yup.object().shape({
-        folder: Yup.string().optional() 
-      });
-
-      await schema.validate(data, {
-        abortEarly: true
-      });
-
       const formData = { exp_id: experience.id };
 
-      if (data.folder) {
+      if (selectedFolder !== 'Nenhuma pasta') {
         Object.assign(formData, {
-          folder: data.folder
+          folder: selectedFolder
         })
       }
       
@@ -246,6 +239,8 @@ const Experience = () => {
       setExperience(response.data.experience);
       await loadFavorites();
       setFavoriteModalVisible(false);
+      setSelectedFolder('Nenhuma pasta')
+      setNewFolder(null)
     } catch (err) {
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
@@ -265,14 +260,15 @@ const Experience = () => {
         `${err.response.data.message}`
       );
     }
-  }, [experience, loadFavorites, setFavoriteModalVisible]);
+  }, [experience, loadFavorites, selectedFolder]);
 
   const handleRemoveFromFavorites = useCallback(async () => {
     try {
       await api.delete(`/experiences/favorites/${experience.id}`);
 
       Alert.alert('Sucesso', 'Experiência foi removida de favoritos com sucesso!')
-      loadFavorites().then(() => setFavoriteModalVisible(false))
+      await loadFavorites();
+      setFavoriteModalVisible(false)
     } catch (err) {
       Alert.alert(
         'Erro ao remover experiência de favoritos',
@@ -336,6 +332,24 @@ const Experience = () => {
     })
   }, [experience]);
 
+  const photos = useMemo(() => {
+    let array = [];
+    
+    if (!experience) {
+      return [];
+    }
+
+    if (experience.cover_url) {
+      array.push(experience.cover_url);
+    }
+
+    if (experience.photos.length) {
+      array.push(...experience.photos.map(p => { return p.photo_url }))
+    }
+
+    return array;
+  }, [experience])
+
   const formattedDuration = useMemo(() => {
     if (!experience) {
       return null;
@@ -370,24 +384,6 @@ const Experience = () => {
     return false;
   }, [favoritesRelation, experience]);
 
-  const photos = useMemo(() => {
-    let array = [];
-    
-    if (!experience) {
-      return [];
-    }
-
-    if (experience.cover_url) {
-      array.push(experience.cover_url);
-    }
-
-    if (experience.photos.length) {
-      array.push(...experience.photos.map(p => { return p.photo_url }))
-    }
-
-    return array;
-  }, [experience])
-
   return (
     <Container>
       <HeaderWithoutSearch>Experiência</HeaderWithoutSearch>
@@ -418,7 +414,10 @@ const Experience = () => {
                   
                   <ExperienceDescription>
                     <Like 
-                      onPress={handleShowFavoriteModal}
+                      onPress={isFavorite 
+                        ? handleRemoveFromFavorites 
+                        : handleShowFavoriteModal
+                      }
                       isFavorite={isFavorite}
                     />
                   </ExperienceDescription>
@@ -427,31 +426,81 @@ const Experience = () => {
                     transparent={true}
                     visible={favoriteModalVisible}
                     onRequestClose={() => {
-                      setFavoriteModalVisible(!favoriteModalVisible);
+                      setFavoriteModalVisible(false);
+                      setSelectedFolder('Nenhuma pasta')
+                      setNewFolder(null)
                     }}
                   >
                     <FolderModalView>
                       <AlignFolder>
-                        <ModalTitle>Seus favoritos</ModalTitle>
-                        <CreateFolder>
-                          <CreateFolderIcon>
-                            <PlusImg source={PlusIcon} />
-                          </CreateFolderIcon>
-                          <Touchable>
-                            <FolderText>Criar nova pasta de favoritos</FolderText>
+                        <ModalTitle style={{ marginTop: 15 }} >Seus favoritos</ModalTitle>
+                        <OptionTitle>
+                          Pasta escolhida: {selectedFolder}
+                        </OptionTitle>
+                        <OptionTitle style={styles.center}>Confirmar adição aos favoritos?</OptionTitle>
+                        <Row style={{ justifyContent: 'center' }}>
+                          <Touchable
+                            onPress={() => {
+                              setFavoriteModalVisible(false);
+                              setSelectedFolder('Nenhuma pasta')
+                              setNewFolder(null)
+                            }}
+                          >
+                            <OptionTitle style={styles.red}>Não</OptionTitle>
                           </Touchable>
-                          {/* <Touchable>
-                            <SubmitForm />
-                          </Touchable> */}
-                        </CreateFolder>
-                        <Folder>
-                          <FolderIcon source={FolderImg} />
-                          <FolderName>Florianópolis</FolderName>
-                        </Folder>
-                        <Folder>
-                          <FolderIcon source={FolderImg} />
-                          <FolderName>São Paulo</FolderName>
-                        </Folder>
+                          <Touchable onPress={() => handleAddToFavorites()}>
+                            <OptionTitle style={styles.green}>Sim</OptionTitle>
+                          </Touchable>
+                        </Row>
+                        <Form>
+                          <CreateFolder>
+                            <AddComments>
+                              <KeyboardAvoidingView
+                                behavior={Platform.OS === "ios" ? "padding" : undefined}
+                                enabled
+                              />                    
+                              <FormInput 
+                                name="folder"
+                                placeholder="Crie uma nova pasta"
+                                maxLength={100}
+                                value={newFolder}
+                                onChangeText={(text) => setNewFolder(text)}
+                                multiline
+                              />
+                              <AddCommentButton 
+                                onPress={() => {
+                                  if (newFolder) {
+                                    setSelectedFolder(newFolder)
+                                  }
+                                }}
+                              >
+                                <AddCommentIcon source={AddCommentImg} />
+                              </AddCommentButton>
+                            </AddComments>
+                          </CreateFolder>
+                        </Form>
+                        <Touchable onPress={() => setSelectedFolder('Nenhuma pasta')}>
+                          <Folder>
+                            <FolderIcon source={FolderImg} />
+                            <FolderName>Nenhuma pasta</FolderName>
+                          </Folder> 
+                        </Touchable>
+                        {
+                          folders.length
+                          && folders.map((f, i) => {
+                            return (
+                              <Touchable 
+                                key={`Touchable:${f}:${i}`}
+                                onPress={() => setSelectedFolder(f)}
+                              >
+                                <Folder key={`Folder:${f}:${i}`} >
+                                  <FolderIcon source={FolderImg} />
+                                  <FolderName>{f}</FolderName>
+                                </Folder> 
+                              </Touchable>
+                            )
+                          })                          
+                        }                                               
                       </AlignFolder>
                     </FolderModalView>
                   </Modal>                  
@@ -500,7 +549,7 @@ const Experience = () => {
                 </ExperienceDetailsRow>
                 <ExperienceDetailsRow>
                   <ImageDetails source={PriceIcon} />
-                  <DetailsInput>{`R$ ${experience.price}`}</DetailsInput>
+                  <DetailsInput>{experience.price > 0 ? `R$ ${experience.price}`: 'Gratuito'}</DetailsInput>
                 </ExperienceDetailsRow>
 
                 <Title>Classificação Indicativa</Title>
@@ -553,7 +602,7 @@ const Experience = () => {
                             </OptionTitle>
 
                             <OptionTitle>
-                              Preço da experiência: {`R$ ${experience.price}`}
+                              Preço da experiência: {experience.price > 0 ? `R$ ${experience.price}` : 'Gratuito'}
                             </OptionTitle>
                             
                             <Row>
@@ -571,11 +620,11 @@ const Experience = () => {
                             </Row>                            
                             
                             <OptionTitle>
-                              Preço Final: {`R$ ${finalPrice}`}
+                              Preço Final: {experience.price > 0 ? `R$ ${finalPrice}` : 'Gratuito'}
                             </OptionTitle>                            
                             
                             <AlignCallback>
-                            <OptionTitle style={styles.center}>Você deseja agendar sua experiência?</OptionTitle>
+                              <OptionTitle style={styles.center}>Você deseja agendar sua experiência?</OptionTitle>
                               <Row>
                                 <Touchable
                                   onPress={() => {

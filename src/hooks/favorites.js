@@ -78,9 +78,15 @@ const FavoritesProvider = ({children}) => {
       return [];
     }
 
-    const listOfFolders = [...new Set(favoritesRelation.map(fav => {
-      return fav.folder;
+    const listOfFolders = [...new Set(favoritesRelation.filter(fav => {
+      if (fav.folder) {
+        return fav;
+      }
+    }).map(fav => {
+      return fav.folder
     }))];
+
+    console.log(listOfFolders);
 
     return listOfFolders;
   }, [favoritesRelation]);

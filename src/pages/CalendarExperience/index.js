@@ -1,20 +1,21 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useCallback, useMemo, } from 'react';
 import { ScrollView, KeyboardAvoidingView, Alert, StyleSheet, View, ActivityIndicator } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
+import { format, addMinutes, parseISO } from 'date-fns';
+import ptBR from 'date-fns/esm/locale/pt-BR';
 
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
 
 import api from '../../services/api';
 
-import ReportImg from '../../assets/img/report-experience.png'
+import { useAuth } from '../../hooks/auth';
+
 import AddressIcon from '../../assets/img/address.png';
 import DurationIcon from '../../assets/img/duration.png';
 import AmountPeopleIcon from '../../assets/img/amountpeople.png';
 import PriceIcon from '../../assets/img/price.png';
 import DefaultImg from '../../assets/img/DinoGreenColor.png'
-import AddCommentImg from '../../assets/img/add-comment.png'
-import PlusIcon from '../../assets/img/plusicon.png';
-import FolderImg from '../../assets/img/folder.png';
 
 import { 
   Container, 
@@ -35,6 +36,8 @@ import {
 
 const CalendarExperience = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+  const { user } = useAuth();
 
   const routeParams = route.params;
 
@@ -49,8 +52,8 @@ const CalendarExperience = () => {
       const response = await api.get(`/appointments/${routeParams.appointment_id}`);
 
       setAppointment(response.data);
+      setSchedule(response.data.schedule);
     } catch (err) {
-      console.log(err);
       Alert.alert('Erro ao carregar experiência', `${err.response.data.message}`)
     }
   }, [routeParams]);
@@ -62,20 +65,97 @@ const CalendarExperience = () => {
       setExperience(response.data);
       setLoading(true);
     } catch (err) {
-      console.log(err);
       Alert.alert('Erro ao carregar experiência', `${err.response.data.message}`)
     }
   }, [appointment]);
-  
-  useEffect(() => {
+
+  const navigateToExperience = useCallback(() => {
+    if (isHost) {
+      return;
+    }
     
+    navigation.navigate('ExperienceRoute', { 
+      screen: 'Experience',
+      params: {
+        exp_id: experience.id
+      }
+    })
+  }, [navigation, user, experience, isHost]);
+
+  const handleCancelAppointment = useCallback(async () => {
+    try {
+      await api.delete('/appointments', {
+        data: { appointment_id: appointment.id }
+      });
+
+      Alert.alert('Sucesso', 'Agendamento foi cancelado');
+      navigation.navigate('AppRoute', {
+        screen: 'Calendar'
+      })
+    } catch (err) {
+      Alert.alert('Erro ao carregar experiência', `${err.response.data.message}`)
+    }
+  }, [appointment])
+
+  const ensureCancelAppointment = useCallback(() => {
+    Alert.alert(
+      'Cancelar agendamento',
+      'Tem certeza que deseja cancelar agendamento?',
+      [
+        { text: 'Fechar', style: 'cancel', onPress: () => {} },
+        { text: 'Cancelar', style: 'destructive', onPress: () => handleCancelAppointment() }
+      ]
+    )
   }, []);
 
-  useEffect(() => {
-    if (appointment) {
-      setSchedule(appointment.schedule);
+  const isHost = useMemo(() => {
+    if (!user || !experience) {
+      return true;
     }
-  }, [appointment]);
+
+    if (user.type !== 'host') {
+      return false;
+    }
+
+    if (user.host.id === experience.host.id) {
+      return true;
+    }
+    return false;
+  }, [user, experience]);
+
+  const formattedDate = useMemo(() => {
+    if (!schedule) {
+      return false;
+    }
+
+    const parsedDate = parseISO(schedule.date);
+
+    const date = format(parsedDate, "EEEE',' dd 'de' MMMM 'de' yyyy", {
+      locale: ptBR,            
+    }); 
+
+    const dateText = date.charAt(0).toUpperCase() + date.slice(1);
+
+    return dateText
+  }, [schedule]);
+
+  const formattedDuration = useMemo(() => {
+    if (!schedule || !experience) {
+      return false;
+    }
+
+    const parsedDate = parseISO(schedule.date);
+
+    const startsAt = format(parsedDate, "HH:mm", {
+      locale: ptBR
+    });
+
+    const endsAt = format(addMinutes(parsedDate, experience.duration), "HH:mm", {
+      locale: ptBR
+    });
+
+    return `${startsAt} - ${endsAt}`
+  }, [schedule, experience]);
 
   if (!loading){
     setTimeout(() => {
@@ -94,7 +174,11 @@ const CalendarExperience = () => {
             loading === true 
             ? (
               <>
-                <ExperienceTitle>{experience.name}</ExperienceTitle>
+                <Touchable
+                  onPress={() => navigateToExperience()}
+                >
+                  <ExperienceTitle>{experience.name}</ExperienceTitle>
+                </Touchable>
                 <ExperienceHost>
                   <ExperienceHostProfile 
                     source={
@@ -127,9 +211,7 @@ const CalendarExperience = () => {
                   <ExperienceDetailsRow>
                     <ImageDetails source={DurationIcon} />
                     <DetailsInput>
-                      {
-                        'Indeterminado'
-                      }
+                      {formattedDuration}
                     </DetailsInput>
                   </ExperienceDetailsRow>
                   <ExperienceDetailsRow>
@@ -138,14 +220,23 @@ const CalendarExperience = () => {
                   </ExperienceDetailsRow>
                   <ExperienceDetailsRow>
                     <ImageDetails source={PriceIcon} />
-                    <DetailsInput>{`R$ ${experience.price}`}</DetailsInput>
+                    <DetailsInput>{experience.price > 0 ? `R$ ${experience.price}` : 'Gratuito'}</DetailsInput>
                   </ExperienceDetailsRow>
                 </ExperienceDetails>
+
                 <Title>Horário da experiência</Title>
-                <Title>Sabado eu me mato, oba, sabado eu me mato</Title>
-                <Touchable>
-                 <CancelExperience>Cancelar agendamento</CancelExperience>
-                </Touchable>
+                <Title>{formattedDate}</Title>
+
+                {
+                  appointment.user.id === user.id && (
+                    <Touchable 
+                      style={{ marginTop: 15, marginBottom: 15 }}
+                      onPress={() => ensureCancelAppointment()}
+                    >
+                      <CancelExperience>Cancelar agendamento</CancelExperience>
+                    </Touchable>
+                  )
+                }
               </>
             )
             : (

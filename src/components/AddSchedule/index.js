@@ -41,9 +41,6 @@ const AddSchedule = ({datetime, onPress, duration }) => {
     <Experience>
       <ExperienceDate>{date}</ExperienceDate>
       <ExperienceTime>{time}</ExperienceTime>
-      <ExperienceButton onPress={onPress} >
-        <ExperienceButtonText>Deletar</ExperienceButtonText>
-      </ExperienceButton>
     </Experience>
   );
 };

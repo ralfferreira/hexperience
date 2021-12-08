@@ -29,7 +29,7 @@ const HostExperienceCard = ({name, image, address, price, onEditPress, onDeleteP
           ? { uri: image }
           : DefaultImg
         }
-        resizeMode="center"
+        resizeMode="cover"
       />
       <ExperienceDescription>
         <ExperienceName numberOfLines={1}>{name}</ExperienceName>
@@ -39,7 +39,7 @@ const HostExperienceCard = ({name, image, address, price, onEditPress, onDeleteP
             {address ? address : 'Online'}
           </ExperienceLocalizationText>
         </ExperienceDetails>
-        <ExperiencePrice>{price ? `R$ ${price}` : 'Indeterminado'}</ExperiencePrice>
+        <ExperiencePrice>{price > 0 ? `R$ ${price}` : 'Gratuito'}</ExperiencePrice>
       </ExperienceDescription>
       <ExperienceCommands>
         <Touchable onPress={onEditPress} >

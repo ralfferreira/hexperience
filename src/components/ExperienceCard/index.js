@@ -45,13 +45,13 @@ const ExperienceCard = ({
         <ExperienceDescription>
           <ExperienceName numberOfLines={1}>{name}</ExperienceName>
           <ExperienceDetails>
-            <LocalizationIcon source={LocalizationImg} />
+            <LocalizationIcon source={LocalizationImg} />            
             <ExperienceLocalizationText numberOfLines={1}>
               {address ? address : 'Online'}
             </ExperienceLocalizationText>
           </ExperienceDetails>
           <ExperiencePrice>
-            {price ? `R$ ${price}` : 'Indeterminado'}
+            {price > 0 ? `R$ ${price}` : 'Gratuito'}
           </ExperiencePrice>
         </ExperienceDescription>
         <ExperienceRating>

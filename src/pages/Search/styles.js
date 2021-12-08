@@ -40,4 +40,5 @@ export const HostPhoto = styled.Image`
     height: 75px;
     border-radius: 50px;
 `
-export const HostProfile = styled.TouchableOpacity``
+export const HostProfile = styled.TouchableOpacity``;
+export const Touchable = styled.TouchableOpacity``;

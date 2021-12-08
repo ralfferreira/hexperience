@@ -40,7 +40,7 @@ const AuthProvider = ({children}) => {
       }
     }
 
-    loadStorageData().then(() => renewSession());
+    loadStorageData().then(() => {});
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
@@ -80,44 +80,7 @@ const AuthProvider = ({children}) => {
       token: data.token,
       user: user
     });
-  }, [data.token]);
-
-  const renewSession = useCallback(async () => {    
-    if (!data.user) {      
-      return;
-    }
-
-    if (data.user.type === 'admin') {      
-      if (differenceInHours(data.lastLoginDate, new Date()) > 23) {
-        signOut();
-      }
-
-      return;
-    }
-
-    try {
-      const response = await api.put('/sessions', {
-        token: data.token,
-        user_id: data.user.id
-      });
-      
-      const { user, newToken } = response.data;
-  
-      await AsyncStorage.multiSet([
-        ['@Hexperience:token', newToken],
-        ['@Hexperience:user', JSON.stringify(user)],
-        ['@Hexperience:lastLoginDate', new Date().toISOString()],
-      ]);
-  
-      api.defaults.headers.authorization = `Bearer ${newToken}`;
-  
-      setData({ token: newToken, user: user, lastLoginDate: new Date() });
-  
-      setLoading(false);
-    } catch (err) {
-      Alert.alert('Erro ao renovar sessão', `${err.response.data.message}`);
-    }        
-  }, [data]);
+  }, [data.token]);  
 
   return (
     <AuthContext.Provider

@@ -4,7 +4,7 @@ import LottieView from 'lottie-react-native';
 import like from '../../assets/lottie/like.json';
 
 const Like = ({onPress, isFavorite, ...rest}) => {
-  const progress = useRef(new Animated.Value(0)).current;
+  const progress = useRef(new Animated.Value(isFavorite ? 1 : 0)).current;
   const [hasLiked, setHasLiked] = useState(isFavorite);
 
   const handleLikeAnimation = useCallback(() => {

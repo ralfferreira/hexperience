@@ -108,7 +108,7 @@ const Favorites = () => {
                     ? fav.experience.address
                     : 'Online'
                   }
-                  price={`${fav.experience.price}`}
+                  price={fav.experience.price > 0 ? `${fav.experience.price}` : 'Gratuito'}
                   onPress={() => handleNavigateToExperience(fav.experience.id)}
                   isFavorite={true}
                 />

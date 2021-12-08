@@ -497,8 +497,6 @@ const EditExperience = () => {
       Alert.alert('Sucesso', 'Experiência foi atualizada com sucesso');
       navigation.navigate('Profile')
     } catch (err) {
-      console.log(err.response);
-
       if (err instanceof Yup.ValidationError) {
         const errors = getValidationErrors(err);
 
