@@ -1,31 +1,51 @@
-import React from 'react'
+import React from 'react';
+
 import LocalizationImg from '../../assets/img/pins-hexperience.png'
 import DeleteExperienceImg from '../../assets/img/delete-experience.png'
-import { useNavigation } from '@react-navigation/native'; 
-import { EditExperience, DeleteExperience, Experience, Touchable, ExperienceImage, ExperienceDescription, ExperienceName, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperiencePrice, ExperienceCommands, ExperienceFavorite} from './styles';
 const EditProfileImg = require('../../assets/img/editprofile.png');
+const DefaultImg = require('../../assets/img/DinoGreenColor.png');
 
-const HostExperienceCard = ({name, image, localizationText, price }) => {
-  const navigation = useNavigation();
+import { 
+  EditExperience, 
+  DeleteExperience, 
+  Experience, 
+  Touchable, 
+  ExperienceImage, 
+  ExperienceDescription, 
+  ExperienceName, 
+  ExperienceDetails, 
+  LocalizationIcon, 
+  ExperienceLocalizationText, 
+  ExperiencePrice, 
+  ExperienceCommands
+} from './styles';
+
+const HostExperienceCard = ({name, image, address, price, onEditPress, onDeletePress }) => {
   return (
     <Experience>
-      <ExperienceImage source={(image)} />
+      <ExperienceImage 
+        source={
+          image
+          ? { uri: image }
+          : DefaultImg
+        }
+        resizeMode="cover"
+      />
       <ExperienceDescription>
-        <ExperienceName>{(name)}</ExperienceName>
+        <ExperienceName numberOfLines={1}>{name}</ExperienceName>
         <ExperienceDetails>
           <LocalizationIcon source={LocalizationImg} />
-          <ExperienceLocalizationText>{(localizationText)}</ExperienceLocalizationText>
+          <ExperienceLocalizationText numberOfLines={1}>
+            {address ? address : 'Online'}
+          </ExperienceLocalizationText>
         </ExperienceDetails>
-        <ExperiencePrice>{(price)}</ExperiencePrice>
+        <ExperiencePrice>{price > 0 ? `R$ ${price}` : 'Gratuito'}</ExperiencePrice>
       </ExperienceDescription>
       <ExperienceCommands>
-        <Touchable
-        onPress={() => {
-        navigation.navigate('EditExperienceRoute')
-        }}>
+        <Touchable onPress={onEditPress} >
           <EditExperience source={EditProfileImg} />
         </Touchable>
-        <Touchable>
+        <Touchable onPress={onDeletePress} >
           <DeleteExperience source={DeleteExperienceImg} />
         </Touchable>
       </ExperienceCommands>

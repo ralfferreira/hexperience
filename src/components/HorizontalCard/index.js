@@ -1,28 +1,61 @@
 import React from 'react';
-import { Experience, Touchable, ExperienceDescription, ExperienceImage, ExperienceDetails, LocalizationIcon, ExperienceLocalizationText, ExperienceName, ExperiencePrice, ExperienceFavorite } from './styles';
-import LocalizationImg from '../../assets/img/pins-hexperience.png'
-import FavoriteImg from '../../assets/img/heart-icon.png'
-import { useNavigation } from '@react-navigation/native'; 
 
-const HorizontalCard = ({name, image, localizationText, price }) => {
-  const navigation = useNavigation();
+import LocalizationImg from '../../assets/img/pins-hexperience.png'
+import UnfavoriteImg from '../../assets/img/heart-icon.png';
+import FavoriteImg from '../../assets/img/heart-full.png';
+const DefaultImg = require('../../assets/img/DinoGreenColor.png');
+
+import { 
+  Experience,
+  Touchable,
+  ExperienceDescription,
+  ExperienceImage,
+  ExperienceDetails,
+  LocalizationIcon,
+  ExperienceLocalizationText,
+  ExperienceName,
+  ExperiencePrice,
+  ExperienceFavorite,
+  Row
+} from './styles';
+
+const HorizontalCard = ({ name, image, address, price, onPress, isFavorite }) => {
+  
   return (
     <Touchable
-      onPress={() => {
-      navigation.navigate('ExperienceRoute')
-      }}>
-    <Experience>
-      <ExperienceImage source={(image)} />
-      <ExperienceDescription>
-        <ExperienceName>{(name)}</ExperienceName>
-        <ExperienceDetails>
-          <LocalizationIcon source={LocalizationImg} />
-          <ExperienceLocalizationText>{(localizationText)}</ExperienceLocalizationText>
-          <ExperiencePrice>{(price)}</ExperiencePrice>
-          <ExperienceFavorite source={FavoriteImg} />
-        </ExperienceDetails>
-      </ExperienceDescription>
-    </Experience>
+      onPress={onPress}
+    >
+      <Experience>
+        <ExperienceImage
+          resizeMode="cover" 
+          source={
+            image
+            ? { uri: image }
+            : DefaultImg
+          }
+        />
+        <ExperienceDescription>
+          <ExperienceName>{name}</ExperienceName>
+          <ExperienceDetails>
+            <Row>
+              <LocalizationIcon source={LocalizationImg} />
+              <ExperienceLocalizationText numberOfLines={1}>
+                {address ? address : 'Online'}
+              </ExperienceLocalizationText>
+            </Row>
+            <Row>
+            <ExperienceFavorite 
+                source={
+                  isFavorite
+                  ? FavoriteImg
+                  : UnfavoriteImg
+                } 
+              />
+              <ExperiencePrice>{price > 0 ? `R$ ${price}` : 'Gratuito'}</ExperiencePrice>
+            </Row>
+          </ExperienceDetails>
+        </ExperienceDescription>
+      </Experience>
     </Touchable>
   );
 };

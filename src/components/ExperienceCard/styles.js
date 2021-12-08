@@ -17,7 +17,7 @@ export const ExperienceImage = styled.Image `
 `
 export const ExperienceDescription = styled.View `
     display: flex;
-    padding: 8px;
+    padding: 8px 12px;
     flex-direction: column;
     justify-content: space-around;
 `
@@ -27,6 +27,7 @@ export const ExperienceName = styled.Text `
 export const ExperienceDetails = styled.View `
     display: flex;
     flex-direction: row;
+    align-self: flex-start;
 `
 export const LocalizationIcon = styled.Image `
     margin-right: 5px;

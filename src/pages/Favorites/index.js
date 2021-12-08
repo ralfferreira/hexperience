@@ -1,128 +1,124 @@
-import React from 'react';
-import OrderByImg from '../../assets/img/arrow-down.png';
-import CreateFolderImg from '../../assets/img/create-folder.png';
-import FolderImg from '../../assets/img/folder.png';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import { Alert, ScrollView } from 'react-native' ;
+
 import FloatButton from '../../components/FloatButton'
-// import ExperienceImg from '../../assets/img/div-image-experience.png'
-import { Container, ListAndCreate, OrderBy, OrderByText, OrderByArrow, CreateFolder, Folder, Folders, FolderIcon, FolderName, Experiences } from './styles';
 import Header from '../../components/Header';
-import { ScrollView } from 'react-native' ;
 import HorizontalCard from '../../components/HorizontalCard';
 
+import { useAuth } from '../../hooks/auth';
+import { useFavorites } from '../../hooks/favorites';
+
+import FolderImg from '../../assets/img/folder.png';
 const ExperienceImg = require('../../assets/img/div-image-experience.png');
 
+import { 
+  Container,
+  Folder,
+  FolderButton,
+  Folders, 
+  FolderIcon, 
+  FolderName, 
+  Experiences 
+} from './styles';
+import api from '../../services/api';
+import { useNavigation } from '@react-navigation/core';
+
 const Favorites = () => {
+  const { user } = useAuth();
+  const { folders, favorites, loadFavorites } = useFavorites();
+  const navigation = useNavigation();
+
+  const [selectedFolder, setSelectedFolder] = useState(null);
+
+  useEffect(() => {
+    loadFavorites().finally(() => {});
+  }, []);
+
+  const handleNavigateToExperience = useCallback((exp_id) => {
+    navigation.navigate('ExperienceRoute', {
+      screen: 'Experience',
+      params: {
+        exp_id
+      }
+    })
+  }, []);
+
+  const handleFilterExperiences = useCallback((folder) => {
+    setSelectedFolder(folder)
+  }, [setSelectedFolder]);
+
+  const filteredFavorites = useMemo(() => {
+    if (!selectedFolder) {
+      return favorites
+    }
+
+    if (!favorites.length) {
+      return [];
+    }
+
+    return favorites.filter(fav => {
+      if (fav.folder === selectedFolder) {
+        return fav;
+      }
+    });
+  }, [selectedFolder, favorites]);
+
   return (
     <Container>
       <Header>Favoritos</Header>
-      <ListAndCreate>
-        <OrderBy>
-          <OrderByText>Ordenar por </OrderByText>
-          <OrderByArrow source={OrderByImg} />
-        </OrderBy>
-        <CreateFolder source={CreateFolderImg} />
-      </ListAndCreate>
-
       <ScrollView>
         <Folders horizontal={true} showsHorizontalScrollIndicator={false}>
-          <Folder>
-            <FolderIcon source={FolderImg} />
-            <FolderName numberOfLines={2}>Experiência de Férias</FolderName>
-          </Folder>
-          <Folder>
-            <FolderIcon source={FolderImg} />
-            <FolderName numberOfLines={2}>Experiência para as crianças</FolderName>
-          </Folder>
-          <Folder>
-            <FolderIcon source={FolderImg} />
-            <FolderName numberOfLines={2}>Experiência com os amigos</FolderName>
-          </Folder>
+          <FolderButton
+            onPress={() => handleFilterExperiences(null)}
+          >
+            <Folder>
+              <FolderIcon source={FolderImg} />
+              <FolderName numberOfLines={2}>Todos favoritos</FolderName>
+            </Folder>
+          </FolderButton>
+          {
+            folders.length
+            ? folders.map(f => {
+              return (
+                <FolderButton 
+                  key={`FolderButton:${f}`}
+                  onPress={() => handleFilterExperiences(f)}
+                >
+                  <Folder key={`Folder:${f}`} >
+                    <FolderIcon key={`FolderIcon:${f}`} source={FolderImg} />
+                    <FolderName key={f} numberOfLines={2}>{f}</FolderName>
+                  </Folder>
+                </FolderButton>
+              )
+            })
+            : (<></>)
+          }
         </Folders>
-
         <Experiences horizontal={false} showsHorizontalScrollIndicator={false}>
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Andar à cavalo"
-          localizationText="São Paulo - SP"
-          price="R$ 600,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
-          <HorizontalCard 
-          image= {ExperienceImg}
-          name="Pescaria com Caio Castro"
-          localizationText="Fortaleza - CE"
-          price="R$ 800,00" />
+          {
+            filteredFavorites
+            ? filteredFavorites.map(fav => {
+              return (
+                <HorizontalCard 
+                  key={fav.id}
+                  image={fav.cover_url}
+                  name={fav.experience.name}
+                  address={
+                    fav.experience.address
+                    ? fav.experience.address
+                    : 'Online'
+                  }
+                  price={fav.experience.price > 0 ? `${fav.experience.price}` : 'Gratuito'}
+                  onPress={() => handleNavigateToExperience(fav.experience.id)}
+                  isFavorite={true}
+                />
+              )
+            })
+            : (<></>)
+          }
         </Experiences> 
       </ScrollView>
-      <FloatButton />
+      {user.type === 'host' ? <FloatButton /> : <></>}
     </Container>
   );
 };

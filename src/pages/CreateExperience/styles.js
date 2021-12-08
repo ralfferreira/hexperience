@@ -11,27 +11,10 @@ export const Title = styled.Text`
     margin-top: 10px;
     margin-bottom: 10px;
 `
-export const ExperienceTitle = styled.TextInput`
-    width: 100%;
-    height: 60px;
-    display: flex;
-    justify-content: center;
-    text-align: center;
-    border: 0;
-    flex-direction: row;
-    align-items: center;
-    font-size: 24px;
-`
-export const DetailsInput = styled.TextInput`
-    width: 100%;
-    height: 30px;
-    margin-bottom: 10px;
-    display: flex;
-    flex-direction: row;
-`
 export const ExperienceImage = styled.Image`
     width: 250px;
     height: 200px;
+    margin-right: 30px;
 `
 export const AddExperienceImage = styled.TouchableOpacity`
     border-width: 2px;
@@ -41,27 +24,17 @@ export const AddExperienceImage = styled.TouchableOpacity`
     height: 60px;
     display: flex;
     align-items: center;
+    align-self: center;
     justify-content: center;
 `
 export const ExperienceImageView = styled.View`
     display: flex;
-    justify-content: space-between;
+    justify-content: space-around;
     flex-direction: row;
     padding: 15px;
     align-items: center;
 `
-export const ExperienceDescription = styled.TextInput`
-    width: 90%;
-    height: 100px;
-    padding: 20px;
-    margin-left: 9px;
-    background: #F0F0F0;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    border-width: 2px;
-    border-color: #C4C4C4;
-    flex-direction: row;
-    align-items: center;
+export const ExperienceImageCarrousel = styled.ScrollView`
 `
 export const ExperienceDetails = styled.View`
     display: flex;
@@ -73,6 +46,11 @@ export const ExperienceDetailsRow = styled.View`
     flex-direction: row;
     padding: 10px;
 `
+export const ExperienceDetailsRowAddress = styled.View`
+    display: flex;
+    flex-direction: row;
+    margin-left: 10px;
+`
 export const ParentalRating = styled.View`
     display: flex;
     justify-content: space-evenly;
@@ -81,7 +59,6 @@ export const ParentalRating = styled.View`
     padding: 5px;
 `
 export const ParentalRatingOption = styled.TouchableOpacity``
-
 export const ImageDetails = styled.Image`
     width: 20px;
     height: 20px;
@@ -89,12 +66,12 @@ export const ImageDetails = styled.Image`
     margin-right: 7px;
 `
 export const PlusImg = styled.Image`
-    width: 15px;
-    height: 15px;
+    width: 16px;
+    height: 16px;
 `
 export const ParentalRatingImg = styled.Image`
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
 `
 export const SaveBtn = styled.View`
     display: flex;
@@ -118,4 +95,34 @@ export const SaveBtnView = styled.TouchableOpacity`
     border-radius: 15px;
     justify-content: center;
     align-items: center;
+`
+export const Touchable = styled.TouchableOpacity``;
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+export const ModalView = styled.View`
+    display: flex;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+    text-align: left;
+`
+export const AlignCallback = styled.View`
+    align-items: center;
+    display: flex;
+`
+export const ExperienceSchedules = styled.ScrollView`
+    margin-left: 15px;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const OptionTitle = styled.Text`
+    font-size: 22px;
+    font-weight: 400;
+    text-align: left;
+    padding: 20px;
 `

@@ -17,7 +17,9 @@ export const ExperienceOptions = styled.View`
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
     padding: 10px;
+    width: 90%;
 `
 export const ExperienceReport = styled.TouchableOpacity``
 
@@ -38,6 +40,9 @@ export const ExperienceHost = styled.View`
 `
 export const ExperienceHostProfile = styled.Image`
     padding: 5px;
+    width: 75px;
+    height: 75px;
+    border-radius: 540px;
 `
 export const ExperienceHostName = styled.Text`
     padding: 10px;
@@ -79,10 +84,6 @@ export const DetailsInput = styled.Text`
 export const ExperienceParentalRating = styled.View`
     padding: 15px;
 `
-export const ParentalRatingImg = styled.Image`
-    width: 30px;
-    height: 30px;
-`
 export const ExperienceWhatTake = styled.Text`
     padding: 15px;
     font-size: 15px;
@@ -90,8 +91,112 @@ export const ExperienceWhatTake = styled.Text`
 export const ExperienceSchedules = styled.ScrollView`
     margin-left: 15px;
 `
-export const CommentsList = styled.View`
+export const CommentsList = styled.ScrollView`
     display: flex;
     flex-direction: column;
     margin-bottom: 50px;
 `
+export const AddComments = styled.View`
+    padding: 15px;
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+`
+export const AddCommentButton = styled.TouchableOpacity`
+    margin-left: 10px;
+    margin-bottom: 5px;
+    background-color:#00FF01;
+    border-radius: 100px;
+    width: 40px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+`
+export const AddCommentIcon = styled.Image`
+`
+export const AlignRating = styled.View`
+    display: flex;
+    width: 35%;
+    padding-left: 15px;
+`
+export const OptionTitle = styled.Text`
+    font-size: 22px;
+    font-weight: 400;
+    text-align: left;
+    padding: 20px;
+`
+export const Touchable = styled.TouchableOpacity``
+export const ModalView = styled.View`
+    display: flex;
+    background-color: #fff;
+    justify-content: center;
+    height: 100%;
+    text-align: left;
+`
+export const Row = styled.View`
+    display: flex;
+    flex-direction: row;
+`
+export const Align = styled.View`
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+`
+export const AlignCallback = styled.View`
+    align-items: center;
+    display: flex;
+`
+export const FolderModalView = styled.ScrollView`
+    height: 100%;
+    width: 100%;
+    background-color: #fff;
+`
+export const AlignFolder = styled.View`
+    display: flex;
+    justify-content: center;
+`
+export const ModalTitle = styled.Text`
+    font-weight: bold;
+    font-size: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+    margin-top: 10px;
+`
+export const CreateFolder = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+`
+export const CreateFolderIcon = styled.TouchableOpacity`
+    border-width: 2px;
+    border-color: #7C7C7C;
+    border-radius: 11px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    align-self: center;
+    justify-content: center;
+`
+export const FolderText = styled.Text`
+    font-size: 16px;
+    padding-left: 10px;
+`
+export const Folder = styled.View`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px;
+`
+export const FolderIcon = styled.Image`
+    width: 46px;
+    height: 46px;
+`
+export const FolderName = styled.Text`
+    font-size: 16px;
+    padding-left: 10px;
+`
+export const PlusImg = styled.Image``

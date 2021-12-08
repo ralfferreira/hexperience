@@ -1,19 +1,25 @@
 import React from 'react'
-import { SearchBar, Search, Title, Logo, Touchable } from './styles';
+import { useNavigation } from '@react-navigation/core';
+
 import LogoImg from '../../assets/img/dinoDaleGreen.png'
 import SearchImg from '../../assets/img/search.png'
-import { useNavigation } from '@react-navigation/native'; 
+
+import { SearchBar, Search, Title, Logo, Touchable } from './styles';
+
 const Header = ({ children, ...rest }) => {
   const navigation = useNavigation();
+
   return (
     <SearchBar {...rest}>
-      <Touchable onPress={() => {
-        navigation.navigate('SearchRoute')
-        }}>
+      <Touchable 
+        onPress={() => navigation.navigate('SearchRoute')}
+      >
         <Search source={SearchImg} />
       </Touchable>
-      <Title>{(children)}</Title>
-      <Logo source={LogoImg} />
+      <Title>{children}</Title>
+      <Touchable onPress={() => navigation.navigate('NotificationsRoute')}>
+        <Logo source={LogoImg} />
+      </Touchable>
     </SearchBar>
   );
 };

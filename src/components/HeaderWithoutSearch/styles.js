@@ -35,3 +35,4 @@ export const Logo = styled.Image`
     margin-top: 5px;
     margin-right: -20px;
 `
+export const Touchable = styled.TouchableOpacity``

@@ -1,11 +1,35 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Container, DinoImage, Title, Subtitle, LandingNavigation, Select, Start, StartView, StartText, Sign, SignView, SignText } from './styles';
-import Dino from '../../assets/img/dino2.png';
+
+import { useConnection } from '../../hooks/connection';
+
+import Dino from '../../assets/img/dino3.jpg';
 import SelectGreen from '../../assets/img/select-green.png';
 import SelectGray from '../../assets/img/select-gray.png';
+
+import { 
+  Container,
+  DinoImage,
+  Title,
+  Subtitle,
+  LandingNavigation,
+  Select,
+  Start,
+  StartView,
+  StartText,
+  Sign,
+  SignView,
+  SignText 
+} from './styles';
+
 const GettingStartedThree = () => {
   const navigation = useNavigation();
+  const { handleFirstTime } = useConnection();
+
+  const handleNavigation = useCallback((page) => {
+    handleFirstTime().then(() => navigation.navigate(page));
+  }, [navigation, handleFirstTime]);
+
   return (
     <Container>
       <DinoImage source={Dino} />
@@ -18,24 +42,14 @@ const GettingStartedThree = () => {
       </LandingNavigation>
 
       <Start>
-        <StartView  
-        onPress={() => {
-        navigation.navigate('SignUp')
-        }}>
-        <StartText>
-        Começe agora
-        </StartText>
+        <StartView onPress={() => handleNavigation('SignUp')}>
+          <StartText>Comece agora</StartText>
         </StartView>
       </Start>
 
       <Sign>
-        <SignView  
-        onPress={() => {
-        navigation.navigate('Login')
-        }}>
-        <SignText>
-        Entrar
-        </SignText>
+        <SignView onPress={() => handleNavigation('Login')}>
+          <SignText>Entrar</SignText>
         </SignView>
       </Sign>
 

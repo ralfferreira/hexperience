@@ -38,17 +38,11 @@ export const OrderByArrow = styled.Image`
     height: 12px;
     margin-top: 3px;
 `
-export const CreateFolder = styled.Image`
-    width: 25px;
-    height: 25px;
-    margin-top: 5px;
-    margin-right: 32px;
-`
-
 export const Folders = styled.ScrollView`
     display: flex;
     border: 1px #ddd solid;
 `
+export const FolderButton = styled.TouchableOpacity``
 export const Folder = styled.View`
     width: 200px;
     height: 100px;

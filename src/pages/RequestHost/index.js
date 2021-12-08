@@ -1,63 +1,160 @@
-import React from 'react';
-import { Container, AlignForm, Title, Description, InputTitle, SaveBtn, SaveBtnText, SaveBtnView, DetailsInput } from './styles';
+import React, { useCallback, useRef, useState } from 'react';
+import { ScrollView, KeyboardAvoidingView, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; 
-import { ScrollView, KeyboardAvoidingView } from 'react-native';
+import { Form } from "@unform/mobile";
+import * as Yup from 'yup'
+import formatStringByPattern from 'format-string-by-pattern';
+
+import getValidationErrors from '../../utils/getValidationErrors';
+
+import api from '../../services/api';
+
 import HeaderWithoutSearch from '../../components/HeaderWithoutSearch';
+import FormInput from '../../components/FormInput';
+
+import { 
+  Container,
+  AlignForm,
+  Title,
+  Description,
+  InputTitle,
+  SaveBtn,
+  SaveBtnText,
+  SaveBtnView,
+  DetailsInput 
+} from './styles';
+
 const RequestHost = () => {
   const navigation = useNavigation();
+  const formRef = useRef();
+
+  const [cpf, setCPF] = useState(null);
+  const [cnpj, setCNPJ] = useState(null);
+
+  const handleCPFTextChange = useCallback((value) => {
+    const formatted = formatStringByPattern('999.999.999-99', value)   
+
+    setCPF(formatted);
+  }, [setCPF]);
+
+  const handleCNPJTextChange = useCallback((value) => {
+    const formatted = formatStringByPattern('99.999.999/9999-99', value)
+
+    setCNPJ(formatted);
+  }, [setCNPJ]);
+  
+  const handleSubmit = useCallback(async (data) => {
+    try {
+      const schema = Yup.object().shape({
+        nickname: Yup.string().required('Apelido é obrigatório'),
+      });
+
+      if (!data.cpf && !data.cnpj) {
+        throw new Error('CPF ou CNPJ deve ser fornecido');
+      }
+
+      await schema.validate(data, {
+        abortEarly: false,
+      });
+
+      const postData = {
+        nickname: data.nickname,
+      }
+
+      if (data.cpf) {
+        const formattedCPF = data.cpf.replace(/[^\d]/g, '');
+
+        Object.assign(postData, { cpf: formattedCPF })
+      }
+
+      if (data.cnpj) {
+        const formattedCNPJ = data.cnpj.replace(/[^\d]/g, '');
+
+        Object.assign(postData, { cnpj: formattedCNPJ })
+      }
+
+      await api.post('hosts/request-privilege', postData)
+
+      Alert.alert(
+        'Sucesso', 
+        'Sua requisição para privilégio de anfitrião foi enviada e será analisada'
+      );
+
+      navigation.navigate('Home');
+    } catch (err) {
+      if (err instanceof Yup.ValidationError) {
+        const errors = getValidationErrors(err);
+
+        formRef.current?.setErrors(errors);
+
+        Alert.alert(
+          'Erro na solicitação',
+          `${err.message}`
+        );
+
+        return;
+      }
+
+      Alert.alert(
+        'Erro na solicitação',
+        `${err.response.data.message}`
+      );
+    }
+  }, [navigation]);
+
   return (
     <Container>
       <HeaderWithoutSearch>Anfitrião</HeaderWithoutSearch>
       <ScrollView keyboardShouldPersistTaps="handled">
-      <Title>Seja um Anfitrião e trabalhe Conosco!</Title>
-      <Description>Um anfitrião tem permissão para proporcionar e divulgar experiências em nossa plataforma.</Description>
-        <AlignForm>
-          <KeyboardAvoidingView
-            behavior={Platform.OS === "ios" ? "padding" : undefined}
-            enabled
+        <Title>Seja um Anfitrião e trabalhe Conosco!</Title>
+        <Description>Um anfitrião tem permissão para proporcionar e divulgar experiências em nossa plataforma.</Description>
+        <Form ref={formRef} onSubmit={handleSubmit} >
+          <AlignForm>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              enabled
             />
-          <InputTitle>Apelido</InputTitle>
-          <DetailsInput 
-          autoCapitalize="words"
-          name="surname"
-          placeholder="Coloque um Apelido bem legal"
-          maxLength={150}
-          />
-          <InputTitle>CPF</InputTitle>
-          <DetailsInput
-          name="cpf"
-          maxLength={11}
-          keyBoardType={'numeric'}
-          placeholder="000.000.000-00"
-          placeholderTextColor="gray"
-          />
-          <InputTitle>CNPJ</InputTitle>
-          <DetailsInput
-          name="cnpj"
-          maxLength={14}
-          placeholder="000.000.000-00"
-          placeholderTextColor="gray"
-          keyBoardType={'numeric'}
-          />
-          <InputTitle>CEP</InputTitle>
-          <DetailsInput
-          name="cep"
-          maxLength={8}
-          keyBoardType={'numeric'}
-          placeholder="00066-000"
-          placeholderTextColor="gray"
-          />
-          <SaveBtn>
-          <SaveBtnView  
-          onPress={() => {
-          navigation.navigate('AuthRoute')
-          }}>
-            <SaveBtnText>
-            Enviar
-            </SaveBtnText>
-          </SaveBtnView>
-        </SaveBtn>
-        </AlignForm>
+            <InputTitle>Apelido</InputTitle>
+            <FormInput 
+              autoCapitalize="words"
+              name="nickname"
+              placeholder="Coloque um Apelido bem legal"
+              maxLength={150}
+              containerStyle={DetailsInput}
+            />
+            <InputTitle>CPF</InputTitle>
+            <FormInput
+              name="cpf"
+              maxLength={14}
+              keyboardType="number-pad"
+              placeholder="000.000.000-00"
+              placeholderTextColor="gray"
+              value={cpf}         
+              onChangeText={(value) => handleCPFTextChange(value)}
+              containerStyle={DetailsInput}
+            />
+            <InputTitle>CNPJ</InputTitle>
+            <FormInput
+              name="cnpj"
+              maxLength={18}
+              placeholder="00.000.000/0000-00"
+              placeholderTextColor="gray"
+              keyboardType="number-pad"
+              value={cnpj}
+              onChangeText={(value) => handleCNPJTextChange(value)}
+              containerStyle={DetailsInput}
+            />
+            <SaveBtn>
+              <SaveBtnView
+                onPress={() => {
+                  formRef.current?.submitForm();
+                }}
+              >
+                <SaveBtnText>Enviar</SaveBtnText>
+              </SaveBtnView>
+            </SaveBtn>
+          </AlignForm>
+        </Form>
       </ScrollView>
     </Container>
   );

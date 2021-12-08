@@ -1,20 +1,50 @@
-import React from 'react'
-import { CommentView, CommentRow, CommentName, CommentProfile, CommentContent, CommentContentText, CommentDate } from './styles';
+import React, { useMemo } from 'react';
+import { format, parseISO, } from 'date-fns';
+import ptBR from 'date-fns/esm/locale/pt-BR';
+
 import Rating from '../Rating';
-import UserProfileImg from '../../assets/img/luffy.jpg'
-const Comment = ({name, content, date}) => {
+
+import DefaultImg from '../../assets/img/DinoGreenColor.png'
+
+import { 
+  CommentView,
+  CommentRow,
+  CommentName,
+  CommentProfile,
+  CommentContent,
+  CommentContentText,
+  CommentDate 
+} from './styles';
+
+const Comment = ({ name, content, date, rating, avatar_url }) => {
+  const commentDate = useMemo(() => {
+    const parsedDate = parseISO(date);
+
+    const formattedDate = format(parsedDate, "EEEE',' dd 'de' MMMM 'de' yyyy", {
+      locale: ptBR,            
+    });
+
+    return formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+  }, [date]);
+
   return (
     <CommentView>
       <CommentRow>
-        <CommentProfile source={UserProfileImg} />
+        <CommentProfile 
+          source={avatar_url ? { uri: avatar_url } : DefaultImg}
+          resizeMode="center"
+        />
         <CommentName>{name}</CommentName>
-        <Rating />
+        <Rating
+          rating={rating}
+          disabled={true}
+        />
       </CommentRow>
         <CommentContent>
           <CommentContentText>
             {content}
           </CommentContentText>
-          <CommentDate>{date}</CommentDate>
+          <CommentDate>{commentDate}</CommentDate>
         </CommentContent>
     </CommentView>
   );
