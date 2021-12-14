@@ -74,7 +74,6 @@ const styles = StyleSheet.create({
     height: ITEM_HEIGHT,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'black'
   },
   itemLabel: {
     color: 'white',

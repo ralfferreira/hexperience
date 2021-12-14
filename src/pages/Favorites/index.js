@@ -81,7 +81,7 @@ const Favorites = () => {
             ? folders.map(f => {
               return (
                 <FolderButton 
-                  key={`FolderButton:${f}`}
+                  key={`FolderButton:${f.id}`}
                   onPress={() => handleFilterExperiences(f)}
                 >
                   <Folder key={`Folder:${f}`} >
@@ -98,18 +98,20 @@ const Favorites = () => {
           {
             filteredFavorites
             ? filteredFavorites.map(fav => {
+              const { experience } = fav;
+
               return (
                 <HorizontalCard 
                   key={fav.id}
-                  image={fav.cover_url}
-                  name={fav.experience.name}
+                  image={experience.cover_url}
+                  name={experience.name}
                   address={
-                    fav.experience.address
-                    ? fav.experience.address
+                    experience.address
+                    ? experience.address
                     : 'Online'
                   }
-                  price={fav.experience.price > 0 ? `${fav.experience.price}` : 'Gratuito'}
-                  onPress={() => handleNavigateToExperience(fav.experience.id)}
+                  price={experience.price > 0 ? `${experience.price}` : 'Gratuito'}
+                  onPress={() => handleNavigateToExperience(experience.id)}
                   isFavorite={true}
                 />
               )

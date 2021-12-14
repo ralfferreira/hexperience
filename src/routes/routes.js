@@ -27,9 +27,9 @@ const Route = () => {
     }, 300);
     return (
       <>
-        {processingTimeEnded === true ? (
+        {processingTimeEnded === true ? (            
           <AuthRoute />
-        ): (
+        ) : (
           <View style={{ flex: 1, justifyContent: 'center' }}>
             <ActivityIndicator size="large" color="#00ff00" />
           </View>
