@@ -168,7 +168,7 @@ const SignUp = () => {
           </Center>
         </Form>
 
-        <BackToSignIn onPress={() => navigation.goBack()}>
+        <BackToSignIn onPress={() => { navigation.navigate('Login') }}>
           <BackToSignInText>Já possui uma conta? <Underline>Faça Login</Underline></BackToSignInText>
         </BackToSignIn>
       </Container>

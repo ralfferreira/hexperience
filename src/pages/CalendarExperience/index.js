@@ -216,11 +216,11 @@ const CalendarExperience = () => {
                   </ExperienceDetailsRow>
                   <ExperienceDetailsRow>
                     <ImageDetails source={AmountPeopleIcon} />
-                    <DetailsInput>{`${experience.max_guests} pessoas`}</DetailsInput>
+                    <DetailsInput>{`${appointment.guests} pessoas`}</DetailsInput>
                   </ExperienceDetailsRow>
                   <ExperienceDetailsRow>
                     <ImageDetails source={PriceIcon} />
-                    <DetailsInput>{experience.price > 0 ? `R$ ${experience.price}` : 'Gratuito'}</DetailsInput>
+                    <DetailsInput>{appointment.final_price > 0 ? `R$ ${appointment.final_price}` : 'Gratuito'}</DetailsInput>
                   </ExperienceDetailsRow>
                 </ExperienceDetails>
 

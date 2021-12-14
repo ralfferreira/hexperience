@@ -86,8 +86,6 @@ const FavoritesProvider = ({children}) => {
       return fav.folder
     }))];
 
-    console.log(listOfFolders);
-
     return listOfFolders;
   }, [favoritesRelation]);
 

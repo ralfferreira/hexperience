@@ -266,7 +266,6 @@ const Experience = () => {
     try {
       await api.delete(`/experiences/favorites/${experience.id}`);
 
-      Alert.alert('Sucesso', 'Experiência foi removida de favoritos com sucesso!')
       await loadFavorites();
       setFavoriteModalVisible(false)
     } catch (err) {
@@ -494,8 +493,11 @@ const Experience = () => {
                                 onPress={() => setSelectedFolder(f)}
                               >
                                 <Folder key={`Folder:${f}:${i}`} >
-                                  <FolderIcon source={FolderImg} />
-                                  <FolderName>{f}</FolderName>
+                                  <FolderIcon 
+                                    key={`FolderIcon:${f}:${i}`}
+                                    source={FolderImg} 
+                                  />
+                                  <FolderName key={`FolderName:${f}:${i}`}>{f}</FolderName>
                                 </Folder> 
                               </Touchable>
                             )
